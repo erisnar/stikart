@@ -184,6 +184,71 @@ body {
     font-size: 13px;
 }
 
+/* Category folder styling */
+.layer-category {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.layer-category:last-child {
+    border-bottom: none;
+}
+
+.layer-category-header {
+    display: flex;
+    align-items: center;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: #444;
+    user-select: none;
+    transition: background 0.2s;
+    gap: 6px;
+}
+
+.layer-category-header input[type="checkbox"] {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    margin: 0;
+}
+
+.layer-category-header:hover {
+    background: #f5f5f5;
+}
+
+.layer-category-arrow {
+    font-size: 9px;
+    color: #888;
+    transition: transform 0.2s;
+    display: inline-block;
+}
+
+.layer-category-arrow.open {
+    transform: rotate(90deg);
+}
+
+.layer-category-name {
+    flex: 1;
+}
+
+.layer-category-count {
+    background: #e8e8e8;
+    color: #666;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 1px 6px;
+    border-radius: 10px;
+}
+
+.layer-category-items {
+    border-top: 1px solid #f0f0f0;
+}
+
+.layer-category-race {
+    padding-left: 30px;
+}
+
 @media (max-width: 768px) {
     #header h1 {
         font-size: 1.5em;

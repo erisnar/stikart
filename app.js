@@ -24,6 +24,16 @@ L.control.scale({
     position: 'bottomleft'
 }).addTo(map);
 
+// Race distance categories
+const raceCategories = [
+    { id: 'marathon-trail', name: '<50K' },
+    { id: '50k', name: '50K' },
+    { id: '50-miles', name: '50 Miles' },
+    { id: '100k', name: '100K' },
+    { id: '100-miles', name: '100 Miles' },
+    { id: '100-miles-plus', name: '100 Miles+' }
+];
+
 // GPX race routes configuration
 const raceRoutes = [
     {
@@ -33,7 +43,8 @@ const raceRoutes = [
         description: 'Nordmarka Skogsmaraton Ultra - løp gjennom Nordmarkas skogsområder',
         url: 'https://nordmarkaskogsmaraton.no/',
         useCalculatedStats: true,
-        location: 'Nordmarka, Oslo'
+        location: 'Nordmarka, Oslo',
+        category: '50k'
     },
     {
         name: 'OBT Oslo-Bergen Trail',
@@ -48,7 +59,8 @@ const raceRoutes = [
         url: 'https://oslobergentrail.com/',
         manualDistance: 500,
         manualElevation: 15000,
-        location: 'Oslo til Bergen'
+        location: 'Oslo til Bergen',
+        category: '100-miles-plus'
     },
     {
         name: 'SMVE - Soria Moria til Verdens Ende',
@@ -57,7 +69,8 @@ const raceRoutes = [
         description: 'Fra Soria Moria til Verdens Ende',
         url: 'https://soriamoriatilverdensende.com',
         useCalculatedStats: true,
-        location: 'Oslo området'
+        location: 'Oslo området',
+        category: '100-miles'
     },
     {
         name: 'Nøsen Hundreds',
@@ -66,7 +79,8 @@ const raceRoutes = [
         description: 'Ultra distanse terrengløp',
         url: 'https://www.nosenhundreds.com/',
         useCalculatedStats: true,
-        location: 'Nøsen området'
+        location: 'Nøsen området',
+        category: '100k'
     },
     {
         name: 'Dobbeltravern - Nordmarkstraveren',
@@ -75,7 +89,8 @@ const raceRoutes = [
         description: 'Dobbel Nordmarka traversering',
         url: 'http://www.nordmarkstravern.no/',
         useCalculatedStats: true,
-        location: 'Nordmarka, Oslo'
+        location: 'Nordmarka, Oslo',
+        category: '50k'
     },
     {
         name: 'Lillomarka Rundt',
@@ -84,7 +99,8 @@ const raceRoutes = [
         description: 'Rundt Lillomarka skog',
         url: 'https://www.sidespor.no/lop/lillomarka-rundt',
         useCalculatedStats: true,
-        location: 'Lillomarka, Oslo'
+        location: 'Lillomarka, Oslo',
+        category: '50k'
     },
     {
         name: 'Flyktningeruta',
@@ -93,7 +109,8 @@ const raceRoutes = [
         description: 'Flyktningeruta - historisk sti',
         url: 'https://www.ostmarkatrail.no/flyktningeruta/',
         useCalculatedStats: true,
-        location: 'Østmarka, Oslo'
+        location: 'Østmarka, Oslo',
+        category: 'marathon-trail'
     },
     {
         name: 'Endless Shore Ultra',
@@ -102,7 +119,8 @@ const raceRoutes = [
         description: 'Kyst ultra terrengløp',
         url: 'https://www.endless-shore.no/',
         useCalculatedStats: true,
-        location: 'Norsk kyst'
+        location: 'Norsk kyst',
+        category: '100-miles'
     },
     {
         name: 'Sandnes 100 Miles',
@@ -111,13 +129,168 @@ const raceRoutes = [
         description: '100 miles ultra terrengløp',
         url: 'https://www.sandnes100miles.no/',
         useCalculatedStats: true,
-        location: 'Sandnes området'
+        location: 'Sandnes området',
+        category: '100-miles'
+    },
+    {
+        name: 'Lofoten Ultra Trail 100 Miles',
+        files: ['race-calendar/LofotenUltraTrail/lofoten-ultra-trail-100-miles.gpx'],
+        color: '#2980b9',
+        description: 'Episk 100 miles gjennom Lofoten fra Moskenes til Svolvær',
+        url: 'https://thearctictriple.no/lofoten-ultra-trail-100-miles',
+        useCalculatedStats: true,
+        location: 'Lofoten',
+        category: '100-miles'
+    },
+    {
+        name: 'Lofoten Ultra Trail 50 Miles',
+        files: ['race-calendar/LofotenUltraTrail/lofoten-ultra-trail-50-miles.gpx'],
+        color: '#5dade2',
+        description: '50 miles gjennom Lofoten fra Leknes til Svolvær',
+        url: 'https://thearctictriple.no/lofoten-ultra-trail-50-miles',
+        useCalculatedStats: true,
+        location: 'Lofoten',
+        category: '50-miles'
+    },
+    {
+        name: 'Lofoten Ultra Trail 48K',
+        files: ['race-calendar/LofotenUltraTrail/lofoten-ultra-trail-48km.gpx'],
+        color: '#85c1e9',
+        description: '48 km fra vikingleir på Vestvågøy til Svolvær',
+        url: 'https://thearctictriple.no/lofoten-ultra-trail-48-km',
+        useCalculatedStats: true,
+        location: 'Lofoten',
+        category: '50k'
+    },
+    {
+        name: 'MMC 100 Miles',
+        files: ['race-calendar/MeråkerMountainChallenge/MMC_100M.gpx'],
+        color: '#8e44ad',
+        description: 'Meråker Mountain Challenge 161 km - The Death March',
+        url: 'https://mmctrail.no/100m',
+        useCalculatedStats: true,
+        location: 'Meråker, Trøndelag',
+        category: '100-miles'
+    },
+    {
+        name: 'MMC 100K',
+        files: ['race-calendar/MeråkerMountainChallenge/MMC_100K.gpx'],
+        color: '#a569bd',
+        description: 'Meråker Mountain Challenge 100 km fjellultra',
+        url: 'https://mmctrail.no/100k',
+        useCalculatedStats: true,
+        location: 'Meråker, Trøndelag',
+        category: '100k'
+    },
+    {
+        name: 'MMC 70K',
+        files: ['race-calendar/MeråkerMountainChallenge/MMC_70K.gpx'],
+        color: '#bb8fce',
+        description: 'Meråker Mountain Challenge 70 km fjellultra',
+        url: 'https://mmctrail.no/70k',
+        useCalculatedStats: true,
+        location: 'Meråker, Trøndelag',
+        category: '50-miles'
+    },
+    {
+        name: 'Hardangerjøkulen Ultra 95K',
+        files: ['race-calendar/HardangerjøkulenUltra/hardangerjokulen-ultra-95k.gpx'],
+        color: '#27ae60',
+        description: 'Ultra rundt Hardangerjøkulen gjennom DNT-stier',
+        url: 'https://xtremeidfjord.no/hardangerjokulen-ultra/',
+        useCalculatedStats: true,
+        location: 'Eidfjord, Hardanger',
+        category: '100k'
+    },
+    {
+        name: 'Hardangerjøkulen Ultra 34K',
+        files: ['race-calendar/HardangerjøkulenUltra/hardangerjokulen-ultra-34k.gpx'],
+        color: '#58d68d',
+        description: 'Fjellultra i Hardangervidda',
+        url: 'https://xtremeidfjord.no/hardangerjokulen-ultra/',
+        useCalculatedStats: true,
+        location: 'Eidfjord, Hardanger',
+        category: 'marathon-trail'
+    },
+    {
+        name: 'Oslo Trail Challenge 200K',
+        files: [
+            'race-calendar/OsloTrailChallenge/OTC_200K_First_Half.gpx',
+            'race-calendar/OsloTrailChallenge/OTC_100K.gpx'
+        ],
+        color: '#d35400',
+        description: '200 km ultra gjennom Nordmarka, Lillomarka og Romeriksåsen',
+        url: 'https://langtoglenge.org/en/events_en/otc_en.html',
+        useCalculatedStats: true,
+        location: 'Oslo / Nordmarka',
+        category: '100-miles-plus'
+    },
+    {
+        name: 'Oslo Trail Challenge 100K',
+        files: ['race-calendar/OsloTrailChallenge/OTC_100K.gpx'],
+        color: '#dc7633',
+        description: '100 km ultra gjennom Nordmarka og Lillomarka',
+        url: 'https://langtoglenge.org/en/events_en/otc_en.html',
+        useCalculatedStats: true,
+        location: 'Oslo / Nordmarka',
+        category: '100k'
+    },
+    {
+        name: 'Oslo Trail Challenge 55K',
+        files: ['race-calendar/OsloTrailChallenge/OTC_2024_55K_FINAL.gpx'],
+        color: '#f0b27a',
+        description: '55 km ultra gjennom Nordmarka',
+        url: 'https://langtoglenge.org/en/events_en/otc_en.html',
+        useCalculatedStats: true,
+        location: 'Oslo / Nordmarka',
+        category: '50k'
+    },
+    {
+        name: 'Lustrafjorden Inn Ultra 100',
+        files: ['race-calendar/LustrafjordenInn/Lustrafjorden Inn 2024 Ultra100.gpx'],
+        color: '#1a5276',
+        description: '104 km langs Lustrafjorden fra Kaupanger til Skjolden med 6000 høydemeter',
+        url: 'https://www.lustrafjordeninn.no/',
+        useCalculatedStats: true,
+        location: 'Luster, Sogn',
+        category: '100k'
+    },
+    {
+        name: 'Hornindal Rundt 75K',
+        files: ['race-calendar/HornindalRundt/HornindalRundt75K.gpx'],
+        color: '#7d3c98',
+        description: '75 km rundt Hornindalsvatnet med 5600 høydemeter over 20 fjelltopper',
+        url: 'https://hornindalrundt.no/',
+        useCalculatedStats: true,
+        location: 'Hornindal, Møre og Romsdal',
+        category: '50-miles'
+    },
+    {
+        name: 'Dynafit Hardangervidda Maraton 43K',
+        files: ['race-calendar/HardangerviddaMaraton/hardangervidda-marathon-43k.gpx'],
+        color: '#d4ac0d',
+        description: 'Fjellmaraton over Hardangervidda',
+        url: 'https://xtremeidfjord.no/hardangerjokulen-ultra/',
+        useCalculatedStats: true,
+        location: 'Eidfjord, Hardanger',
+        category: 'marathon-trail'
+    },
+    {
+        name: 'Nøsen 50K',
+        files: ['race-calendar/Nøsen/Nosen 50km.gpx'],
+        color: '#cb4335',
+        description: 'Fjellultra gjennom Valdres med 1910 høydemeter',
+        url: 'https://www.nosenhundreds.com/50km',
+        useCalculatedStats: true,
+        location: 'Valdres',
+        category: '50k'
     }
 ];
 
 // Track layer groups for each race
 const raceLayers = {};
 const layerStates = {};
+const racePolylines = {}; // track polylines per race for highlight/dim
 
 // Initialize individual race states
 raceRoutes.forEach(race => {
@@ -160,12 +333,16 @@ async function loadRaces() {
             const finalElevation = race.manualElevation !== undefined ? race.manualElevation : totalElevationGain;
 
             // Create polyline for each segment
+            if (!racePolylines[race.name]) racePolylines[race.name] = [];
+
             allCoordinates.forEach(coords => {
                 const polyline = L.polyline(coords, {
                     color: race.color,
                     weight: 3,
                     opacity: 0.8
                 });
+
+                racePolylines[race.name].push(polyline);
 
                 // Add popup with race info
                 const popupHTML = `
@@ -184,6 +361,15 @@ async function loadRaces() {
                 `;
 
                 polyline.bindPopup(popupHTML);
+
+                // Grey out other routes when popup opens
+                polyline.on('popupopen', () => {
+                    highlightRace(race.name);
+                });
+                polyline.on('popupclose', () => {
+                    resetRaceStyles();
+                });
+
                 polyline.addTo(raceLayers[race.name]);
             });
 
@@ -194,20 +380,62 @@ async function loadRaces() {
     }
 }
 
+// Highlight a specific race and grey out all others
+function highlightRace(activeName) {
+    for (const [name, polylines] of Object.entries(racePolylines)) {
+        polylines.forEach(pl => {
+            if (name === activeName) {
+                pl.setStyle({ opacity: 1, weight: 5 });
+                pl.bringToFront();
+            } else {
+                pl.setStyle({ opacity: 0.15, weight: 2 });
+            }
+        });
+    }
+}
+
+// Reset all race styles back to normal
+function resetRaceStyles() {
+    for (const [name, polylines] of Object.entries(racePolylines)) {
+        const race = raceRoutes.find(r => r.name === name);
+        polylines.forEach(pl => {
+            pl.setStyle({ color: race.color, opacity: 0.8, weight: 3 });
+        });
+    }
+}
 
 // Custom layer control
 L.Control.CustomLayers = L.Control.extend({
     onAdd: function(map) {
         const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control layer-control-container');
 
-        // Build race checkboxes dynamically
-        const raceCheckboxes = raceRoutes.map(race => `
-            <label class="layer-checkbox-item layer-checkbox-subitem">
-                <input type="checkbox" class="toggle-race" data-race="${race.name}" checked>
-                <span class="layer-icon" style="background-color: ${race.color}; width: 16px; height: 3px; display: inline-block; border-radius: 2px;"></span>
-                <span>${race.name}</span>
-            </label>
-        `).join('');
+        // Build race checkboxes grouped by category
+        const raceCategoryHTML = raceCategories.map(cat => {
+            const racesInCategory = raceRoutes.filter(r => r.category === cat.id);
+            if (racesInCategory.length === 0) return '';
+
+            const raceItems = racesInCategory.map(race => `
+                <label class="layer-checkbox-item layer-checkbox-subitem layer-category-race">
+                    <input type="checkbox" class="toggle-race" data-race="${race.name}" checked>
+                    <span class="layer-icon" style="background-color: ${race.color}; width: 16px; height: 3px; display: inline-block; border-radius: 2px;"></span>
+                    <span>${race.name}</span>
+                </label>
+            `).join('');
+
+            return `
+                <div class="layer-category" data-category="${cat.id}">
+                    <div class="layer-category-header">
+                        <input type="checkbox" class="toggle-category" data-category="${cat.id}" checked>
+                        <span class="layer-category-arrow">&#9654;</span>
+                        <span class="layer-category-name">${cat.name}</span>
+                        <span class="layer-category-count">${racesInCategory.length}</span>
+                    </div>
+                    <div class="layer-category-items" style="display: none;">
+                        ${raceItems}
+                    </div>
+                </div>
+            `;
+        }).join('');
 
         container.innerHTML = `
             <button id="layer-toggle-btn" class="layer-control-btn" title="Lagkontroller">
@@ -222,7 +450,7 @@ L.Control.CustomLayers = L.Control.extend({
                     <div class="layer-section-title">Kartlag</div>
                     <label class="layer-checkbox-item">
                         <input type="radio" name="base-layer" value="kartverket" checked>
-                        <span>Norgeskart (Kartverket)</span>
+                        <span>Norgeskart</span>
                     </label>
                     <label class="layer-checkbox-item">
                         <input type="radio" name="base-layer" value="osm">
@@ -231,7 +459,7 @@ L.Control.CustomLayers = L.Control.extend({
                 </div>
                 <div class="layer-section">
                     <div class="layer-section-title">Løp</div>
-                    ${raceCheckboxes}
+                    ${raceCategoryHTML}
                 </div>
             </div>
         `;
@@ -273,6 +501,38 @@ L.Control.CustomLayers = L.Control.extend({
             };
         });
 
+        // Toggle category folders open/closed
+        container.querySelectorAll('.layer-category-header').forEach(header => {
+            header.onclick = (e) => {
+                // Don't toggle folder when clicking the checkbox
+                if (e.target.classList.contains('toggle-category')) return;
+                const category = header.parentElement;
+                const items = category.querySelector('.layer-category-items');
+                const arrow = header.querySelector('.layer-category-arrow');
+                const isOpen = items.style.display !== 'none';
+                items.style.display = isOpen ? 'none' : 'block';
+                arrow.classList.toggle('open', !isOpen);
+            };
+        });
+
+        // Toggle all races in a category
+        container.querySelectorAll('.toggle-category').forEach(checkbox => {
+            checkbox.onchange = (e) => {
+                const checked = e.target.checked;
+                const categoryDiv = e.target.closest('.layer-category');
+                categoryDiv.querySelectorAll('.toggle-race').forEach(raceCheckbox => {
+                    raceCheckbox.checked = checked;
+                    const raceName = raceCheckbox.dataset.race;
+                    layerStates[raceName] = checked;
+                    if (checked) {
+                        map.addLayer(raceLayers[raceName]);
+                    } else {
+                        map.removeLayer(raceLayers[raceName]);
+                    }
+                });
+            };
+        });
+
         // Toggle individual race layers
         container.querySelectorAll('.toggle-race').forEach(checkbox => {
             checkbox.onchange = (e) => {
@@ -284,6 +544,15 @@ L.Control.CustomLayers = L.Control.extend({
                 } else {
                     map.removeLayer(raceLayers[raceName]);
                 }
+
+                // Update category checkbox state
+                const categoryDiv = e.target.closest('.layer-category');
+                const allRaceCheckboxes = categoryDiv.querySelectorAll('.toggle-race');
+                const categoryCheckbox = categoryDiv.querySelector('.toggle-category');
+                const allChecked = Array.from(allRaceCheckboxes).every(cb => cb.checked);
+                const someChecked = Array.from(allRaceCheckboxes).some(cb => cb.checked);
+                categoryCheckbox.checked = allChecked;
+                categoryCheckbox.indeterminate = someChecked && !allChecked;
             };
         });
 
