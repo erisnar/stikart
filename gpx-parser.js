@@ -19,18 +19,36 @@ function calculateGPXStats(coordinates) {
     let totalDistance = 0;
     let elevationGain = 0;
 
+    // Filter to only points with valid elevation for elevation calculation.
+    // Use a threshold to filter GPS noise - only count elevation changes
+    // that exceed the threshold.
+    const ELEVATION_THRESHOLD = 4; // meters
+    let lastCountedEle = null;
+
     for (let i = 1; i < coordinates.length; i++) {
-        const [lon1, lat1, ele1] = coordinates[i - 1];
+        const [lon1, lat1] = coordinates[i - 1];
         const [lon2, lat2, ele2] = coordinates[i];
 
-        // Calculate distance
+        // Calculate distance (always, regardless of elevation)
         const dist = calculateDistance(lon1, lat1, lon2, lat2);
         totalDistance += dist;
 
-        // Calculate elevation gain
-        const elevDiff = ele2 - ele1;
-        if (elevDiff > 0) {
+        // Skip points without elevation data
+        if (ele2 === null || ele2 === undefined) continue;
+
+        // Initialize reference elevation from first valid point
+        if (lastCountedEle === null) {
+            lastCountedEle = ele2;
+            continue;
+        }
+
+        // Calculate elevation gain with threshold filtering
+        const elevDiff = ele2 - lastCountedEle;
+        if (elevDiff > ELEVATION_THRESHOLD) {
             elevationGain += elevDiff;
+            lastCountedEle = ele2;
+        } else if (elevDiff < -ELEVATION_THRESHOLD) {
+            lastCountedEle = ele2;
         }
     }
 
@@ -52,7 +70,7 @@ function parseGPXToGeoJSON(gpxText) {
         const lat = parseFloat(trkpt.getAttribute('lat'));
         const lon = parseFloat(trkpt.getAttribute('lon'));
         const eleElement = trkpt.querySelector('ele');
-        const ele = eleElement ? parseFloat(eleElement.textContent) : 0;
+        const ele = eleElement ? parseFloat(eleElement.textContent) : null;
 
         coordinates.push([lon, lat, ele]);
     });
