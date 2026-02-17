@@ -12,30 +12,32 @@
 </head>
 <body>
     <div id="map"></div>
-    <button id="regenerate-colors-btn" onclick="regenerateColors()">Shuffle Colors</button>
-    <div id="month-filter">
-        <button class="month-btn active" data-month="all" onclick="filterByMonth(null)">Alle</button>
-        <button class="month-btn" data-month="0" onclick="filterByMonth(0)">Jan</button>
-        <button class="month-btn" data-month="1" onclick="filterByMonth(1)">Feb</button>
-        <button class="month-btn" data-month="2" onclick="filterByMonth(2)">Mar</button>
-        <button class="month-btn" data-month="3" onclick="filterByMonth(3)">Apr</button>
-        <button class="month-btn" data-month="4" onclick="filterByMonth(4)">Mai</button>
-        <button class="month-btn" data-month="5" onclick="filterByMonth(5)">Jun</button>
-        <button class="month-btn" data-month="6" onclick="filterByMonth(6)">Jul</button>
-        <button class="month-btn" data-month="7" onclick="filterByMonth(7)">Aug</button>
-        <button class="month-btn" data-month="8" onclick="filterByMonth(8)">Sep</button>
-        <button class="month-btn" data-month="9" onclick="filterByMonth(9)">Okt</button>
-        <button class="month-btn" data-month="10" onclick="filterByMonth(10)">Nov</button>
-        <button class="month-btn" data-month="11" onclick="filterByMonth(11)">Des</button>
-    </div>
-    <div id="category-filter">
-        <button class="category-btn active" data-category="all" onclick="filterByCategory(null)">Alle</button>
-        <button class="category-btn" data-category="marathon-trail" onclick="filterByCategory('marathon-trail')">&lt;50K</button>
-        <button class="category-btn" data-category="50k" onclick="filterByCategory('50k')">50K</button>
-        <button class="category-btn" data-category="50-miles" onclick="filterByCategory('50-miles')">50 Miles</button>
-        <button class="category-btn" data-category="100k" onclick="filterByCategory('100k')">100K</button>
-        <button class="category-btn" data-category="100-miles" onclick="filterByCategory('100-miles')">100 Miles</button>
-        <button class="category-btn" data-category="100-miles-plus" onclick="filterByCategory('100-miles-plus')">100 Miles+</button>
+    <div id="filter-bar">
+        <button id="regenerate-colors-btn" onclick="regenerateColors()">🎨</button>
+        <select id="month-select" onchange="filterByMonth(this.value === '' ? null : parseInt(this.value))">
+            <option value="">Alle måneder</option>
+            <option value="0">Januar</option>
+            <option value="1">Februar</option>
+            <option value="2">Mars</option>
+            <option value="3">April</option>
+            <option value="4">Mai</option>
+            <option value="5">Juni</option>
+            <option value="6">Juli</option>
+            <option value="7">August</option>
+            <option value="8">September</option>
+            <option value="9">Oktober</option>
+            <option value="10">November</option>
+            <option value="11">Desember</option>
+        </select>
+        <select id="category-select" onchange="filterByCategory(this.value === '' ? null : this.value)">
+            <option value="">Alle distanser</option>
+            <option value="marathon-trail">&lt;50K</option>
+            <option value="50k">50K</option>
+            <option value="50-miles">50 Miles</option>
+            <option value="100k">100K</option>
+            <option value="100-miles">100 Miles</option>
+            <option value="100-miles-plus">100 Miles+</option>
+        </select>
     </div>
 
     <!-- Leaflet JS -->
