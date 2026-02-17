@@ -1,3 +1,56 @@
+// Download GPX file
+function downloadGpx(url, fileName) {
+    fetch(url)
+        .then(response => response.blob())
+        .then(blob => {
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = fileName;
+            link.click();
+            URL.revokeObjectURL(link.href);
+        })
+        .catch(err => console.error('Download failed:', err));
+}
+
+// Generate a random hex color
+function getRandomColor() {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+
+// Regenerate colors for all race routes
+function regenerateColors() {
+    raceRoutes.forEach(race => {
+        race.color = getRandomColor();
+    });
+
+    // Update polyline colors on the map
+    for (const [name, polylines] of Object.entries(racePolylines)) {
+        const race = raceRoutes.find(r => r.name === name);
+        if (race) {
+            polylines.forEach(pl => {
+                pl.setStyle({ color: race.color });
+            });
+        }
+    }
+
+    // Update legend color indicators in the layer control
+    document.querySelectorAll('.toggle-race').forEach(checkbox => {
+        const raceName = checkbox.dataset.race;
+        const race = raceRoutes.find(r => r.name === raceName);
+        if (race) {
+            const colorIcon = checkbox.parentElement.querySelector('.layer-icon');
+            if (colorIcon) {
+                colorIcon.style.backgroundColor = race.color;
+            }
+        }
+    });
+}
+
 // Initialize Leaflet map centered on Oslo
 // Oslo coordinates: 59.9139° N, 10.7522° E
 const map = L.map('map').setView([59.9139, 10.7522], 11);
@@ -44,7 +97,8 @@ const raceRoutes = [
         url: 'https://nordmarkaskogsmaraton.no/',
         useCalculatedStats: true,
         location: 'Nordmarka, Oslo',
-        category: '50k'
+        category: '50k',
+        date: '2026-20-06'
     },
     {
         name: 'OBT Oslo-Bergen Trail',
@@ -55,12 +109,13 @@ const raceRoutes = [
             'race-calendar/OsloBergenTrail/M4_Gullbotn-Bergen.gpx'
         ],
         color: '#3498db',
-        description: 'Episk fjellkryssing fra Oslo til Bergen',
+        description: 'Fra Oslo til Bergen',
         url: 'https://oslobergentrail.com/',
         manualDistance: 500,
         manualElevation: 15000,
         location: 'Oslo til Bergen',
-        category: '100-miles-plus'
+        category: '100-miles-plus',
+        date: '2027-07-01'
     },
     {
         name: 'SMVE - Soria Moria til Verdens Ende',
@@ -70,17 +125,19 @@ const raceRoutes = [
         url: 'https://soriamoriatilverdensende.com',
         useCalculatedStats: true,
         location: 'Oslo området',
-        category: '100-miles'
+        category: '100-miles',
+        date: '2026-05-30'
     },
     {
         name: 'Nøsen Hundreds',
         files: ['race-calendar/Nøsen/Nosen_100.gpx'],
         color: '#e74c3c',
-        description: 'Ultra distanse terrengløp',
+        description: 'Ultraløp i Valdres',
         url: 'https://www.nosenhundreds.com/',
         useCalculatedStats: true,
         location: 'Nøsen området',
-        category: '100k'
+        category: '100k',
+        date: '2026-06-13'
     },
     {
         name: 'Dobbeltravern - Nordmarkstraveren',
@@ -90,37 +147,41 @@ const raceRoutes = [
         url: 'http://www.nordmarkstravern.no/',
         useCalculatedStats: true,
         location: 'Nordmarka, Oslo',
-        category: '50k'
+        category: '50k',
+        date: '2026-09-05'
     },
     {
         name: 'Lillomarka Rundt',
-        files: ['race-calendar/Sidespor-SkyBlazers/Lillomarka+rundt+51+km+-+Frysja+161025.gpx'],
+        files: ['race-calendar/Sidespor-SkyBlazers/Lillomarka_rundt_51_km_Frysja_161025.gpx'],
         color: '#1abc9c',
-        description: 'Rundt Lillomarka skog',
+        description: 'Lillomarka Rundt',
         url: 'https://www.sidespor.no/lop/lillomarka-rundt',
         useCalculatedStats: true,
         location: 'Lillomarka, Oslo',
-        category: '50k'
+        category: '50k',
+        date: '2026-10-25'
     },
     {
         name: 'Flyktningeruta',
-        files: ['race-calendar/ØstmarkaTrailChallenge/Flyktningeruta 2025 (med ny sti ved kraftlinja).gpx'],
+        files: ['race-calendar/ØstmarkaTrailChallenge/Flyktningeruta_2025.gpx'],
         color: '#e67e22',
         description: 'Flyktningeruta - historisk sti',
         url: 'https://www.ostmarkatrail.no/flyktningeruta/',
         useCalculatedStats: true,
         location: 'Østmarka, Oslo',
-        category: 'marathon-trail'
+        category: 'marathon-trail',
+        date: '2026-08-26'
     },
     {
         name: 'Endless Shore Ultra',
-        files: ['race-calendar/EndlessShores/Endless Shores Ultra Trail 100 miles 2025 FINAL.gpx'],
+        files: ['race-calendar/EndlessShores/Endless_Shores_Ultra_Trail_100_miles_2025_FINAL.gpx'],
         color: '#16a085',
         description: 'Kyst ultra terrengløp',
         url: 'https://www.endless-shore.no/',
         useCalculatedStats: true,
         location: 'Norsk kyst',
-        category: '100-miles'
+        category: '100-miles',
+        date: '2026-05-23'
     },
     {
         name: 'Sandnes 100 Miles',
@@ -130,7 +191,8 @@ const raceRoutes = [
         url: 'https://www.sandnes100miles.no/',
         useCalculatedStats: true,
         location: 'Sandnes området',
-        category: '100-miles'
+        category: '100-miles',
+        date: '2026-04-17'
     },
     {
         name: 'Lofoten Ultra Trail 100 Miles',
@@ -140,7 +202,8 @@ const raceRoutes = [
         url: 'https://thearctictriple.no/lofoten-ultra-trail-100-miles',
         useCalculatedStats: true,
         location: 'Lofoten',
-        category: '100-miles'
+        category: '100-miles',
+        date: '2026-05-28'
     },
     {
         name: 'Lofoten Ultra Trail 50 Miles',
@@ -150,7 +213,8 @@ const raceRoutes = [
         url: 'https://thearctictriple.no/lofoten-ultra-trail-50-miles',
         useCalculatedStats: true,
         location: 'Lofoten',
-        category: '50-miles'
+        category: '50-miles',
+        date: '2026-05-28'
     },
     {
         name: 'Lofoten Ultra Trail 48K',
@@ -160,7 +224,8 @@ const raceRoutes = [
         url: 'https://thearctictriple.no/lofoten-ultra-trail-48-km',
         useCalculatedStats: true,
         location: 'Lofoten',
-        category: '50k'
+        category: '50k',
+        date: '2026-05-28'
     },
     {
         name: 'MMC 100 Miles',
@@ -170,7 +235,8 @@ const raceRoutes = [
         url: 'https://mmctrail.no/100m',
         useCalculatedStats: true,
         location: 'Meråker, Trøndelag',
-        category: '100-miles'
+        category: '100-miles',
+        date: '2026-08-01'
     },
     {
         name: 'MMC 100K',
@@ -180,7 +246,8 @@ const raceRoutes = [
         url: 'https://mmctrail.no/100k',
         useCalculatedStats: true,
         location: 'Meråker, Trøndelag',
-        category: '100k'
+        category: '100k',
+        date: '2026-08-01'
     },
     {
         name: 'MMC 70K',
@@ -190,7 +257,8 @@ const raceRoutes = [
         url: 'https://mmctrail.no/70k',
         useCalculatedStats: true,
         location: 'Meråker, Trøndelag',
-        category: '50-miles'
+        category: '50-miles',
+        date: '2026-08-01'
     },
     {
         name: 'Hardangerjøkulen Ultra 95K',
@@ -200,7 +268,8 @@ const raceRoutes = [
         url: 'https://xtremeidfjord.no/hardangerjokulen-ultra/',
         useCalculatedStats: true,
         location: 'Eidfjord, Hardanger',
-        category: '100k'
+        category: '100k',
+        date: '2026-07-11'
     },
     {
         name: 'Hardangerjøkulen Ultra 34K',
@@ -210,7 +279,8 @@ const raceRoutes = [
         url: 'https://xtremeidfjord.no/hardangerjokulen-ultra/',
         useCalculatedStats: true,
         location: 'Eidfjord, Hardanger',
-        category: 'marathon-trail'
+        category: 'marathon-trail',
+        date: '2026-07-11'
     },
     {
         name: 'Oslo Trail Challenge 200K',
@@ -223,7 +293,8 @@ const raceRoutes = [
         url: 'https://langtoglenge.org/en/events_en/otc_en.html',
         useCalculatedStats: true,
         location: 'Oslo / Nordmarka',
-        category: '100-miles-plus'
+        category: '100-miles-plus',
+        date: '2026-09-20'
     },
     {
         name: 'Oslo Trail Challenge 100K',
@@ -233,7 +304,8 @@ const raceRoutes = [
         url: 'https://langtoglenge.org/en/events_en/otc_en.html',
         useCalculatedStats: true,
         location: 'Oslo / Nordmarka',
-        category: '100k'
+        category: '100k',
+        date: '2026-09-27'
     },
     {
         name: 'Oslo Trail Challenge 55K',
@@ -243,17 +315,19 @@ const raceRoutes = [
         url: 'https://langtoglenge.org/en/events_en/otc_en.html',
         useCalculatedStats: true,
         location: 'Oslo / Nordmarka',
-        category: '50k'
+        category: '50k',
+        date: '2026-09-27'
     },
     {
         name: 'Lustrafjorden Inn Ultra 100',
-        files: ['race-calendar/LustrafjordenInn/Lustrafjorden Inn 2024 Ultra100.gpx'],
+        files: ['race-calendar/LustrafjordenInn/Lustrafjorden_Inn_2024_Ultra100.gpx'],
         color: '#1a5276',
         description: '104 km langs Lustrafjorden fra Kaupanger til Skjolden med 6000 høydemeter',
         url: 'https://www.lustrafjordeninn.no/',
         useCalculatedStats: true,
         location: 'Luster, Sogn',
-        category: '100k'
+        category: '100k',
+        date: '2026-08-14'
     },
     {
         name: 'Hornindal Rundt 75K',
@@ -263,7 +337,8 @@ const raceRoutes = [
         url: 'https://hornindalrundt.no/',
         useCalculatedStats: true,
         location: 'Hornindal, Møre og Romsdal',
-        category: '50-miles'
+        category: '50-miles',
+        date: '2026-07-04'
     },
     {
         name: 'Dynafit Hardangervidda Maraton 43K',
@@ -273,19 +348,237 @@ const raceRoutes = [
         url: 'https://xtremeidfjord.no/hardangerjokulen-ultra/',
         useCalculatedStats: true,
         location: 'Eidfjord, Hardanger',
-        category: 'marathon-trail'
+        category: 'marathon-trail',
+        date: '2026-08-29'
     },
     {
         name: 'Nøsen 50K',
-        files: ['race-calendar/Nøsen/Nosen 50km.gpx'],
+        files: ['race-calendar/Nøsen/Nosen_50km.gpx'],
         color: '#cb4335',
         description: 'Fjellultra gjennom Valdres med 1910 høydemeter',
         url: 'https://www.nosenhundreds.com/50km',
         useCalculatedStats: true,
         location: 'Valdres',
-        category: '50k'
+        category: '50k',
+        date: '2026-06-14'
+    },
+    {
+        name: 'KRSUltra 60',
+        files: ['race-calendar/KRSUltra/krsultra-60k-2025-v1.gpx'],
+        color: '#e55039',
+        description: '60 km terrengløp med 2200 høydemeter',
+        url: 'https://www.krsultra.no/lop/krsultra-60',
+        useCalculatedStats: true,
+        location: 'Kristiansand',
+        category: '50k',
+        date: '2026-04-11'
+    },
+    {
+        name: 'Skogvokteren',
+        files: ['race-calendar/Skogvokteren/Skogvokteren_2025.gpx'],
+        color: '#2d6a4f',
+        description: '88 km med 3500 høydemeter',
+        url: 'https://grenlandultrarunners.no/skogvokteren-ultra-2/',
+        useCalculatedStats: true,
+        location: 'Norge',
+        category: '50-miles',
+        date: '2026-05-02'
+    },
+    {
+        name: 'Ecotrail Oslo 80K',
+        files: ['race-calendar/ecotrail/ecotrail_oslo_80km_2026.gpx'],
+        color: '#40916c',
+        description: '81.7 km med 1991 høydemeter gjennom Oslo og Nordmarka',
+        url: 'https://oslo.ecotrail.com/en/race-ecotrail-oslo/trail-80-km',
+        useCalculatedStats: true,
+        location: 'Oslo',
+        category: '50-miles',
+        date: '2026-05-30'
+    },
+    {
+        name: 'Ecotrail Oslo 50K',
+        files: ['race-calendar/ecotrail/ecotrail_oslo_50km_2026.gpx'],
+        color: '#74c69d',
+        description: '50.5 km med 1026 høydemeter',
+        url: 'https://oslo.ecotrail.com/en/race-ecotrail-oslo/trail-80-km',
+        useCalculatedStats: true,
+        location: 'Oslo',
+        category: '50k',
+        date: '2026-05-30'
+    },
+    {
+        name: 'Sognefjord Trail Run 50K',
+        files: ['race-calendar/SognefjordTrail/STR+50K+2026.gpx'],
+        color: '#0077b6',
+        description: 'Ca. 50 km med 2400 høydemeter ved Sognefjorden',
+        url: 'https://www.sognefjordtrailrun.com/50k',
+        useCalculatedStats: true,
+        location: 'Sognefjorden',
+        category: '50k',
+        date: '2026-06-06'
+    },
+    {
+        name: 'Vestfold Historic Ultra 147K',
+        files: ['race-calendar/VestfoldHistoricUltra/VHUT_2025_147km.gpx'],
+        color: '#6930c3',
+        description: '147 km med 5000 høydemeter gjennom historiske Vestfold',
+        url: 'https://www.vhut.no/loyper/',
+        useCalculatedStats: true,
+        location: 'Vestfold',
+        category: '100-miles',
+        date: '2026-05-18'
+    },
+    {
+        name: 'Vestfold Historic Ultra 87K',
+        files: ['race-calendar/VestfoldHistoricUltra/VHUT_2025_87km.gpx'],
+        color: '#7400b8',
+        description: '87 km med 2750 høydemeter',
+        url: 'https://www.vhut.no/loyper/',
+        useCalculatedStats: true,
+        location: 'Vestfold',
+        category: '50-miles',
+        date: '2026-05-18'
+    },
+    {
+        name: 'Vestfold Historic Ultra 50K',
+        files: ['race-calendar/VestfoldHistoricUltra/VHUT_2025_50km.gpx'],
+        color: '#9d4edd',
+        description: '50 km med 1280 høydemeter',
+        url: 'https://www.vhut.no/loyper/',
+        useCalculatedStats: true,
+        location: 'Vestfold',
+        category: '50k',
+        date: '2026-05-18'
+    },
+    {
+        name: 'Jotunheimen Trail Run',
+        files: ['race-calendar/JotunheimenTrail/JTR+ULTRA+2026.gpx'],
+        color: '#023e8a',
+        description: 'Ca. 73 km med 2500 høydemeter i Jotunheimen',
+        url: 'https://www.jotunheimentrailrun.com/',
+        useCalculatedStats: true,
+        location: 'Jotunheimen',
+        category: '50-miles',
+        date: '2026-07-31'
+    },
+    {
+        name: 'Bodøryggen Ultra',
+        files: ['race-calendar/Bodøryggen/Bodoryggen_2025_ultra.gpx'],
+        color: '#00b4d8',
+        description: '48.8 km med 1778 høydemeter',
+        url: 'https://bodorunfestival.no/bodoryggen/',
+        useCalculatedStats: true,
+        location: 'Bodø',
+        category: 'marathon-trail',
+        date: '2026-08-01'
+    },
+    {
+        name: 'Stranda Fjord Trail 55K',
+        files: ['race-calendar/StrandaFjordTrail/55k.gpx'],
+        color: '#ff6d00',
+        description: '55 km rundløype med 3800 høydemeter',
+        url: 'https://strandafjordtrailrace.com/',
+        useCalculatedStats: true,
+        location: 'Stranda, Sunnmøre',
+        category: '50k',
+        date: '2026-08-12'
+    },
+    {
+        name: 'Stranda Fjord Trail 95K',
+        files: ['race-calendar/StrandaFjordTrail/95K.gpx'],
+        color: '#ff9500',
+        description: '95 km med 6800 høydemeter',
+        url: 'https://strandafjordtrailrace.com/',
+        useCalculatedStats: true,
+        location: 'Stranda, Sunnmøre',
+        category: '100k',
+        date: '2026-08-12'
+    },
+    {
+        name: 'Trollheimen Ultra 100K',
+        files: ['race-calendar/TrollheimenUltra/trollheimen-ultra-trip.gpx'],
+        color: '#6a040f',
+        description: '100 km med 3143 høydemeter i Trollheimen',
+        url: 'https://trollheimenultra100km.webnode.page/',
+        useCalculatedStats: true,
+        location: 'Trollheimen',
+        category: '100k',
+        date: '2026-08-15'
+    },
+    {
+        name: 'Tromsø Mountain Challenge 50K',
+        files: ['race-calendar/TromsøMountainChallenge/TMC_Ultra_50km_2025.gpx'],
+        color: '#4cc9f0',
+        description: '50 km fjellultra i Tromsø',
+        url: 'https://msm.no/en/mountain-challenge/loypekart-tromso-mountain-challenge/',
+        useCalculatedStats: true,
+        location: 'Tromsø',
+        category: '50k',
+        date: '2026-08-22'
     }
 ];
+
+// Month names in Norwegian
+const monthNames = ['Januar', 'Februar', 'Mars', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Desember'];
+
+// Current month filter (null = show all)
+let currentMonthFilter = null;
+
+// Current category filter (null = show all)
+let currentCategoryFilter = null;
+
+// Format date for display
+function formatDate(dateStr) {
+    const date = new Date(dateStr);
+    const day = date.getDate();
+    const month = monthNames[date.getMonth()];
+    const year = date.getFullYear();
+    return `${day}. ${month} ${year}`;
+}
+
+// Apply both month and category filters
+function applyFilters() {
+    raceRoutes.forEach(race => {
+        const raceMonth = new Date(race.date).getMonth();
+        const matchesMonth = currentMonthFilter === null || raceMonth === currentMonthFilter;
+        const matchesCategory = currentCategoryFilter === null || race.category === currentCategoryFilter;
+        const shouldShow = matchesMonth && matchesCategory;
+
+        if (shouldShow && !map.hasLayer(raceLayers[race.name])) {
+            map.addLayer(raceLayers[race.name]);
+            layerStates[race.name] = true;
+        } else if (!shouldShow && map.hasLayer(raceLayers[race.name])) {
+            map.removeLayer(raceLayers[race.name]);
+            layerStates[race.name] = false;
+        }
+
+        // Update checkbox state
+        const checkbox = document.querySelector(`.toggle-race[data-race="${race.name}"]`);
+        if (checkbox) checkbox.checked = shouldShow;
+    });
+}
+
+// Filter races by month
+function filterByMonth(month) {
+    currentMonthFilter = month;
+    applyFilters();
+
+    // Update active button state
+    document.querySelectorAll('.month-btn').forEach(btn => {
+        btn.classList.toggle('active', parseInt(btn.dataset.month) === month || (btn.dataset.month === 'all' && month === null));
+    });
+}
+
+// Filter races by category
+function filterByCategory(category) {
+    currentCategoryFilter = category;
+    applyFilters();
+
+    // Update active button state
+    document.querySelectorAll('.category-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.category === category || (btn.dataset.category === 'all' && category === null));
+    });
+}
 
 // Track layer groups for each race
 const raceLayers = {};
@@ -344,15 +637,25 @@ async function loadRaces() {
 
                 racePolylines[race.name].push(polyline);
 
+                // Build download links for GPX files
+                const downloadLinks = race.files.map((file, index) => {
+                    const fileName = file.split('/').pop();
+                    const githubUrl = `https://raw.githubusercontent.com/erisnar/Stikart/main/${encodeURI(file)}`;
+                    const label = race.files.length > 1 ? `GPX ${index + 1}` : 'Last ned GPX';
+                    return `<a href="#" onclick="downloadGpx('${githubUrl}', '${fileName}'); return false;" class="race-download-link">${label}</a>`;
+                }).join(' ');
+
                 // Add popup with race info
                 const popupHTML = `
                     <div class="race-popup">
                         <h3>${race.name}</h3>
                         <p class="race-description">${race.description}</p>
                         <div class="race-details">
+                            <div><strong>Dato:</strong> ${formatDate(race.date)}</div>
                             <div><strong>Distanse:</strong> ${finalDistance.toFixed(1)} km</div>
                             <div><strong>Høydemeter:</strong> ${finalElevation} m</div>
                             <div><strong>Sted:</strong> ${race.location}</div>
+                            <div><strong>GPX:</strong> ${downloadLinks}</div>
                         </div>
                         <a href="${race.url}" target="_blank" rel="noopener noreferrer" class="race-link">
                             Besøk nettside →
@@ -567,4 +870,5 @@ map.addControl(new L.Control.CustomLayers(), { position: 'topright' });
 map.zoomControl.setPosition('topright');
 
 // Load all data
+regenerateColors(); // Randomize colors on startup
 loadRaces();
