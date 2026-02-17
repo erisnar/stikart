@@ -562,22 +562,12 @@ function applyFilters() {
 function filterByMonth(month) {
     currentMonthFilter = month;
     applyFilters();
-
-    // Update active button state
-    document.querySelectorAll('.month-btn').forEach(btn => {
-        btn.classList.toggle('active', parseInt(btn.dataset.month) === month || (btn.dataset.month === 'all' && month === null));
-    });
 }
 
 // Filter races by category
 function filterByCategory(category) {
     currentCategoryFilter = category;
     applyFilters();
-
-    // Update active button state
-    document.querySelectorAll('.category-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.category === category || (btn.dataset.category === 'all' && category === null));
-    });
 }
 
 // Track layer groups for each race
@@ -657,6 +647,7 @@ async function loadRaces() {
                             <div><strong>Sted:</strong> ${race.location}</div>
                             <div><strong>GPX:</strong> ${downloadLinks}</div>
                         </div>
+                        <p class="race-disclaimer">⚠️ Løyper kan endres. Bruk alltid siste versjon fra arrangørens nettside.</p>
                         <a href="${race.url}" target="_blank" rel="noopener noreferrer" class="race-link">
                             Besøk nettside →
                         </a>
