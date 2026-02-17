@@ -620,50 +620,21 @@ function resetRaceStyles() {
     }
 }
 
-// Custom layer control
+// Custom layer control (base map only)
 L.Control.CustomLayers = L.Control.extend({
     onAdd: function(map) {
         const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control layer-control-container');
 
-        // Build race checkboxes grouped by category
-        const raceCategoryHTML = raceCategories.map(cat => {
-            const racesInCategory = raceRoutes.filter(r => r.category === cat.id);
-            if (racesInCategory.length === 0) return '';
-
-            const raceItems = racesInCategory.map(race => `
-                <label class="layer-checkbox-item layer-checkbox-subitem layer-category-race">
-                    <input type="checkbox" class="toggle-race" data-race="${race.name}" checked>
-                    <span class="layer-icon" style="background-color: ${race.color}; width: 16px; height: 3px; display: inline-block; border-radius: 2px;"></span>
-                    <span>${race.name}</span>
-                </label>
-            `).join('');
-
-            return `
-                <div class="layer-category" data-category="${cat.id}">
-                    <div class="layer-category-header">
-                        <input type="checkbox" class="toggle-category" data-category="${cat.id}" checked>
-                        <span class="layer-category-arrow">&#9654;</span>
-                        <span class="layer-category-name">${cat.name}</span>
-                        <span class="layer-category-count">${racesInCategory.length}</span>
-                    </div>
-                    <div class="layer-category-items" style="display: none;">
-                        ${raceItems}
-                    </div>
-                </div>
-            `;
-        }).join('');
-
         container.innerHTML = `
-            <button id="layer-toggle-btn" class="layer-control-btn" title="Lagkontroller">
+            <button id="layer-toggle-btn" class="layer-control-btn" title="Kartlag">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M10 2L2 6l8 4 8-4-8-4z"/>
                     <path d="M2 10l8 4 8-4M2 14l8 4 8-4" opacity="0.6"/>
                 </svg>
             </button>
             <div id="layer-dropdown" class="layer-dropdown" style="display: none;">
-                <div class="layer-dropdown-header">Lag</div>
+                <div class="layer-dropdown-header">Kartlag</div>
                 <div class="layer-section">
-                    <div class="layer-section-title">Kartlag</div>
                     <label class="layer-checkbox-item">
                         <input type="radio" name="base-layer" value="kartverket" checked>
                         <span>Norgeskart</span>
@@ -672,10 +643,6 @@ L.Control.CustomLayers = L.Control.extend({
                         <input type="radio" name="base-layer" value="osm">
                         <span>OpenStreetMap</span>
                     </label>
-                </div>
-                <div class="layer-section">
-                    <div class="layer-section-title">Løp</div>
-                    ${raceCategoryHTML}
                 </div>
             </div>
         `;
@@ -714,61 +681,6 @@ L.Control.CustomLayers = L.Control.extend({
                 } else if (e.target.value === 'kartverket') {
                     map.addLayer(kartverketLayer);
                 }
-            };
-        });
-
-        // Toggle category folders open/closed
-        container.querySelectorAll('.layer-category-header').forEach(header => {
-            header.onclick = (e) => {
-                // Don't toggle folder when clicking the checkbox
-                if (e.target.classList.contains('toggle-category')) return;
-                const category = header.parentElement;
-                const items = category.querySelector('.layer-category-items');
-                const arrow = header.querySelector('.layer-category-arrow');
-                const isOpen = items.style.display !== 'none';
-                items.style.display = isOpen ? 'none' : 'block';
-                arrow.classList.toggle('open', !isOpen);
-            };
-        });
-
-        // Toggle all races in a category
-        container.querySelectorAll('.toggle-category').forEach(checkbox => {
-            checkbox.onchange = (e) => {
-                const checked = e.target.checked;
-                const categoryDiv = e.target.closest('.layer-category');
-                categoryDiv.querySelectorAll('.toggle-race').forEach(raceCheckbox => {
-                    raceCheckbox.checked = checked;
-                    const raceName = raceCheckbox.dataset.race;
-                    layerStates[raceName] = checked;
-                    if (checked) {
-                        map.addLayer(raceLayers[raceName]);
-                    } else {
-                        map.removeLayer(raceLayers[raceName]);
-                    }
-                });
-            };
-        });
-
-        // Toggle individual race layers
-        container.querySelectorAll('.toggle-race').forEach(checkbox => {
-            checkbox.onchange = (e) => {
-                const raceName = e.target.dataset.race;
-                layerStates[raceName] = e.target.checked;
-
-                if (e.target.checked) {
-                    map.addLayer(raceLayers[raceName]);
-                } else {
-                    map.removeLayer(raceLayers[raceName]);
-                }
-
-                // Update category checkbox state
-                const categoryDiv = e.target.closest('.layer-category');
-                const allRaceCheckboxes = categoryDiv.querySelectorAll('.toggle-race');
-                const categoryCheckbox = categoryDiv.querySelector('.toggle-category');
-                const allChecked = Array.from(allRaceCheckboxes).every(cb => cb.checked);
-                const someChecked = Array.from(allRaceCheckboxes).some(cb => cb.checked);
-                categoryCheckbox.checked = allChecked;
-                categoryCheckbox.indeterminate = someChecked && !allChecked;
             };
         });
 
