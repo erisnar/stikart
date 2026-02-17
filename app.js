@@ -93,10 +93,8 @@ const raceRoutes = [
         name: 'NSM Ultra 2025',
         files: ['race-calendar/NordmarkaSkogsmaraton/NSM_Ultra_2025.gpx'],
         color: '#ff6b35',
-        description: 'Nordmarka Skogsmaraton Ultra - løp gjennom Nordmarkas skogsområder',
         url: 'https://nordmarkaskogsmaraton.no/',
         useCalculatedStats: true,
-        location: 'Nordmarka, Oslo',
         category: '50k',
         date: '2026-20-06'
     },
@@ -109,11 +107,9 @@ const raceRoutes = [
             'race-calendar/OsloBergenTrail/M4_Gullbotn-Bergen.gpx'
         ],
         color: '#3498db',
-        description: 'Fra Oslo til Bergen',
         url: 'https://oslobergentrail.com/',
         manualDistance: 500,
         manualElevation: 15000,
-        location: 'Oslo til Bergen',
         category: '100-miles-plus',
         date: '2027-07-01'
     },
@@ -121,10 +117,8 @@ const raceRoutes = [
         name: 'SMVE - Soria Moria til Verdens Ende',
         files: ['race-calendar/SoriaMoriaTilVerdensEnde/SMVE_2024_100_miles_02.gpx'],
         color: '#9b59b6',
-        description: 'Fra Soria Moria til Verdens Ende',
         url: 'https://soriamoriatilverdensende.com',
         useCalculatedStats: true,
-        location: 'Oslo området',
         category: '100-miles',
         date: '2026-05-30'
     },
@@ -132,10 +126,8 @@ const raceRoutes = [
         name: 'Nøsen Hundreds',
         files: ['race-calendar/Nøsen/Nosen_100.gpx'],
         color: '#e74c3c',
-        description: 'Ultraløp i Valdres',
         url: 'https://www.nosenhundreds.com/',
         useCalculatedStats: true,
-        location: 'Nøsen området',
         category: '100k',
         date: '2026-06-13'
     },
@@ -143,10 +135,8 @@ const raceRoutes = [
         name: 'Dobbeltravern - Nordmarkstraveren',
         files: ['race-calendar/Nordmakstravern/dobbeltravern_60km_1_.gpx'],
         color: '#f39c12',
-        description: 'Dobbel Nordmarka traversering',
         url: 'http://www.nordmarkstravern.no/',
         useCalculatedStats: true,
-        location: 'Nordmarka, Oslo',
         category: '50k',
         date: '2026-09-05'
     },
@@ -154,10 +144,8 @@ const raceRoutes = [
         name: 'Lillomarka Rundt',
         files: ['race-calendar/Sidespor-SkyBlazers/Lillomarka_rundt_51_km_Frysja_161025.gpx'],
         color: '#1abc9c',
-        description: 'Lillomarka Rundt',
         url: 'https://www.sidespor.no/lop/lillomarka-rundt',
         useCalculatedStats: true,
-        location: 'Lillomarka, Oslo',
         category: '50k',
         date: '2026-10-25'
     },
@@ -165,10 +153,8 @@ const raceRoutes = [
         name: 'Flyktningeruta',
         files: ['race-calendar/ØstmarkaTrailChallenge/Flyktningeruta_2025.gpx'],
         color: '#e67e22',
-        description: 'Flyktningeruta - historisk sti',
         url: 'https://www.ostmarkatrail.no/flyktningeruta/',
         useCalculatedStats: true,
-        location: 'Østmarka, Oslo',
         category: 'marathon-trail',
         date: '2026-08-26'
     },
@@ -176,10 +162,8 @@ const raceRoutes = [
         name: 'Endless Shore Ultra',
         files: ['race-calendar/EndlessShores/Endless_Shores_Ultra_Trail_100_miles_2025_FINAL.gpx'],
         color: '#16a085',
-        description: 'Kyst ultra terrengløp',
         url: 'https://www.endless-shore.no/',
         useCalculatedStats: true,
-        location: 'Norsk kyst',
         category: '100-miles',
         date: '2026-05-23'
     },
@@ -187,10 +171,8 @@ const raceRoutes = [
         name: 'Sandnes 100 Miles',
         files: ['race-calendar/SandsnesUltraTrail/sandnes100-miles.gpx'],
         color: '#c0392b',
-        description: '100 miles ultra terrengløp',
         url: 'https://www.sandnes100miles.no/',
         useCalculatedStats: true,
-        location: 'Sandnes området',
         category: '100-miles',
         date: '2026-04-17'
     },
@@ -198,10 +180,8 @@ const raceRoutes = [
         name: 'Lofoten Ultra Trail 100 Miles',
         files: ['race-calendar/LofotenUltraTrail/lofoten-ultra-trail-100-miles.gpx'],
         color: '#2980b9',
-        description: 'Episk 100 miles gjennom Lofoten fra Moskenes til Svolvær',
         url: 'https://thearctictriple.no/lofoten-ultra-trail-100-miles',
         useCalculatedStats: true,
-        location: 'Lofoten',
         category: '100-miles',
         date: '2026-05-28'
     },
@@ -209,10 +189,8 @@ const raceRoutes = [
         name: 'Lofoten Ultra Trail 50 Miles',
         files: ['race-calendar/LofotenUltraTrail/lofoten-ultra-trail-50-miles.gpx'],
         color: '#5dade2',
-        description: '50 miles gjennom Lofoten fra Leknes til Svolvær',
         url: 'https://thearctictriple.no/lofoten-ultra-trail-50-miles',
         useCalculatedStats: true,
-        location: 'Lofoten',
         category: '50-miles',
         date: '2026-05-28'
     },
@@ -220,10 +198,8 @@ const raceRoutes = [
         name: 'Lofoten Ultra Trail 48K',
         files: ['race-calendar/LofotenUltraTrail/lofoten-ultra-trail-48km.gpx'],
         color: '#85c1e9',
-        description: '48 km fra vikingleir på Vestvågøy til Svolvær',
         url: 'https://thearctictriple.no/lofoten-ultra-trail-48-km',
         useCalculatedStats: true,
-        location: 'Lofoten',
         category: '50k',
         date: '2026-05-28'
     },
@@ -231,10 +207,8 @@ const raceRoutes = [
         name: 'MMC 100 Miles',
         files: ['race-calendar/MeråkerMountainChallenge/MMC_100M.gpx'],
         color: '#8e44ad',
-        description: 'Meråker Mountain Challenge 161 km - The Death March',
         url: 'https://mmctrail.no/100m',
         useCalculatedStats: true,
-        location: 'Meråker, Trøndelag',
         category: '100-miles',
         date: '2026-08-01'
     },
@@ -242,10 +216,8 @@ const raceRoutes = [
         name: 'MMC 100K',
         files: ['race-calendar/MeråkerMountainChallenge/MMC_100K.gpx'],
         color: '#a569bd',
-        description: 'Meråker Mountain Challenge 100 km fjellultra',
         url: 'https://mmctrail.no/100k',
         useCalculatedStats: true,
-        location: 'Meråker, Trøndelag',
         category: '100k',
         date: '2026-08-01'
     },
@@ -253,10 +225,8 @@ const raceRoutes = [
         name: 'MMC 70K',
         files: ['race-calendar/MeråkerMountainChallenge/MMC_70K.gpx'],
         color: '#bb8fce',
-        description: 'Meråker Mountain Challenge 70 km fjellultra',
         url: 'https://mmctrail.no/70k',
         useCalculatedStats: true,
-        location: 'Meråker, Trøndelag',
         category: '50-miles',
         date: '2026-08-01'
     },
@@ -264,10 +234,8 @@ const raceRoutes = [
         name: 'Hardangerjøkulen Ultra 95K',
         files: ['race-calendar/HardangerjøkulenUltra/hardangerjokulen-ultra-95k.gpx'],
         color: '#27ae60',
-        description: 'Ultra rundt Hardangerjøkulen gjennom DNT-stier',
         url: 'https://xtremeidfjord.no/hardangerjokulen-ultra/',
         useCalculatedStats: true,
-        location: 'Eidfjord, Hardanger',
         category: '100k',
         date: '2026-07-11'
     },
@@ -275,10 +243,8 @@ const raceRoutes = [
         name: 'Hardangerjøkulen Ultra 34K',
         files: ['race-calendar/HardangerjøkulenUltra/hardangerjokulen-ultra-34k.gpx'],
         color: '#58d68d',
-        description: 'Fjellultra i Hardangervidda',
         url: 'https://xtremeidfjord.no/hardangerjokulen-ultra/',
         useCalculatedStats: true,
-        location: 'Eidfjord, Hardanger',
         category: 'marathon-trail',
         date: '2026-07-11'
     },
@@ -289,10 +255,8 @@ const raceRoutes = [
             'race-calendar/OsloTrailChallenge/OTC_100K.gpx'
         ],
         color: '#d35400',
-        description: '200 km ultra gjennom Nordmarka, Lillomarka og Romeriksåsen',
         url: 'https://langtoglenge.org/en/events_en/otc_en.html',
         useCalculatedStats: true,
-        location: 'Oslo / Nordmarka',
         category: '100-miles-plus',
         date: '2026-09-20'
     },
@@ -300,10 +264,8 @@ const raceRoutes = [
         name: 'Oslo Trail Challenge 100K',
         files: ['race-calendar/OsloTrailChallenge/OTC_100K.gpx'],
         color: '#dc7633',
-        description: '100 km ultra gjennom Nordmarka og Lillomarka',
         url: 'https://langtoglenge.org/en/events_en/otc_en.html',
         useCalculatedStats: true,
-        location: 'Oslo / Nordmarka',
         category: '100k',
         date: '2026-09-27'
     },
@@ -311,10 +273,8 @@ const raceRoutes = [
         name: 'Oslo Trail Challenge 55K',
         files: ['race-calendar/OsloTrailChallenge/OTC_2024_55K_FINAL.gpx'],
         color: '#f0b27a',
-        description: '55 km ultra gjennom Nordmarka',
         url: 'https://langtoglenge.org/en/events_en/otc_en.html',
         useCalculatedStats: true,
-        location: 'Oslo / Nordmarka',
         category: '50k',
         date: '2026-09-27'
     },
@@ -322,10 +282,8 @@ const raceRoutes = [
         name: 'Lustrafjorden Inn Ultra 100',
         files: ['race-calendar/LustrafjordenInn/Lustrafjorden_Inn_2024_Ultra100.gpx'],
         color: '#1a5276',
-        description: '104 km langs Lustrafjorden fra Kaupanger til Skjolden med 6000 høydemeter',
         url: 'https://www.lustrafjordeninn.no/',
         useCalculatedStats: true,
-        location: 'Luster, Sogn',
         category: '100k',
         date: '2026-08-14'
     },
@@ -333,10 +291,8 @@ const raceRoutes = [
         name: 'Hornindal Rundt 75K',
         files: ['race-calendar/HornindalRundt/HornindalRundt75K.gpx'],
         color: '#7d3c98',
-        description: '75 km rundt Hornindalsvatnet med 5600 høydemeter over 20 fjelltopper',
         url: 'https://hornindalrundt.no/',
         useCalculatedStats: true,
-        location: 'Hornindal, Møre og Romsdal',
         category: '50-miles',
         date: '2026-07-04'
     },
@@ -344,10 +300,8 @@ const raceRoutes = [
         name: 'Dynafit Hardangervidda Maraton 43K',
         files: ['race-calendar/HardangerviddaMaraton/hardangervidda-marathon-43k.gpx'],
         color: '#d4ac0d',
-        description: 'Fjellmaraton over Hardangervidda',
         url: 'https://xtremeidfjord.no/hardangerjokulen-ultra/',
         useCalculatedStats: true,
-        location: 'Eidfjord, Hardanger',
         category: 'marathon-trail',
         date: '2026-08-29'
     },
@@ -355,10 +309,8 @@ const raceRoutes = [
         name: 'Nøsen 50K',
         files: ['race-calendar/Nøsen/Nosen_50km.gpx'],
         color: '#cb4335',
-        description: 'Fjellultra gjennom Valdres med 1910 høydemeter',
         url: 'https://www.nosenhundreds.com/50km',
         useCalculatedStats: true,
-        location: 'Valdres',
         category: '50k',
         date: '2026-06-14'
     },
@@ -366,10 +318,8 @@ const raceRoutes = [
         name: 'KRSUltra 60',
         files: ['race-calendar/KRSUltra/krsultra-60k-2025-v1.gpx'],
         color: '#e55039',
-        description: '60 km terrengløp med 2200 høydemeter',
         url: 'https://www.krsultra.no/lop/krsultra-60',
         useCalculatedStats: true,
-        location: 'Kristiansand',
         category: '50k',
         date: '2026-04-11'
     },
@@ -377,10 +327,8 @@ const raceRoutes = [
         name: 'Skogvokteren',
         files: ['race-calendar/Skogvokteren/Skogvokteren_2025.gpx'],
         color: '#2d6a4f',
-        description: '88 km med 3500 høydemeter',
         url: 'https://grenlandultrarunners.no/skogvokteren-ultra-2/',
         useCalculatedStats: true,
-        location: 'Norge',
         category: '50-miles',
         date: '2026-05-02'
     },
@@ -388,10 +336,8 @@ const raceRoutes = [
         name: 'Ecotrail Oslo 80K',
         files: ['race-calendar/ecotrail/ecotrail_oslo_80km_2026.gpx'],
         color: '#40916c',
-        description: '81.7 km med 1991 høydemeter gjennom Oslo og Nordmarka',
         url: 'https://oslo.ecotrail.com/en/race-ecotrail-oslo/trail-80-km',
         useCalculatedStats: true,
-        location: 'Oslo',
         category: '50-miles',
         date: '2026-05-30'
     },
@@ -399,10 +345,8 @@ const raceRoutes = [
         name: 'Ecotrail Oslo 50K',
         files: ['race-calendar/ecotrail/ecotrail_oslo_50km_2026.gpx'],
         color: '#74c69d',
-        description: '50.5 km med 1026 høydemeter',
         url: 'https://oslo.ecotrail.com/en/race-ecotrail-oslo/trail-80-km',
         useCalculatedStats: true,
-        location: 'Oslo',
         category: '50k',
         date: '2026-05-30'
     },
@@ -410,10 +354,8 @@ const raceRoutes = [
         name: 'Sognefjord Trail Run 50K',
         files: ['race-calendar/SognefjordTrail/STR+50K+2026.gpx'],
         color: '#0077b6',
-        description: 'Ca. 50 km med 2400 høydemeter ved Sognefjorden',
         url: 'https://www.sognefjordtrailrun.com/50k',
         useCalculatedStats: true,
-        location: 'Sognefjorden',
         category: '50k',
         date: '2026-06-06'
     },
@@ -421,10 +363,8 @@ const raceRoutes = [
         name: 'Vestfold Historic Ultra 147K',
         files: ['race-calendar/VestfoldHistoricUltra/VHUT_2025_147km.gpx'],
         color: '#6930c3',
-        description: '147 km med 5000 høydemeter gjennom historiske Vestfold',
         url: 'https://www.vhut.no/loyper/',
         useCalculatedStats: true,
-        location: 'Vestfold',
         category: '100-miles',
         date: '2026-05-18'
     },
@@ -432,10 +372,8 @@ const raceRoutes = [
         name: 'Vestfold Historic Ultra 87K',
         files: ['race-calendar/VestfoldHistoricUltra/VHUT_2025_87km.gpx'],
         color: '#7400b8',
-        description: '87 km med 2750 høydemeter',
         url: 'https://www.vhut.no/loyper/',
         useCalculatedStats: true,
-        location: 'Vestfold',
         category: '50-miles',
         date: '2026-05-18'
     },
@@ -443,10 +381,8 @@ const raceRoutes = [
         name: 'Vestfold Historic Ultra 50K',
         files: ['race-calendar/VestfoldHistoricUltra/VHUT_2025_50km.gpx'],
         color: '#9d4edd',
-        description: '50 km med 1280 høydemeter',
         url: 'https://www.vhut.no/loyper/',
         useCalculatedStats: true,
-        location: 'Vestfold',
         category: '50k',
         date: '2026-05-18'
     },
@@ -454,10 +390,8 @@ const raceRoutes = [
         name: 'Jotunheimen Trail Run',
         files: ['race-calendar/JotunheimenTrail/JTR+ULTRA+2026.gpx'],
         color: '#023e8a',
-        description: 'Ca. 73 km med 2500 høydemeter i Jotunheimen',
         url: 'https://www.jotunheimentrailrun.com/',
         useCalculatedStats: true,
-        location: 'Jotunheimen',
         category: '50-miles',
         date: '2026-07-31'
     },
@@ -465,10 +399,8 @@ const raceRoutes = [
         name: 'Bodøryggen Ultra',
         files: ['race-calendar/Bodøryggen/Bodoryggen_2025_ultra.gpx'],
         color: '#00b4d8',
-        description: '48.8 km med 1778 høydemeter',
         url: 'https://bodorunfestival.no/bodoryggen/',
         useCalculatedStats: true,
-        location: 'Bodø',
         category: 'marathon-trail',
         date: '2026-08-01'
     },
@@ -476,10 +408,8 @@ const raceRoutes = [
         name: 'Stranda Fjord Trail 55K',
         files: ['race-calendar/StrandaFjordTrail/55k.gpx'],
         color: '#ff6d00',
-        description: '55 km rundløype med 3800 høydemeter',
         url: 'https://strandafjordtrailrace.com/',
         useCalculatedStats: true,
-        location: 'Stranda, Sunnmøre',
         category: '50k',
         date: '2026-08-12'
     },
@@ -487,10 +417,8 @@ const raceRoutes = [
         name: 'Stranda Fjord Trail 95K',
         files: ['race-calendar/StrandaFjordTrail/95K.gpx'],
         color: '#ff9500',
-        description: '95 km med 6800 høydemeter',
         url: 'https://strandafjordtrailrace.com/',
         useCalculatedStats: true,
-        location: 'Stranda, Sunnmøre',
         category: '100k',
         date: '2026-08-12'
     },
@@ -498,10 +426,8 @@ const raceRoutes = [
         name: 'Trollheimen Ultra 100K',
         files: ['race-calendar/TrollheimenUltra/trollheimen-ultra-trip.gpx'],
         color: '#6a040f',
-        description: '100 km med 3143 høydemeter i Trollheimen',
         url: 'https://trollheimenultra100km.webnode.page/',
         useCalculatedStats: true,
-        location: 'Trollheimen',
         category: '100k',
         date: '2026-08-15'
     },
@@ -509,10 +435,8 @@ const raceRoutes = [
         name: 'Tromsø Mountain Challenge 50K',
         files: ['race-calendar/TromsøMountainChallenge/TMC_Ultra_50km_2025.gpx'],
         color: '#4cc9f0',
-        description: '50 km fjellultra i Tromsø',
         url: 'https://msm.no/en/mountain-challenge/loypekart-tromso-mountain-challenge/',
         useCalculatedStats: true,
-        location: 'Tromsø',
         category: '50k',
         date: '2026-08-22'
     }
@@ -639,12 +563,10 @@ async function loadRaces() {
                 const popupHTML = `
                     <div class="race-popup">
                         <h3>${race.name}</h3>
-                        <p class="race-description">${race.description}</p>
                         <div class="race-details">
                             <div><strong>Dato:</strong> ${formatDate(race.date)}</div>
                             <div><strong>Distanse:</strong> ${finalDistance.toFixed(1)} km</div>
                             <div><strong>Høydemeter:</strong> ${finalElevation} m</div>
-                            <div><strong>Sted:</strong> ${race.location}</div>
                             <div><strong>GPX:</strong> ${downloadLinks}</div>
                         </div>
                         <p class="race-disclaimer">⚠️ Løyper kan endres. Bruk alltid siste versjon fra arrangørens nettside.</p>
