@@ -439,6 +439,29 @@ const raceRoutes = [
         useCalculatedStats: true,
         category: '50k',
         date: '2026-08-22'
+    },
+    {
+        name: 'Blefjell Troll 57K',
+        files: ['race-calendar/Blefjell/BB_01_Troll_4.gpx'],
+        color: '#5c4033',
+        url: 'https://blefjellsbeste.com/',
+        useCalculatedStats: true,
+        category: '50k',
+        date: '2026-07-24'
+    },
+    {
+        name: 'Blefjell Storetroll 96K',
+        files: [
+            'race-calendar/Blefjell/BB_01_Troll_4.gpx',
+            'race-calendar/Blefjell/BB_02_Tusser_3.gpx',
+            'race-calendar/Blefjell/BB_10K_Smatusser.gpx',
+            'race-calendar/Blefjell/BB_05K_Smatroll.gpx'
+        ],
+        color: '#3d2817',
+        url: 'https://blefjellsbeste.com/',
+        useCalculatedStats: true,
+        category: '100k',
+        date: '2026-07-24'
     }
 ];
 
