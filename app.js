@@ -397,7 +397,7 @@ const raceRoutes = [
     },
     {
         name: 'Bodøryggen Ultra',
-        files: ['race-calendar/Bodøryggen/Bodoryggen_2025_ultra.gpx'],
+        files: ['race-calendar/Bodoryggen/Bodoryggen_2025_ultra.gpx'],
         color: '#00b4d8',
         url: 'https://bodorunfestival.no/bodoryggen/',
         useCalculatedStats: true,
@@ -433,7 +433,7 @@ const raceRoutes = [
     },
     {
         name: 'Tromsø Mountain Challenge 50K',
-        files: ['race-calendar/TromsøMountainChallenge/TMC_Ultra_50km_2025.gpx'],
+        files: ['race-calendar/TromsoMountainChallenge/TMC_Ultra_50km_2025.gpx'],
         color: '#4cc9f0',
         url: 'https://msm.no/en/mountain-challenge/loypekart-tromso-mountain-challenge/',
         useCalculatedStats: true,
