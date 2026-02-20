@@ -13,7 +13,8 @@
 <body>
     <div id="map"></div>
     <div id="filter-bar">
-        <button id="regenerate-colors-btn" onclick="regenerateColors()">🎨</button>
+        <button id="info-btn" onclick="showInfoOverlay()" title="Informasjon">ℹ️</button>
+        <button id="regenerate-colors-btn" onclick="regenerateColors()" title="Endre farger">🎨</button>
         <select id="month-select" onchange="filterByMonth(this.value === '' ? null : parseInt(this.value))">
             <option value="">Alle måneder</option>
             <option value="0">Januar</option>
@@ -55,6 +56,36 @@
         <div class="race-detail-card">
             <button class="close-detail" id="close-detail">&times;</button>
             <div id="race-detail-content"></div>
+        </div>
+    </div>
+
+    <!-- Info Overlay -->
+    <div id="info-overlay" class="info-overlay hidden">
+        <div class="info-card">
+            <button class="close-info" onclick="closeInfoOverlay()">&times;</button>
+            <div class="info-content">
+                <h2>Om Stikart</h2>
+                <p>Stikart er et interaktivt kart for å utforske ultraløp i Norge. Her kan du se løyper, distanser, høydemeter og finne lenker til arrangørenes nettsider.</p>
+
+                <h3>Slik bruker du kartet</h3>
+                <ul>
+                    <li><strong>Trykk på en løype</strong> for å se informasjon om løpet</li>
+                    <li><strong>Last ned GPX</strong> fra popup-vinduet for hvert løp</li>
+                    <li><strong>Bruk filtrene</strong> øverst for å filtrere etter måned eller distanse</li>
+                    <li><strong>🎨-knappen</strong> gir alle løypene nye tilfeldige farger</li>
+                    <li><strong>Kartlag-knappen</strong> oppe til høyre lar deg bytte mellom Norgeskart og OpenStreetMap</li>
+
+                </ul>
+
+                <h3>Bidra</h3>
+                <p>Stikart er et åpent prosjekt. Har du forslag til nye løp, feil å rapportere, eller ønsker å bidra med kode?</p>
+                <a href="https://github.com/erisnar/Stikart" target="_blank" rel="noopener noreferrer" class="info-link">
+                    Se prosjektet på GitHub →
+                </a>
+
+                <h3>Kartdata</h3>
+                <p>Kartet bruker <a href="https://www.kartverket.no/" target="_blank">Kartverket</a> (Norgeskart) og <a href="https://www.openstreetmap.org/" target="_blank">OpenStreetMap</a> som bakgrunnskart.</p>
+            </div>
         </div>
     </div>
 

@@ -8,6 +8,23 @@ const isTouchDevice = (function() {
     );
 })();
 
+// Info overlay functions
+function showInfoOverlay() {
+    document.getElementById('info-overlay').classList.remove('hidden');
+}
+
+function closeInfoOverlay() {
+    document.getElementById('info-overlay').classList.add('hidden');
+}
+
+// Close info overlay when clicking outside
+document.addEventListener('click', (e) => {
+    const overlay = document.getElementById('info-overlay');
+    if (e.target === overlay) {
+        closeInfoOverlay();
+    }
+});
+
 // Download GPX file
 function downloadGpx(url, fileName) {
     fetch(url)
