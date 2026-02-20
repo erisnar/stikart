@@ -292,6 +292,27 @@ body {
     align-items: center;
 }
 
+#info-btn {
+    background: white;
+    border: none;
+    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+#info-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+#info-btn:active {
+    transform: scale(0.95);
+}
+
 #regenerate-colors-btn {
     background: linear-gradient(135deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3, #54a0ff);
     background-size: 300% 300%;
@@ -364,6 +385,7 @@ body {
         background-position: right 6px center;
     }
 
+    #info-btn,
     #regenerate-colors-btn {
         width: 32px;
         height: 32px;
@@ -555,5 +577,121 @@ body {
         max-width: 400px;
         border-radius: 12px;
         max-height: 70vh;
+    }
+}
+
+/* Info Overlay */
+.info-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1003;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.info-overlay.hidden {
+    display: none;
+}
+
+.info-card {
+    background: white;
+    width: 100%;
+    max-width: 500px;
+    max-height: 85vh;
+    border-radius: 12px;
+    padding: 24px;
+    overflow-y: auto;
+    position: relative;
+}
+
+.close-info {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: #f0f0f0;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-info:hover {
+    background: #e0e0e0;
+}
+
+.info-content h2 {
+    margin: 0 0 16px 0;
+    color: #2c5f2d;
+    font-size: 1.5em;
+    padding-right: 30px;
+}
+
+.info-content h3 {
+    margin: 20px 0 10px 0;
+    color: #333;
+    font-size: 1.1em;
+}
+
+.info-content p {
+    margin: 0 0 12px 0;
+    color: #555;
+    line-height: 1.5;
+}
+
+.info-content ul {
+    margin: 0 0 12px 0;
+    padding-left: 20px;
+    color: #555;
+    line-height: 1.6;
+}
+
+.info-content li {
+    margin-bottom: 6px;
+}
+
+.info-content a {
+    color: #2c5f2d;
+}
+
+.info-link {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 10px 18px;
+    background: #2c5f2d;
+    color: white !important;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 0.95em;
+    transition: background 0.2s;
+}
+
+.info-link:hover {
+    background: #234a24;
+}
+
+.info-disclaimer {
+    padding: 10px;
+    background: #fff3cd;
+    border-radius: 6px;
+    font-size: 0.9em;
+    color: #856404 !important;
+}
+
+@media (max-width: 768px) {
+    .info-card {
+        padding: 20px;
+        max-height: 80vh;
+    }
+
+    .info-content h2 {
+        font-size: 1.3em;
     }
 }
