@@ -1,3 +1,13 @@
+// Touch device detection
+const isTouchDevice = (function() {
+    return (
+        ('ontouchstart' in window) ||
+        (navigator.maxTouchPoints > 0) ||
+        (navigator.msMaxTouchPoints > 0) ||
+        (window.matchMedia && window.matchMedia('(pointer: coarse)').matches)
+    );
+})();
+
 // Download GPX file
 function downloadGpx(url, fileName) {
     fetch(url)
@@ -96,7 +106,7 @@ const raceRoutes = [
         url: 'https://nordmarkaskogsmaraton.no/',
         useCalculatedStats: true,
         category: '50k',
-        date: '2026-20-06'
+        date: '2026-06-20'
     },
     {
         name: 'OBT Oslo-Bergen Trail',
@@ -521,6 +531,7 @@ function filterByCategory(category) {
 const raceLayers = {};
 const layerStates = {};
 const racePolylines = {}; // track polylines per race for highlight/dim
+const hitAreaPolylines = {}; // invisible wider polylines for touch
 
 // Initialize individual race states
 raceRoutes.forEach(race => {
@@ -574,6 +585,21 @@ async function loadRaces() {
 
                 racePolylines[race.name].push(polyline);
 
+                // Add invisible hit area for easier touch/click targeting
+                if (!hitAreaPolylines[race.name]) hitAreaPolylines[race.name] = [];
+                const hitArea = L.polyline(coords, {
+                    color: 'transparent',
+                    weight: 50,
+                    opacity: 0,
+                    interactive: true
+                });
+                hitAreaPolylines[race.name].push(hitArea);
+                hitArea.on('click', (e) => {
+                    L.DomEvent.stopPropagation(e);
+                    polyline.openPopup(e.latlng);
+                });
+                hitArea.addTo(raceLayers[race.name]);
+
                 // Build download links for GPX files
                 const downloadLinks = race.files.map((file, index) => {
                     const fileName = file.split('/').pop();
@@ -585,7 +611,7 @@ async function loadRaces() {
                 // Add popup with race info
                 const popupHTML = `
                     <div class="race-popup">
-                        <h3>${race.name}</h3>
+                        <h3>${race.name} <span class="popup-color-btn" onclick="changeRaceColor('${race.name}')" title="Endre farge">🎨</span></h3>
                         <div class="race-details">
                             <div><strong>Dato:</strong> ${formatDate(race.date)}</div>
                             <div><strong>Distanse:</strong> ${finalDistance.toFixed(1)} km</div>
@@ -720,3 +746,217 @@ map.zoomControl.setPosition('topright');
 // Load all data
 regenerateColors(); // Randomize colors on startup
 loadRaces();
+
+// ============================================
+// RACE PANEL MODULE
+// ============================================
+
+let isPanelExpanded = false;
+let selectedRaceName = null;
+let isMobile = window.innerWidth <= 768;
+
+// Initialize race panel
+function initRacePanel() {
+    const handle = document.getElementById('panel-handle');
+
+    // Click/tap to toggle
+    handle.addEventListener('click', togglePanel);
+
+    // Close detail overlay
+    document.getElementById('close-detail').addEventListener('click', closeRaceDetail);
+    document.getElementById('race-detail-overlay').addEventListener('click', (e) => {
+        if (e.target.classList.contains('race-detail-overlay')) {
+            closeRaceDetail();
+        }
+    });
+
+    // Handle window resize
+    window.addEventListener('resize', debounce(() => {
+        isMobile = window.innerWidth <= 768;
+        renderRaceList();
+    }, 250));
+
+    // Initial render after races load
+    setTimeout(renderRaceList, 500);
+}
+
+function togglePanel() {
+    const panel = document.getElementById('race-panel');
+    isPanelExpanded = !isPanelExpanded;
+    panel.classList.toggle('expanded', isPanelExpanded);
+}
+
+function getVisibleRaces() {
+    return raceRoutes.filter(race => {
+        const raceMonth = new Date(race.date).getMonth();
+        const matchesMonth = currentMonthFilter === null || raceMonth === currentMonthFilter;
+        const matchesCategory = currentCategoryFilter === null || race.category === currentCategoryFilter;
+        return matchesMonth && matchesCategory;
+    }).sort((a, b) => new Date(a.date) - new Date(b.date));
+}
+
+function renderRaceList() {
+    const raceList = document.getElementById('race-list');
+    const raceCount = document.getElementById('race-count');
+    if (!raceList) return;
+
+    const visibleRaces = getVisibleRaces();
+    raceCount.textContent = `${visibleRaces.length} løp`;
+
+    raceList.innerHTML = visibleRaces.map(race => `
+        <div class="race-item ${selectedRaceName === race.name ? 'selected' : ''}" data-race="${race.name}">
+            <span class="race-color-indicator" style="background-color: ${race.color}"></span>
+            <div class="race-item-info">
+                <div class="race-item-name">${race.name}</div>
+                <div class="race-item-meta">${formatDate(race.date)}</div>
+            </div>
+        </div>
+    `).join('');
+
+    raceList.querySelectorAll('.race-item').forEach(item => {
+        item.addEventListener('click', () => {
+            selectRace(item.dataset.race);
+        });
+    });
+}
+
+function selectRace(raceName) {
+    const race = raceRoutes.find(r => r.name === raceName);
+    if (!race) return;
+
+    selectedRaceName = raceName;
+
+    document.querySelectorAll('.race-item').forEach(item => {
+        item.classList.toggle('selected', item.dataset.race === raceName);
+    });
+
+    // Close the dropdown
+    const panel = document.getElementById('race-panel');
+    isPanelExpanded = false;
+    panel.classList.remove('expanded');
+
+    highlightRace(raceName);
+    panToRace(raceName);
+    openRacePopup(raceName);
+}
+
+function panToRace(raceName) {
+    const polylines = racePolylines[raceName];
+    if (!polylines || polylines.length === 0) return;
+
+    const bounds = L.latLngBounds([]);
+    polylines.forEach(pl => bounds.extend(pl.getBounds()));
+
+    map.fitBounds(bounds, {
+        padding: isMobile ? [50, 50] : [100, 100],
+        maxZoom: 13
+    });
+}
+
+function openRacePopup(raceName) {
+    const polylines = racePolylines[raceName];
+    if (!polylines || polylines.length === 0) return;
+
+    const firstPolyline = polylines[0];
+    const center = firstPolyline.getCenter();
+    firstPolyline.openPopup(center);
+}
+
+function showRaceDetailOverlay(race) {
+    const overlay = document.getElementById('race-detail-overlay');
+    const content = document.getElementById('race-detail-content');
+
+    const downloadLinks = race.files.map((file, index) => {
+        const fileName = file.split('/').pop();
+        const githubUrl = `https://raw.githubusercontent.com/erisnar/Stikart/main/${encodeURI(file)}`;
+        const label = race.files.length > 1 ? `GPX ${index + 1}` : 'Last ned GPX';
+        return `<a href="#" onclick="downloadGpx('${githubUrl}', '${fileName}'); return false;" class="race-download-link">${label}</a>`;
+    }).join(' ');
+
+    content.innerHTML = `
+        <div class="race-popup" style="padding: 0;">
+            <h3 style="margin-top: 0;">${race.name}</h3>
+            <div class="race-details">
+                <div><strong>Dato:</strong> ${formatDate(race.date)}</div>
+                <div><strong>GPX:</strong> ${downloadLinks}</div>
+            </div>
+            <p class="race-disclaimer">⚠️ Løyper kan endres. Bruk alltid siste versjon fra arrangørens nettside.</p>
+            <a href="${race.url}" target="_blank" rel="noopener noreferrer" class="race-link" style="display: block; text-align: center;">
+                Besøk nettside →
+            </a>
+        </div>
+    `;
+
+    overlay.classList.remove('hidden');
+}
+
+function closeRaceDetail() {
+    document.getElementById('race-detail-overlay').classList.add('hidden');
+    resetRaceStyles();
+    selectedRaceName = null;
+
+    document.querySelectorAll('.race-item').forEach(item => {
+        item.classList.remove('selected');
+    });
+}
+
+function changeRaceColor(raceName) {
+    const race = raceRoutes.find(r => r.name === raceName);
+    if (!race) return;
+
+    race.color = getRandomColor();
+
+    // Update polylines on the map
+    if (racePolylines[raceName]) {
+        racePolylines[raceName].forEach(pl => {
+            pl.setStyle({ color: race.color });
+        });
+    }
+
+    // Update the color dot in the list
+    const raceItem = document.querySelector(`.race-item[data-race="${raceName}"]`);
+    if (raceItem) {
+        const indicator = raceItem.querySelector('.race-color-indicator');
+        if (indicator) {
+            indicator.style.backgroundColor = race.color;
+        }
+    }
+}
+
+function debounce(func, wait) {
+    let timeout;
+    return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func(...args), wait);
+    };
+}
+
+// Wrap applyFilters to update panel
+const originalApplyFilters = applyFilters;
+applyFilters = function() {
+    originalApplyFilters();
+    renderRaceList();
+
+    // Clear selection if selected race is now hidden
+    if (selectedRaceName) {
+        const race = raceRoutes.find(r => r.name === selectedRaceName);
+        if (race) {
+            const raceMonth = new Date(race.date).getMonth();
+            const matchesMonth = currentMonthFilter === null || raceMonth === currentMonthFilter;
+            const matchesCategory = currentCategoryFilter === null || race.category === currentCategoryFilter;
+            if (!matchesMonth || !matchesCategory) {
+                closeRaceDetail();
+            }
+        }
+    }
+};
+
+// Wrap regenerateColors to update panel colors
+const originalRegenerateColors = regenerateColors;
+regenerateColors = function() {
+    originalRegenerateColors();
+    renderRaceList();
+};
+
+// Initialize panel on DOM ready
+document.addEventListener('DOMContentLoaded', initRacePanel);

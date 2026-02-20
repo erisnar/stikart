@@ -91,6 +91,18 @@ body {
     background: #234a24;
 }
 
+.popup-color-btn {
+    cursor: pointer;
+    font-size: 14px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+    margin-left: 8px;
+}
+
+.popup-color-btn:hover {
+    opacity: 1;
+}
+
 .race-popup .race-disclaimer {
     margin: 10px 0 0 0;
     padding: 8px;
@@ -357,5 +369,191 @@ body {
         height: 32px;
         font-size: 14px;
         flex-shrink: 0;
+    }
+}
+
+/* Race Panel - Mobile First (Bottom Sheet) */
+.race-panel {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+    z-index: 1001;
+    transform: translateY(calc(100% - 38px));
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    max-height: 70vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.race-panel.expanded {
+    transform: translateY(0);
+}
+
+.race-panel-handle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid #e0e0e0;
+    flex-shrink: 0;
+}
+
+.race-panel-handle:active {
+    background: #f5f5f5;
+}
+
+.race-count {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+.race-panel-content {
+    flex: 1;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+}
+
+.race-list {
+    padding: 8px 0;
+}
+
+.race-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    gap: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.race-item:hover,
+.race-item:active {
+    background: #f5f5f5;
+}
+
+.race-item.selected {
+    background: #e8f5e9;
+}
+
+.race-color-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.race-color-btn {
+    font-size: 14px;
+    cursor: pointer;
+    padding: 4px;
+    opacity: 0.6;
+    transition: opacity 0.2s, transform 0.2s;
+    flex-shrink: 0;
+}
+
+.race-color-btn:hover {
+    opacity: 1;
+}
+
+.race-color-btn:active {
+    transform: scale(0.9);
+}
+
+.race-item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.race-item-name {
+    font-weight: 500;
+    font-size: 14px;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.race-item-meta {
+    font-size: 12px;
+    color: #666;
+    margin-top: 2px;
+}
+
+.race-item-arrow {
+    color: #ccc;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+/* Race Detail Overlay */
+.race-detail-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1002;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.race-detail-overlay.hidden {
+    display: none;
+}
+
+.race-detail-card {
+    background: white;
+    width: 100%;
+    max-height: 80vh;
+    border-radius: 16px 16px 0 0;
+    padding: 20px;
+    overflow-y: auto;
+    position: relative;
+}
+
+.close-detail {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: #f0f0f0;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Desktop adjustments */
+@media (min-width: 769px) {
+    .race-panel {
+        max-width: 400px;
+        left: 50%;
+        transform: translateX(-50%) translateY(calc(100% - 38px));
+    }
+
+    .race-panel.expanded {
+        transform: translateX(-50%) translateY(0);
+    }
+
+    .race-detail-overlay {
+        align-items: center;
+    }
+
+    .race-detail-card {
+        max-width: 400px;
+        border-radius: 12px;
+        max-height: 70vh;
     }
 }

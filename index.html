@@ -40,6 +40,24 @@
         </select>
     </div>
 
+    <!-- Race List Panel -->
+    <div id="race-panel" class="race-panel">
+        <div class="race-panel-handle" id="panel-handle">
+            <span class="race-count" id="race-count">0 løp</span>
+        </div>
+        <div class="race-panel-content" id="panel-content">
+            <div class="race-list" id="race-list"></div>
+        </div>
+    </div>
+
+    <!-- Race Detail Overlay (mobile) -->
+    <div id="race-detail-overlay" class="race-detail-overlay hidden">
+        <div class="race-detail-card">
+            <button class="close-detail" id="close-detail">&times;</button>
+            <div id="race-detail-content"></div>
+        </div>
+    </div>
+
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
