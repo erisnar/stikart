@@ -39,20 +39,40 @@ function downloadGpx(url, fileName) {
         .catch(err => console.error('Download failed:', err));
 }
 
-// Generate a random hex color
-function getRandomColor() {
-    const letters = '0123456789ABCDEF';
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
+// Pool of dark + vibrant saturated colors (no pale greens/blues)
+const darkColorPool = [
+    '#e63946', '#d62828', '#9b2335', '#c1121f', '#ff006e',
+    '#f72585', '#b5179e', '#e91e63', '#c2185b', '#ad1457',
+    '#e76f51', '#f4a261', '#fb5607', '#ff5400', '#e65100',
+    '#ff6d00', '#f57c00', '#ef6c00', '#d84315', '#bf360c',
+    '#8338ec', '#7209b7', '#6a1b9a', '#4a148c', '#311b92',
+    '#5e35b1', '#512da8', '#4527a0', '#7c4dff', '#651fff',
+    '#0d47a1', '#1565c0', '#1976d2', '#1e88e5', '#0277bd',
+    '#01579b', '#023e8a', '#0353a4', '#3a86ff', '#4361ee',
+    '#1b5e20', '#2e7d32', '#388e3c', '#087f5b', '#0b7285',
+    '#5d4037', '#4e342e', '#6d4c41', '#795548', '#8d6e63'
+];
+
+// Shuffle array (Fisher-Yates)
+function shuffleArray(array) {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
-    return color;
+    return shuffled;
 }
 
-// Regenerate colors for all race routes
+// Generate a random dark color from the pool (used for single color changes)
+function getRandomColor() {
+    return darkColorPool[Math.floor(Math.random() * darkColorPool.length)];
+}
+
+// Regenerate colors for all race routes with unique colors
 function regenerateColors() {
-    raceRoutes.forEach(race => {
-        race.color = getRandomColor();
+    const shuffledColors = shuffleArray(darkColorPool);
+    raceRoutes.forEach((race, index) => {
+        race.color = shuffledColors[index % shuffledColors.length];
     });
 
     // Update polyline colors on the map
