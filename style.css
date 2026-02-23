@@ -103,6 +103,16 @@ body {
     opacity: 1;
 }
 
+.race-popup .direction-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    font-size: 0.85em;
+    cursor: pointer;
+    user-select: none;
+}
+
 .race-popup .race-disclaimer {
     margin: 10px 0 0 0;
     padding: 8px;
@@ -436,6 +446,42 @@ body {
     color: #333;
 }
 
+.track-marker {
+    width: 22px;
+    height: 22px;
+    border-radius: 3px;
+    border: 2px solid #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+    font-family: sans-serif;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+
+.track-marker-start {
+    background: #2ecc40;
+    color: #fff;
+}
+
+.track-marker-finish {
+    background: repeating-conic-gradient(#000 0% 25%, #fff 0% 50%) 0 0 / 8px 8px;
+}
+
+.panel-arrow {
+    font-size: 10px;
+    color: #888;
+    margin-left: 6px;
+    display: inline-block;
+    transform: rotate(0deg);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.race-panel.expanded .panel-arrow {
+    transform: rotate(180deg);
+}
+
 .race-panel-content {
     flex: 1;
     overflow-y: auto;
@@ -519,12 +565,10 @@ body {
 /* Race Detail Overlay */
 .race-detail-overlay {
     position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.5);
+    bottom: 60px;
+    left: 16px;
     z-index: 1002;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
+    pointer-events: none;
 }
 
 .race-detail-overlay.hidden {
@@ -532,29 +576,31 @@ body {
 }
 
 .race-detail-card {
+    pointer-events: all;
     background: white;
-    width: 100%;
-    max-height: 80vh;
-    border-radius: 16px 16px 0 0;
-    padding: 20px;
+    width: 280px;
+    max-height: 60vh;
+    border-radius: 12px;
     overflow-y: auto;
     position: relative;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
 }
 
 .close-detail {
     position: absolute;
     top: 12px;
     right: 12px;
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     border: none;
     background: #f0f0f0;
     border-radius: 50%;
-    font-size: 20px;
+    font-size: 18px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 1;
 }
 
 /* Desktop adjustments */
@@ -567,16 +613,6 @@ body {
 
     .race-panel.expanded {
         transform: translateX(-50%) translateY(0);
-    }
-
-    .race-detail-overlay {
-        align-items: center;
-    }
-
-    .race-detail-card {
-        max-width: 400px;
-        border-radius: 12px;
-        max-height: 70vh;
     }
 }
 
