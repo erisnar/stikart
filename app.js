@@ -82,6 +82,9 @@ function regenerateColors() {
             polylines.forEach(pl => {
                 pl.setStyle({ color: race.color });
             });
+            (raceDecorators[name] || []).forEach(dec => {
+                dec.setPatterns(makeArrowPattern(race.color, 0));
+            });
         }
     }
 
@@ -569,6 +572,34 @@ const raceLayers = {};
 const layerStates = {};
 const racePolylines = {}; // track polylines per race for highlight/dim
 const hitAreaPolylines = {}; // invisible wider polylines for touch
+const raceDecorators = {}; // directional arrow decorators
+const raceMarkers = {}; // start/finish markers per race
+const raceArrowsVisible = {}; // tracks whether arrows are toggled on per race
+
+const startIcon = L.divIcon({
+    className: '',
+    html: '<div class="track-marker track-marker-start">S</div>',
+    iconSize: [22, 22],
+    iconAnchor: [11, 11]
+});
+
+const finishIcon = L.divIcon({
+    className: '',
+    html: '<div class="track-marker track-marker-finish"></div>',
+    iconSize: [22, 22],
+    iconAnchor: [11, 11]
+});
+
+function makeArrowPattern(color, opacity) {
+    return [{
+        repeat: 300,
+        symbol: L.Symbol.arrowHead({
+            pixelSize: 18,
+            polygon: true,
+            pathOptions: { stroke: true, fill: true, color: '#000', fillColor: color, fillOpacity: opacity, opacity, weight: 1 }
+        })
+    }];
+}
 
 // Initialize individual race states
 raceRoutes.forEach(race => {
@@ -609,6 +640,8 @@ async function loadRaces() {
             // Use manual stats if provided, otherwise use calculated
             const finalDistance = race.manualDistance !== undefined ? race.manualDistance : totalDistance;
             const finalElevation = race.manualElevation !== undefined ? race.manualElevation : totalElevationGain;
+            race.distance = finalDistance;
+            race.elevation = finalElevation;
 
             // Create polyline for each segment
             if (!racePolylines[race.name]) racePolylines[race.name] = [];
@@ -633,47 +666,33 @@ async function loadRaces() {
                 hitAreaPolylines[race.name].push(hitArea);
                 hitArea.on('click', (e) => {
                     L.DomEvent.stopPropagation(e);
-                    polyline.openPopup(e.latlng);
+                    selectRace(race.name);
                 });
                 hitArea.addTo(raceLayers[race.name]);
 
-                // Build download links for GPX files
-                const downloadLinks = race.files.map((file, index) => {
-                    const fileName = file.split('/').pop();
-                    const githubUrl = `https://raw.githubusercontent.com/erisnar/Stikart/main/${encodeURI(file)}`;
-                    const label = race.files.length > 1 ? `GPX ${index + 1}` : 'Last ned GPX';
-                    return `<a href="#" onclick="downloadGpx('${githubUrl}', '${fileName}'); return false;" class="race-download-link">${label}</a>`;
-                }).join(' ');
-
-                // Add popup with race info
-                const popupHTML = `
-                    <div class="race-popup">
-                        <h3>${race.name} <span class="popup-color-btn" onclick="changeRaceColor('${race.name}')" title="Endre farge">🎨</span></h3>
-                        <div class="race-details">
-                            <div><strong>Dato:</strong> ${formatDate(race.date)}</div>
-                            <div><strong>Distanse:</strong> ${finalDistance.toFixed(1)} km</div>
-                            <div><strong>Høydemeter:</strong> ${finalElevation} m</div>
-                            <div><strong>GPX:</strong> ${downloadLinks}</div>
-                        </div>
-                        <p class="race-disclaimer">⚠️ Løyper kan endres. Bruk alltid siste versjon fra arrangørens nettside.</p>
-                        <a href="${race.url}" target="_blank" rel="noopener noreferrer" class="race-link">
-                            Besøk nettside →
-                        </a>
-                    </div>
-                `;
-
-                polyline.bindPopup(popupHTML);
-
-                // Grey out other routes when popup opens
-                polyline.on('popupopen', () => {
-                    highlightRace(race.name);
-                });
-                polyline.on('popupclose', () => {
-                    resetRaceStyles();
-                });
-
                 polyline.addTo(raceLayers[race.name]);
+
+                // Add directional arrow decorator (hidden until track is highlighted)
+                if (!raceDecorators[race.name]) raceDecorators[race.name] = [];
+                const decorator = L.polylineDecorator(polyline, {
+                    patterns: makeArrowPattern(race.color, 0)
+                });
+                raceDecorators[race.name].push(decorator);
+                decorator.addTo(raceLayers[race.name]);
             });
+
+            // Add start/finish markers (hidden until highlighted)
+            if (allCoordinates.length > 0) {
+                const startCoord = allCoordinates[0][0];
+                const lastSeg = allCoordinates[allCoordinates.length - 1];
+                const finishCoord = lastSeg[lastSeg.length - 1];
+
+                const startMarker = L.marker(startCoord, { icon: startIcon, interactive: false, opacity: 0 });
+                const finishMarker = L.marker(finishCoord, { icon: finishIcon, interactive: false, opacity: 0 });
+                raceMarkers[race.name] = { start: startMarker, finish: finishMarker };
+                startMarker.addTo(raceLayers[race.name]);
+                finishMarker.addTo(raceLayers[race.name]);
+            }
 
             console.log(`Loaded race: ${race.name} (${race.files.length} segments)`);
         } catch (error) {
@@ -685,14 +704,25 @@ async function loadRaces() {
 // Highlight a specific race and grey out all others
 function highlightRace(activeName) {
     for (const [name, polylines] of Object.entries(racePolylines)) {
+        const isActive = name === activeName;
         polylines.forEach(pl => {
-            if (name === activeName) {
+            if (isActive) {
                 pl.setStyle({ opacity: 1, weight: 5 });
                 pl.bringToFront();
             } else {
                 pl.setStyle({ opacity: 0.15, weight: 2 });
             }
         });
+        const race = raceRoutes.find(r => r.name === name);
+        const showArrows = isActive && !!raceArrowsVisible[name];
+        (raceDecorators[name] || []).forEach(dec => {
+            dec.setPatterns(makeArrowPattern(race.color, showArrows ? 1 : 0));
+        });
+        const markers = raceMarkers[name];
+        if (markers) {
+            markers.start.setOpacity(isActive ? 1 : 0);
+            markers.finish.setOpacity(isActive ? 1 : 0);
+        }
     }
 }
 
@@ -703,7 +733,23 @@ function resetRaceStyles() {
         polylines.forEach(pl => {
             pl.setStyle({ color: race.color, opacity: 0.8, weight: 3 });
         });
+        (raceDecorators[name] || []).forEach(dec => {
+            dec.setPatterns(makeArrowPattern(race.color, 0));
+        });
+        const markers = raceMarkers[name];
+        if (markers) {
+            markers.start.setOpacity(0);
+            markers.finish.setOpacity(0);
+        }
     }
+}
+
+function toggleRaceArrows(raceName, show) {
+    raceArrowsVisible[raceName] = show;
+    const race = raceRoutes.find(r => r.name === raceName);
+    (raceDecorators[raceName] || []).forEach(dec => {
+        dec.setPatterns(makeArrowPattern(race.color, show ? 1 : 0));
+    });
 }
 
 // Custom layer control (base map only)
@@ -784,6 +830,11 @@ map.zoomControl.setPosition('topright');
 regenerateColors(); // Randomize colors on startup
 loadRaces();
 
+// Clicking the map background closes the detail card
+map.on('click', () => {
+    if (selectedRaceName) closeRaceDetail();
+});
+
 // ============================================
 // RACE PANEL MODULE
 // ============================================
@@ -838,7 +889,7 @@ function renderRaceList() {
     if (!raceList) return;
 
     const visibleRaces = getVisibleRaces();
-    raceCount.textContent = `${visibleRaces.length} løp`;
+    raceCount.textContent = `Løpskalender`;
 
     raceList.innerHTML = visibleRaces.map(race => `
         <div class="race-item ${selectedRaceName === race.name ? 'selected' : ''}" data-race="${race.name}">
@@ -874,7 +925,7 @@ function selectRace(raceName) {
 
     highlightRace(raceName);
     panToRace(raceName);
-    openRacePopup(raceName);
+    showRaceDetailOverlay(race);
 }
 
 function panToRace(raceName) {
@@ -911,14 +962,20 @@ function showRaceDetailOverlay(race) {
     }).join(' ');
 
     content.innerHTML = `
-        <div class="race-popup" style="padding: 0;">
-            <h3 style="margin-top: 0;">${race.name}</h3>
+        <div class="race-popup">
+            <h3>${race.name} <span class="popup-color-btn" onclick="changeRaceColor('${race.name}')" title="Endre farge">🎨</span></h3>
             <div class="race-details">
                 <div><strong>Dato:</strong> ${formatDate(race.date)}</div>
+                <div><strong>Distanse:</strong> ${race.distance ? race.distance.toFixed(1) + ' km' : 'N/A'}</div>
+                <div><strong>Høydemeter:</strong> ${race.elevation ? race.elevation + ' m' : 'N/A'}</div>
                 <div><strong>GPX:</strong> ${downloadLinks}</div>
             </div>
+            <label class="direction-toggle">
+                <input type="checkbox" onchange="toggleRaceArrows('${race.name}', this.checked)" ${raceArrowsVisible[race.name] ? 'checked' : ''}>
+                Vis retning
+            </label>
             <p class="race-disclaimer">⚠️ Løyper kan endres. Bruk alltid siste versjon fra arrangørens nettside.</p>
-            <a href="${race.url}" target="_blank" rel="noopener noreferrer" class="race-link" style="display: block; text-align: center;">
+            <a href="${race.url}" target="_blank" rel="noopener noreferrer" class="race-link">
                 Besøk nettside →
             </a>
         </div>
@@ -949,6 +1006,9 @@ function changeRaceColor(raceName) {
             pl.setStyle({ color: race.color });
         });
     }
+    (raceDecorators[raceName] || []).forEach(dec => {
+        dec.setPatterns(makeArrowPattern(race.color, 0));
+    });
 
     // Update the color dot in the list
     const raceItem = document.querySelector(`.race-item[data-race="${raceName}"]`);
