@@ -117,8 +117,8 @@ const kartverketLayer = L.tileLayer('https://cache.kartverket.no/v1/wmts/1.0.0/t
     attribution: '&copy; <a href="https://www.kartverket.no/" target="_blank">Kartverket</a>'
 });
 
-// Add default layer - Kartverket Norgeskart
-kartverketLayer.addTo(map);
+// Add default layer - OpenStreetMap
+osmLayer.addTo(map);
 
 // Add scale control
 L.control.scale({
@@ -768,11 +768,11 @@ L.Control.CustomLayers = L.Control.extend({
                 <div class="layer-dropdown-header">Kartlag</div>
                 <div class="layer-section">
                     <label class="layer-checkbox-item">
-                        <input type="radio" name="base-layer" value="kartverket" checked>
+                        <input type="radio" name="base-layer" value="kartverket">
                         <span>Norgeskart</span>
                     </label>
                     <label class="layer-checkbox-item">
-                        <input type="radio" name="base-layer" value="osm">
+                        <input type="radio" name="base-layer" value="osm" checked>
                         <span>OpenStreetMap</span>
                     </label>
                 </div>
