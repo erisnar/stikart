@@ -29,7 +29,7 @@ body {
 }
 
 .leaflet-popup-content strong {
-    color: #2c5f2d;
+    color: #116A7B;
     font-size: 1.1em;
 }
 
@@ -45,9 +45,9 @@ body {
 
 .race-popup h3 {
     margin: 0 0 10px 0;
-    color: #2c5f2d;
+    color: #116A7B;
     font-size: 1.2em;
-    border-bottom: 2px solid #2c5f2d;
+    border-bottom: 2px solid #116A7B;
     padding-bottom: 8px;
 }
 
@@ -60,7 +60,7 @@ body {
 .race-popup .race-details {
     margin: 10px 0;
     padding: 10px;
-    background: #f8f9fa;
+    background: #C2DEDC;
     border-radius: 4px;
     font-size: 0.9em;
 }
@@ -71,15 +71,21 @@ body {
 }
 
 .race-popup .race-details strong {
-    color: #2c5f2d;
+    color: #116A7B;
     font-size: 1em;
+}
+
+.race-popup .race-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    flex-wrap: wrap;
 }
 
 .race-popup .race-link {
     display: inline-block;
-    margin-top: 10px;
     padding: 8px 16px;
-    background: #2c5f2d;
+    background: #116A7B;
     color: white;
     text-decoration: none;
     border-radius: 4px;
@@ -88,7 +94,31 @@ body {
 }
 
 .race-popup .race-link:hover {
-    background: #234a24;
+    background: #0d5463;
+}
+
+.race-popup .race-share-btn {
+    padding: 8px 16px;
+    background: #CDC2AE;
+    color: #333;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.race-popup .race-share-btn:hover {
+    background: #b8ad9e;
+}
+
+.share-url-display {
+    width: 100%;
+    font-size: 0.75em;
+    color: #666;
+    word-break: break-all;
+    margin-top: 4px;
+    font-family: monospace;
 }
 
 .popup-color-btn {
@@ -124,13 +154,13 @@ body {
 }
 
 .race-download-link {
-    color: #3498db;
+    color: #116A7B;
     text-decoration: underline;
     cursor: pointer;
 }
 
 .race-download-link:hover {
-    color: #2980b9;
+    color: #0d5463;
 }
 
 /* Layer control styling */
@@ -152,11 +182,11 @@ body {
 }
 
 .layer-control-btn:hover {
-    background: #f0f0f0;
+    background: #CDC2AE;
 }
 
 .layer-control-btn.active {
-    background: #e8e8e8;
+    background: #CDC2AE;
 }
 
 .layer-dropdown {
@@ -172,7 +202,7 @@ body {
 
 .layer-dropdown-header {
     padding: 10px 15px;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid #CDC2AE;
     font-weight: 600;
     font-size: 14px;
     color: #333;
@@ -190,7 +220,7 @@ body {
 }
 
 .layer-checkbox-item:hover {
-    background: #f5f5f5;
+    background: #C2DEDC;
 }
 
 .layer-checkbox-item input[type="checkbox"] {
@@ -209,7 +239,7 @@ body {
 }
 
 .layer-section {
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid #CDC2AE;
 }
 
 .layer-section-title {
@@ -228,7 +258,7 @@ body {
 
 /* Category folder styling */
 .layer-category {
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid #CDC2AE;
 }
 
 .layer-category:last-child {
@@ -256,7 +286,7 @@ body {
 }
 
 .layer-category-header:hover {
-    background: #f5f5f5;
+    background: #C2DEDC;
 }
 
 .layer-category-arrow {
@@ -275,8 +305,8 @@ body {
 }
 
 .layer-category-count {
-    background: #e8e8e8;
-    color: #666;
+    background: #CDC2AE;
+    color: #555;
     font-size: 11px;
     font-weight: 500;
     padding: 1px 6px;
@@ -284,7 +314,7 @@ body {
 }
 
 .layer-category-items {
-    border-top: 1px solid #f0f0f0;
+    border-top: 1px solid #CDC2AE;
 }
 
 .layer-category-race {
@@ -432,12 +462,12 @@ body {
     padding: 10px 16px;
     cursor: pointer;
     user-select: none;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid #CDC2AE;
     flex-shrink: 0;
 }
 
 .race-panel-handle:active {
-    background: #f5f5f5;
+    background: #C2DEDC;
 }
 
 .race-count {
@@ -500,16 +530,16 @@ body {
     gap: 12px;
     cursor: pointer;
     transition: background 0.2s;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid #CDC2AE;
 }
 
 .race-item:hover,
 .race-item:active {
-    background: #f5f5f5;
+    background: #C2DEDC;
 }
 
 .race-item.selected {
-    background: #e8f5e9;
+    background: #C2DEDC;
 }
 
 .race-color-indicator {
@@ -557,7 +587,7 @@ body {
 }
 
 .race-item-arrow {
-    color: #ccc;
+    color: #CDC2AE;
     font-size: 18px;
     flex-shrink: 0;
 }
@@ -593,7 +623,7 @@ body {
     width: 28px;
     height: 28px;
     border: none;
-    background: #f0f0f0;
+    background: #CDC2AE;
     border-radius: 50%;
     font-size: 18px;
     cursor: pointer;
@@ -613,6 +643,12 @@ body {
 
     .race-panel.expanded {
         transform: translateX(-50%) translateY(0);
+    }
+
+    .race-detail-card {
+        width: 360px;
+        max-height: 80vh;
+        font-size: 1.05em;
     }
 }
 
@@ -650,7 +686,7 @@ body {
     width: 32px;
     height: 32px;
     border: none;
-    background: #f0f0f0;
+    background: #CDC2AE;
     border-radius: 50%;
     font-size: 20px;
     cursor: pointer;
@@ -660,14 +696,26 @@ body {
 }
 
 .close-info:hover {
-    background: #e0e0e0;
+    background: #b8ad9e;
 }
 
 .info-content h2 {
     margin: 0 0 16px 0;
-    color: #2c5f2d;
+    color: #116A7B;
     font-size: 1.5em;
     padding-right: 30px;
+}
+
+.visit-count {
+    color: #555;
+    margin: 0 0 12px 0;
+    line-height: 1.5;
+}
+
+.info-logo {
+    display: block;
+    width: 64px;
+    margin-bottom: 8px;
 }
 
 .info-content h3 {
@@ -694,14 +742,14 @@ body {
 }
 
 .info-content a {
-    color: #2c5f2d;
+    color: #116A7B;
 }
 
 .info-link {
     display: inline-block;
     margin-top: 8px;
     padding: 10px 18px;
-    background: #2c5f2d;
+    background: #116A7B;
     color: white !important;
     text-decoration: none;
     border-radius: 6px;
@@ -710,7 +758,7 @@ body {
 }
 
 .info-link:hover {
-    background: #234a24;
+    background: #0d5463;
 }
 
 .info-disclaimer {

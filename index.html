@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stikart</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -65,6 +66,7 @@
         <div class="info-card">
             <button class="close-info" onclick="closeInfoOverlay()">&times;</button>
             <div class="info-content">
+                <img src="favicon.svg" alt="Stikart logo" class="info-logo">
                 <h2>Om Stikart</h2>
                 <p>Stikart er et interaktivt kart for å utforske ultraløp i Norge. Her kan du se løyper, distanser, høydemeter og finne lenker til arrangørenes nettsider.</p>
 
@@ -86,6 +88,11 @@
 
                 <h3>Kartdata</h3>
                 <p>Kartet bruker <a href="https://www.kartverket.no/" target="_blank">Kartverket</a> (Norgeskart) og <a href="https://www.openstreetmap.org/" target="_blank">OpenStreetMap</a> som bakgrunnskart.</p>
+
+                <h3>Besøksstatistikk</h3>
+                <p id="visit-count" class="visit-count">Laster...</p>
+                <p>stikart.no lagrer trafikk for nettstedet. Statistikken viser hvor mye hvert enkelt område av nettstedet blir besøkt. Vi kan ikke spore din bruk av nettstedet tilbake til deg som enkeltperson.</p>
+                <a href="https://www.goatcounter.com/help/privacy" target="_blank" rel="noopener noreferrer" class="info-link">Les mer om personvern hos GoatCounter →</a>
             </div>
         </div>
     </div>
