@@ -8,9 +8,31 @@ const isTouchDevice = (function() {
     );
 })();
 
+function slugify(name) {
+    return name
+        .toLowerCase()
+        .replace(/æ/g, 'ae').replace(/ø/g, 'oe').replace(/å/g, 'aa')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '');
+}
+
+function raceBySlug(slug) {
+    return raceRoutes.find(r => slugify(r.name) === slug) || null;
+}
+
 // Info overlay functions
 function showInfoOverlay() {
     document.getElementById('info-overlay').classList.remove('hidden');
+    const el = document.getElementById('visit-count');
+    if (el && !el.dataset.loaded) {
+        fetch('https://stikart.goatcounter.com/counter/TOTAL.json')
+            .then(r => r.json())
+            .then(data => {
+                el.textContent = 'Besøkende på stikart.no: ' + data.count;
+                el.dataset.loaded = '1';
+            })
+            .catch(() => { el.textContent = ''; });
+    }
 }
 
 function closeInfoOverlay() {
@@ -607,97 +629,100 @@ raceRoutes.forEach(race => {
     raceLayers[race.name] = L.layerGroup().addTo(map);
 });
 
-// Load GPX files and add to map
-async function loadRaces() {
-    console.log('Loading races');
+// Load a single race's GPX files and add to map
+async function loadRace(race) {
+    try {
+        const allCoordinates = [];
+        let totalDistance = 0;
+        let totalElevationGain = 0;
 
-    for (const race of raceRoutes) {
-        try {
-            const allCoordinates = [];
-            let totalDistance = 0;
-            let totalElevationGain = 0;
+        // Load all GPX segments for this race
+        for (const gpxFile of race.files) {
+            const response = await fetch(gpxFile);
+            const gpxText = await response.text();
+            const geoJSON = parseGPXToGeoJSON(gpxText);
 
-            // Load all GPX segments for this race
-            for (const gpxFile of race.files) {
-                const response = await fetch(gpxFile);
-                const gpxText = await response.text();
-                const geoJSON = parseGPXToGeoJSON(gpxText);
+            if (geoJSON.features && geoJSON.features.length > 0) {
+                const feature = geoJSON.features[0];
+                const coords = feature.geometry.coordinates;
 
-                if (geoJSON.features && geoJSON.features.length > 0) {
-                    const feature = geoJSON.features[0];
-                    const coords = feature.geometry.coordinates;
+                // Convert to Leaflet format [lat, lng]
+                const leafletCoords = coords.map(c => [c[1], c[0]]);
+                allCoordinates.push(leafletCoords);
 
-                    // Convert to Leaflet format [lat, lng]
-                    const leafletCoords = coords.map(c => [c[1], c[0]]);
-                    allCoordinates.push(leafletCoords);
-
-                    // Accumulate statistics
-                    totalDistance += feature.properties.distance || 0;
-                    totalElevationGain += feature.properties.elevationGain || 0;
-                }
+                // Accumulate statistics
+                totalDistance += feature.properties.distance || 0;
+                totalElevationGain += feature.properties.elevationGain || 0;
             }
+        }
 
-            // Use manual stats if provided, otherwise use calculated
-            const finalDistance = race.manualDistance !== undefined ? race.manualDistance : totalDistance;
-            const finalElevation = race.manualElevation !== undefined ? race.manualElevation : totalElevationGain;
-            race.distance = finalDistance;
-            race.elevation = finalElevation;
+        // Use manual stats if provided, otherwise use calculated
+        race.distance = race.manualDistance !== undefined ? race.manualDistance : totalDistance;
+        race.elevation = race.manualElevation !== undefined ? race.manualElevation : totalElevationGain;
 
-            // Create polyline for each segment
-            if (!racePolylines[race.name]) racePolylines[race.name] = [];
+        // Create polyline for each segment
+        if (!racePolylines[race.name]) racePolylines[race.name] = [];
 
-            allCoordinates.forEach(coords => {
-                const polyline = L.polyline(coords, {
-                    color: race.color,
-                    weight: 3,
-                    opacity: 0.8
-                });
-
-                racePolylines[race.name].push(polyline);
-
-                // Add invisible hit area for easier touch/click targeting
-                if (!hitAreaPolylines[race.name]) hitAreaPolylines[race.name] = [];
-                const hitArea = L.polyline(coords, {
-                    color: 'transparent',
-                    weight: 50,
-                    opacity: 0,
-                    interactive: true
-                });
-                hitAreaPolylines[race.name].push(hitArea);
-                hitArea.on('click', (e) => {
-                    L.DomEvent.stopPropagation(e);
-                    selectRace(race.name);
-                });
-                hitArea.addTo(raceLayers[race.name]);
-
-                polyline.addTo(raceLayers[race.name]);
-
-                // Add directional arrow decorator (hidden until track is highlighted)
-                if (!raceDecorators[race.name]) raceDecorators[race.name] = [];
-                const decorator = L.polylineDecorator(polyline, {
-                    patterns: makeArrowPattern(race.color, 0)
-                });
-                raceDecorators[race.name].push(decorator);
-                decorator.addTo(raceLayers[race.name]);
+        allCoordinates.forEach(coords => {
+            const polyline = L.polyline(coords, {
+                color: race.color,
+                weight: 3,
+                opacity: 0.8,
+                interactive: false
             });
 
-            // Add start/finish markers (hidden until highlighted)
-            if (allCoordinates.length > 0) {
-                const startCoord = allCoordinates[0][0];
-                const lastSeg = allCoordinates[allCoordinates.length - 1];
-                const finishCoord = lastSeg[lastSeg.length - 1];
+            racePolylines[race.name].push(polyline);
 
-                const startMarker = L.marker(startCoord, { icon: startIcon, interactive: false, opacity: 0 });
-                const finishMarker = L.marker(finishCoord, { icon: finishIcon, interactive: false, opacity: 0 });
-                raceMarkers[race.name] = { start: startMarker, finish: finishMarker };
-                startMarker.addTo(raceLayers[race.name]);
-                finishMarker.addTo(raceLayers[race.name]);
-            }
+            // Add invisible hit area for easier touch/click targeting
+            if (!hitAreaPolylines[race.name]) hitAreaPolylines[race.name] = [];
+            const hitArea = L.polyline(coords, {
+                color: 'transparent',
+                weight: 50,
+                opacity: 0,
+                interactive: true
+            });
+            hitAreaPolylines[race.name].push(hitArea);
+            hitArea.on('click', (e) => {
+                L.DomEvent.stopPropagation(e);
+                selectRace(race.name);
+            });
+            hitArea.addTo(raceLayers[race.name]);
 
-            console.log(`Loaded race: ${race.name} (${race.files.length} segments)`);
-        } catch (error) {
-            console.error(`Error loading ${race.name}:`, error);
+            polyline.addTo(raceLayers[race.name]);
+
+            // Add directional arrow decorator (hidden until track is highlighted)
+            if (!raceDecorators[race.name]) raceDecorators[race.name] = [];
+            const decorator = L.polylineDecorator(polyline, {
+                patterns: makeArrowPattern(race.color, 0)
+            });
+            raceDecorators[race.name].push(decorator);
+            decorator.addTo(raceLayers[race.name]);
+        });
+
+        // Add start/finish markers (hidden until highlighted)
+        if (allCoordinates.length > 0) {
+            const startCoord = allCoordinates[0][0];
+            const lastSeg = allCoordinates[allCoordinates.length - 1];
+            const finishCoord = lastSeg[lastSeg.length - 1];
+
+            const startMarker = L.marker(startCoord, { icon: startIcon, interactive: false, opacity: 0 });
+            const finishMarker = L.marker(finishCoord, { icon: finishIcon, interactive: false, opacity: 0 });
+            raceMarkers[race.name] = { start: startMarker, finish: finishMarker };
+            startMarker.addTo(raceLayers[race.name]);
+            finishMarker.addTo(raceLayers[race.name]);
         }
+
+        console.log(`Loaded race: ${race.name} (${race.files.length} segments)`);
+    } catch (error) {
+        console.error(`Error loading ${race.name}:`, error);
+    }
+}
+
+// Load all races, optionally skipping one already loaded
+async function loadRaces(skip = null) {
+    for (const race of raceRoutes) {
+        if (skip && race.name === skip.name) continue;
+        await loadRace(race);
     }
 }
 
@@ -828,7 +853,17 @@ map.zoomControl.setPosition('topright');
 
 // Load all data
 regenerateColors(); // Randomize colors on startup
-loadRaces();
+const params = new URLSearchParams(window.location.search);
+const priorityRace = params.get('race') ? raceBySlug(params.get('race')) : null;
+
+if (priorityRace) {
+    loadRace(priorityRace).then(() => {
+        selectRace(priorityRace.name);
+        loadRaces(priorityRace); // load the rest in the background
+    });
+} else {
+    loadRaces();
+}
 
 // Clicking the map background closes the detail card
 map.on('click', () => {
@@ -923,6 +958,7 @@ function selectRace(raceName) {
     isPanelExpanded = false;
     panel.classList.remove('expanded');
 
+    history.replaceState(null, '', '?race=' + slugify(raceName));
     highlightRace(raceName);
     panToRace(raceName);
     showRaceDetailOverlay(race);
@@ -975,9 +1011,14 @@ function showRaceDetailOverlay(race) {
                 Vis retning
             </label>
             <p class="race-disclaimer">⚠️ Løyper kan endres. Bruk alltid siste versjon fra arrangørens nettside.</p>
-            <a href="${race.url}" target="_blank" rel="noopener noreferrer" class="race-link">
-                Besøk nettside →
-            </a>
+            <div class="race-actions">
+                <a href="${race.url}" target="_blank" rel="noopener noreferrer" class="race-link">
+                    Besøk nettside →
+                </a>
+                <button class="race-share-btn" onclick="shareRace('${race.name.replace(/'/g, "\\'")}')">
+                    Del løype
+                </button>
+            </div>
         </div>
     `;
 
@@ -988,10 +1029,37 @@ function closeRaceDetail() {
     document.getElementById('race-detail-overlay').classList.add('hidden');
     resetRaceStyles();
     selectedRaceName = null;
+    history.replaceState(null, '', window.location.pathname);
 
     document.querySelectorAll('.race-item').forEach(item => {
         item.classList.remove('selected');
     });
+}
+
+function shareRace(raceName) {
+    const url = window.location.origin + window.location.pathname + '?race=' + slugify(raceName);
+    const isTouchDevice = navigator.maxTouchPoints > 0;
+    if (isTouchDevice && navigator.share) {
+        navigator.share({ title: raceName, url });
+    } else {
+        navigator.clipboard.writeText(url).then(() => {
+            const btn = document.querySelector('.race-share-btn');
+            const actions = document.querySelector('.race-actions');
+            if (!btn || !actions) return;
+            btn.textContent = 'Kopiert!';
+            let urlDisplay = actions.querySelector('.share-url-display');
+            if (!urlDisplay) {
+                urlDisplay = document.createElement('div');
+                urlDisplay.className = 'share-url-display';
+                actions.appendChild(urlDisplay);
+            }
+            urlDisplay.textContent = url;
+            setTimeout(() => {
+                btn.textContent = 'Del løype';
+                urlDisplay.textContent = '';
+            }, 3000);
+        });
+    }
 }
 
 function changeRaceColor(raceName) {
