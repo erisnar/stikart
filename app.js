@@ -28,7 +28,7 @@ function showInfoOverlay() {
         fetch('https://stikart.goatcounter.com/counter/TOTAL.json')
             .then(r => r.json())
             .then(data => {
-                el.textContent = 'Besøkende på stikart.no: ' + data.count;
+                el.textContent = 'Antall besøk på stikart.no: ' + data.count;
                 el.dataset.loaded = '1';
             })
             .catch(() => { el.textContent = ''; });
