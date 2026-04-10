@@ -959,6 +959,9 @@ function selectRace(raceName) {
     panel.classList.remove('expanded');
 
     history.replaceState(null, '', '?race=' + slugify(raceName));
+    if (window.goatcounter && window.goatcounter.count) {
+        window.goatcounter.count({ path: '/?race=' + slugify(raceName) });
+    }
     highlightRace(raceName);
     panToRace(raceName);
     showRaceDetailOverlay(race);
