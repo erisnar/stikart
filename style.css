@@ -779,3 +779,19 @@ body {
         font-size: 1.3em;
     }
 }
+
+.distance-dot-tooltip {
+    background: rgba(0, 0, 0, 0.75);
+    border: none;
+    border-radius: 4px;
+    box-shadow: none;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 7px;
+    white-space: nowrap;
+}
+
+.distance-dot-tooltip::before {
+    display: none;
+}

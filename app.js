@@ -726,6 +726,115 @@ async function loadRaces(skip = null) {
     }
 }
 
+// ============================================
+// DISTANCE DOT FEATURE
+// ============================================
+
+let distanceDotMarker = null;
+let activeRoutePoints = null;
+let dotMapMoveHandler = null;
+
+function haversineKm(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const φ1 = lat1 * Math.PI / 180, φ2 = lat2 * Math.PI / 180;
+    const Δφ = (lat2 - lat1) * Math.PI / 180;
+    const Δλ = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(Δφ/2) ** 2 + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ/2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function buildRoutePoints(raceName) {
+    const polylines = racePolylines[raceName];
+    if (!polylines) return [];
+    const points = [];
+    let cumDist = 0;
+    let prev = null;
+    for (const pl of polylines) {
+        for (const ll of pl.getLatLngs()) {
+            if (prev) cumDist += haversineKm(prev.lat, prev.lng, ll.lat, ll.lng);
+            points.push({ lat: ll.lat, lng: ll.lng, cumDist });
+            prev = ll;
+        }
+    }
+    return points;
+}
+
+function nearestOnRoute(points, lat, lng) {
+    let best = { dist: Infinity, lat: 0, lng: 0, km: 0 };
+    for (let i = 0; i < points.length - 1; i++) {
+        const p1 = points[i], p2 = points[i + 1];
+        const dx = p2.lat - p1.lat, dy = p2.lng - p1.lng;
+        const lenSq = dx * dx + dy * dy;
+        const t = lenSq > 0 ? Math.max(0, Math.min(1, ((lat - p1.lat) * dx + (lng - p1.lng) * dy) / lenSq)) : 0;
+        const pLat = p1.lat + t * dx, pLng = p1.lng + t * dy;
+        const d = haversineKm(lat, lng, pLat, pLng);
+        if (d < best.dist) {
+            const segLen = haversineKm(p1.lat, p1.lng, p2.lat, p2.lng);
+            best = { dist: d, lat: pLat, lng: pLng, km: p1.cumDist + t * segLen };
+        }
+    }
+    return best;
+}
+
+function enableDistanceDot(raceName) {
+    disableDistanceDot();
+    if (isTouchDevice) return;
+
+    const race = raceRoutes.find(r => r.name === raceName);
+    if (!race || race.files.length > 1) return;
+
+    activeRoutePoints = buildRoutePoints(raceName);
+    const color = race ? race.color : '#333';
+
+    distanceDotMarker = L.circleMarker([0, 0], {
+        radius: 6,
+        color: '#fff',
+        weight: 2,
+        fillColor: color,
+        fillOpacity: 0,
+        opacity: 0,
+        interactive: false
+    }).addTo(map);
+
+    distanceDotMarker.bindTooltip('', {
+        permanent: true,
+        direction: 'top',
+        offset: [0, -8],
+        className: 'distance-dot-tooltip',
+        opacity: 0
+    });
+
+    dotMapMoveHandler = (e) => {
+        const { lat, lng } = e.latlng;
+        const nearest = nearestOnRoute(activeRoutePoints, lat, lng);
+        // Convert hit area pixel width (~50px) to km at current zoom
+        const metersPerPixel = 156543 * Math.cos(lat * Math.PI / 180) / Math.pow(2, map.getZoom());
+        const thresholdKm = (50 * metersPerPixel) / 1000;
+        if (nearest.dist < thresholdKm) {
+            distanceDotMarker.setLatLng([nearest.lat, nearest.lng]);
+            distanceDotMarker.setStyle({ fillOpacity: 1, opacity: 1 });
+            distanceDotMarker.setTooltipContent(`${nearest.km.toFixed(1)} km`);
+            distanceDotMarker.getTooltip().setOpacity(1);
+        } else {
+            distanceDotMarker.setStyle({ fillOpacity: 0, opacity: 0 });
+            distanceDotMarker.getTooltip().setOpacity(0);
+        }
+    };
+    map.on('mousemove', dotMapMoveHandler);
+}
+
+function disableDistanceDot() {
+    if (distanceDotMarker) {
+        distanceDotMarker.remove();
+        distanceDotMarker = null;
+    }
+    if (dotMapMoveHandler) {
+        map.off('mousemove', dotMapMoveHandler);
+        dotMapMoveHandler = null;
+    }
+    activeRoutePoints = null;
+}
+
 // Highlight a specific race and grey out all others
 function highlightRace(activeName) {
     for (const [name, polylines] of Object.entries(racePolylines)) {
@@ -749,10 +858,12 @@ function highlightRace(activeName) {
             markers.finish.setOpacity(isActive ? 1 : 0);
         }
     }
+    enableDistanceDot(activeName);
 }
 
 // Reset all race styles back to normal
 function resetRaceStyles() {
+    disableDistanceDot();
     for (const [name, polylines] of Object.entries(racePolylines)) {
         const race = raceRoutes.find(r => r.name === name);
         polylines.forEach(pl => {
