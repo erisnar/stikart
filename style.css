@@ -332,6 +332,27 @@ body {
     align-items: center;
 }
 
+.filter-btn-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* Desktop: icon hidden, select shows normally */
+.filter-icon-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.filter-icon-btn svg {
+    display: none;
+}
+
+.filter-icon-btn select {
+    /* inherits #month-select / #category-select styles */
+}
+
 #info-btn {
     background: white;
     border: none;
@@ -411,18 +432,11 @@ body {
 @media (max-width: 768px) {
     #filter-bar {
         left: 10px;
-        right: 60px;
-        gap: 6px;
+        top: 10px;
     }
 
-    #month-select,
-    #category-select {
-        flex: 1;
-        min-width: 0;
-        font-size: 13px;
-        padding: 8px 8px;
-        padding-right: 24px;
-        background-position: right 6px center;
+    .filter-btn-row {
+        gap: 6px;
     }
 
     #info-btn,
@@ -431,6 +445,56 @@ body {
         height: 32px;
         font-size: 14px;
         flex-shrink: 0;
+    }
+
+    /* Hidden on mobile until all routes are loaded */
+    .filter-icon-btn {
+        display: none;
+    }
+
+    .filter-icon-btn.visible {
+        display: flex;
+    }
+
+    /* Mobile: collapse to icon button, select overlaid invisibly */
+    .filter-icon-btn.visible {
+        width: 32px;
+        height: 32px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+
+    .filter-icon-btn svg {
+        display: block;
+        pointer-events: none;
+        color: #444;
+    }
+
+    .filter-icon-btn.active {
+        background: #116A7B;
+    }
+
+    .filter-icon-btn.active svg {
+        color: white;
+    }
+
+    .filter-icon-btn select {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
+        min-width: unset;
+        padding: 0;
+        box-shadow: none;
     }
 }
 
@@ -778,6 +842,79 @@ body {
     .info-content h2 {
         font-size: 1.3em;
     }
+}
+
+.mobile-welcome {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.mobile-welcome.hidden {
+    display: none;
+}
+
+.mobile-welcome-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 32px 24px;
+    text-align: center;
+    max-width: 300px;
+    width: 90%;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+
+.mobile-welcome-logo {
+    width: 56px;
+    height: 56px;
+    margin-bottom: 12px;
+}
+
+.mobile-welcome-card h2 {
+    font-size: 1.5em;
+    margin: 0 0 4px;
+    color: #116A7B;
+}
+
+.mobile-welcome-card p {
+    color: #666;
+    margin: 0 0 24px;
+    font-size: 0.95em;
+}
+
+.mobile-welcome-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.mobile-welcome-btn {
+    border: none;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 1em;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.mobile-welcome-btn.primary {
+    background: #116A7B;
+    color: #fff;
+}
+
+.mobile-welcome-btn.secondary {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.race-loading {
+    color: #666;
+    font-style: italic;
+    margin-top: 8px;
 }
 
 .distance-dot-tooltip {

@@ -580,12 +580,14 @@ function applyFilters() {
 // Filter races by month
 function filterByMonth(month) {
     currentMonthFilter = month;
+    document.getElementById('month-filter-btn').classList.toggle('active', month !== null);
     applyFilters();
 }
 
 // Filter races by category
 function filterByCategory(category) {
     currentCategoryFilter = category;
+    document.getElementById('category-filter-btn').classList.toggle('active', category !== null);
     applyFilters();
 }
 
@@ -970,9 +972,9 @@ const priorityRace = params.get('race') ? raceBySlug(params.get('race')) : null;
 if (priorityRace) {
     loadRace(priorityRace).then(() => {
         selectRace(priorityRace.name);
-        loadRaces(priorityRace); // load the rest in the background
+        if (!isTouchDevice) loadRaces(priorityRace);
     });
-} else {
+} else if (!isTouchDevice) {
     loadRaces();
 }
 
@@ -988,6 +990,19 @@ map.on('click', () => {
 let isPanelExpanded = false;
 let selectedRaceName = null;
 let isMobile = window.innerWidth <= 768;
+
+function welcomeLoadAll() {
+    document.getElementById('mobile-welcome').classList.add('hidden');
+    document.getElementById('month-filter-btn').classList.add('visible');
+    document.getElementById('category-filter-btn').classList.add('visible');
+    loadRaces();
+}
+
+function welcomePickFromList() {
+    document.getElementById('mobile-welcome').classList.add('hidden');
+    isPanelExpanded = true;
+    document.getElementById('race-panel').classList.add('expanded');
+}
 
 // Initialize race panel
 function initRacePanel() {
@@ -1009,6 +1024,11 @@ function initRacePanel() {
         isMobile = window.innerWidth <= 768;
         renderRaceList();
     }, 250));
+
+    // On mobile show welcome screen (unless arriving via direct race link)
+    if (isTouchDevice && !priorityRace) {
+        document.getElementById('mobile-welcome').classList.remove('hidden');
+    }
 
     // Initial render after races load
     setTimeout(renderRaceList, 500);
@@ -1054,7 +1074,7 @@ function renderRaceList() {
     });
 }
 
-function selectRace(raceName) {
+async function selectRace(raceName) {
     const race = raceRoutes.find(r => r.name === raceName);
     if (!race) return;
 
@@ -1073,6 +1093,14 @@ function selectRace(raceName) {
     if (window.goatcounter && window.goatcounter.count) {
         window.goatcounter.count({ path: '/?race=' + slugify(raceName) });
     }
+
+    // Lazy-load GPX if not yet fetched (mobile)
+    const isLoaded = racePolylines[raceName] && racePolylines[raceName].length > 0;
+    if (!isLoaded) {
+        showRaceDetailOverlay(race, true);
+        await loadRace(race);
+    }
+
     highlightRace(raceName);
     panToRace(raceName);
     showRaceDetailOverlay(race);
@@ -1100,9 +1128,15 @@ function openRacePopup(raceName) {
     firstPolyline.openPopup(center);
 }
 
-function showRaceDetailOverlay(race) {
+function showRaceDetailOverlay(race, loading = false) {
     const overlay = document.getElementById('race-detail-overlay');
     const content = document.getElementById('race-detail-content');
+
+    if (loading) {
+        content.innerHTML = `<div class="race-popup"><h3>${race.name}</h3><p class="race-loading">Laster løype…</p></div>`;
+        overlay.classList.remove('hidden');
+        return;
+    }
 
     const downloadLinks = race.files.map((file, index) => {
         const fileName = file.split('/').pop();
@@ -1148,6 +1182,7 @@ function closeRaceDetail() {
     document.querySelectorAll('.race-item').forEach(item => {
         item.classList.remove('selected');
     });
+
 }
 
 function shareRace(raceName) {
