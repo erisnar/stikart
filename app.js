@@ -837,7 +837,11 @@ async function loadRace(race) {
             hitAreaPolylines[race.name].push(hitArea);
             hitArea.on('click', (e) => {
                 L.DomEvent.stopPropagation(e);
-                selectRace(race.name);
+                if (selectedRaceName) {
+                    closeRaceDetail();
+                } else {
+                    selectRace(race.name);
+                }
             });
             hitArea.addTo(raceLayers[race.name]);
 
@@ -887,6 +891,7 @@ let distanceDotMarker = null;
 let activeRoutePoints = null;
 let dotMapMoveHandler = null;
 let chartTouchMarker = null;
+let dotFrozen = false;
 
 function haversineKm(lat1, lon1, lat2, lon2) {
     const R = 6371;
@@ -947,7 +952,7 @@ function enableDistanceDot(raceName) {
         fillColor: color,
         fillOpacity: 0,
         opacity: 0,
-        interactive: false
+        interactive: true
     }).addTo(map);
 
     distanceDotMarker.bindTooltip('', {
@@ -958,7 +963,16 @@ function enableDistanceDot(raceName) {
         opacity: 0
     });
 
+    distanceDotMarker.on('click', (e) => {
+        L.DomEvent.stopPropagation(e);
+        dotFrozen = !dotFrozen;
+        distanceDotMarker.setStyle(dotFrozen
+            ? { color: '#e67e22', weight: 3, radius: 8 }
+            : { color: '#fff', weight: 2, radius: 6 });
+    });
+
     dotMapMoveHandler = (e) => {
+        if (dotFrozen) return;
         const { lat, lng } = e.latlng;
         const nearest = nearestOnRoute(activeRoutePoints, lat, lng);
         // Convert hit area pixel width (~50px) to km at current zoom
@@ -980,6 +994,7 @@ function enableDistanceDot(raceName) {
 }
 
 function disableDistanceDot() {
+    dotFrozen = false;
     if (distanceDotMarker) {
         distanceDotMarker.remove();
         distanceDotMarker = null;
@@ -1017,6 +1032,7 @@ function enableChartMouse(raceName) {
     svg.style.cursor = 'crosshair';
 
     const handleMove = (e) => {
+        if (dotFrozen) return;
         const rect = svg.getBoundingClientRect();
         const svgX = (e.clientX - rect.left) / rect.width * 300;
         const meta = raceChartMeta[raceName];
@@ -1046,12 +1062,28 @@ function enableChartMouse(raceName) {
     };
 
     const handleLeave = () => {
+        if (dotFrozen) return;
         if (chartTouchMarker) { chartTouchMarker.remove(); chartTouchMarker = null; }
         updateElevCursor(raceName, 0, false);
     };
 
+    const handleClick = (e) => {
+        e.stopPropagation();
+        dotFrozen = !dotFrozen;
+        if (chartTouchMarker) {
+            chartTouchMarker.setStyle(dotFrozen
+                ? { color: '#e67e22', weight: 3 }
+                : { color: '#fff', weight: 2 });
+        }
+        if (!dotFrozen) {
+            if (chartTouchMarker) { chartTouchMarker.remove(); chartTouchMarker = null; }
+            updateElevCursor(raceName, 0, false);
+        }
+    };
+
     svg.addEventListener('mousemove', handleMove);
     svg.addEventListener('mouseleave', handleLeave);
+    svg.addEventListener('click', handleClick);
 }
 
 function enableChartTouch(raceName) {
@@ -1063,9 +1095,13 @@ function enableChartTouch(raceName) {
 
     svg.classList.add('chart-interactive');
 
+    let touchStartX = null;
+
     const handleTouch = (e) => {
         e.preventDefault();
+        if (dotFrozen) return;
         const touch = e.touches[0] || e.changedTouches[0];
+        if (e.type === 'touchstart') touchStartX = touch.clientX;
         const rect = svg.getBoundingClientRect();
         const svgX = (touch.clientX - rect.left) / rect.width * 300;
 
@@ -1095,7 +1131,24 @@ function enableChartTouch(raceName) {
         }
     };
 
-    const handleTouchEnd = () => {
+    const handleTouchEnd = (e) => {
+        const touch = e.changedTouches[0];
+        const moved = touchStartX !== null && Math.abs(touch.clientX - touchStartX) > 8;
+        if (!moved) {
+            // Tap: toggle freeze
+            dotFrozen = !dotFrozen;
+            if (chartTouchMarker) {
+                chartTouchMarker.setStyle(dotFrozen
+                    ? { color: '#e67e22', weight: 3 }
+                    : { color: '#fff', weight: 2 });
+            }
+            if (!dotFrozen) {
+                if (chartTouchMarker) { chartTouchMarker.remove(); chartTouchMarker = null; }
+                updateElevCursor(raceName, 0, false);
+            }
+            return;
+        }
+        if (dotFrozen) return;
         if (chartTouchMarker) { chartTouchMarker.remove(); chartTouchMarker = null; }
         updateElevCursor(raceName, 0, false);
     };
@@ -1347,6 +1400,9 @@ async function selectRace(raceName) {
     if (!race) return;
 
     selectedRaceName = raceName;
+
+    // Clear search so the panel is ready for the next race selection
+    if (currentSearchFilter) clearSearch();
 
     document.querySelectorAll('.race-item').forEach(item => {
         item.classList.toggle('selected', item.dataset.race === raceName);
