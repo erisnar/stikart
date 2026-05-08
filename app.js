@@ -1502,9 +1502,14 @@ function changeRaceColor(raceName) {
     const raceItem = document.querySelector(`.race-item[data-race="${raceName}"]`);
     if (raceItem) {
         const indicator = raceItem.querySelector('.race-color-indicator');
-        if (indicator) {
-            indicator.style.backgroundColor = race.color;
-        }
+        if (indicator) indicator.style.backgroundColor = race.color;
+    }
+
+    // Update elevation chart in open detail overlay
+    const chartPath = document.querySelector('#race-detail-content .elevation-chart path');
+    if (chartPath) {
+        chartPath.setAttribute('fill', race.color);
+        chartPath.setAttribute('stroke', race.color);
     }
 }
 
@@ -1537,11 +1542,21 @@ applyFilters = function() {
     }
 };
 
-// Wrap regenerateColors to update panel colors
+// Wrap regenerateColors to update panel colors and open detail chart
 const originalRegenerateColors = regenerateColors;
 regenerateColors = function() {
     originalRegenerateColors();
     renderRaceList();
+    if (selectedRaceName) {
+        const race = raceRoutes.find(r => r.name === selectedRaceName);
+        if (race) {
+            const chartPath = document.querySelector('#race-detail-content .elevation-chart path');
+            if (chartPath) {
+                chartPath.setAttribute('fill', race.color);
+                chartPath.setAttribute('stroke', race.color);
+            }
+        }
+    }
 };
 
 // Initialize panel on DOM ready
