@@ -561,7 +561,8 @@ function applyFilters() {
         const raceMonth = new Date(race.date).getMonth();
         const matchesMonth = currentMonthFilter === null || raceMonth === currentMonthFilter;
         const matchesCategory = currentCategoryFilter === null || race.category === currentCategoryFilter;
-        const shouldShow = matchesMonth && matchesCategory;
+        const matchesSearch = !currentSearchFilter || race.name.toLowerCase().includes(currentSearchFilter);
+        const shouldShow = matchesMonth && matchesCategory && matchesSearch;
 
         if (shouldShow && !map.hasLayer(raceLayers[race.name])) {
             map.addLayer(raceLayers[race.name]);
@@ -591,6 +592,25 @@ function filterByCategory(category) {
     applyFilters();
 }
 
+let currentSearchFilter = null;
+
+function filterBySearch(value) {
+    const trimmed = value.trim().toLowerCase();
+    currentSearchFilter = trimmed || null;
+    const clearBtn = document.getElementById('search-clear-btn');
+    if (clearBtn) clearBtn.style.display = trimmed ? 'inline' : 'none';
+    applyFilters();
+}
+
+function clearSearch() {
+    currentSearchFilter = null;
+    const input = document.getElementById('search-input');
+    if (input) input.value = '';
+    const clearBtn = document.getElementById('search-clear-btn');
+    if (clearBtn) clearBtn.style.display = 'none';
+    applyFilters();
+}
+
 // Track layer groups for each race
 const raceLayers = {};
 const layerStates = {};
@@ -598,7 +618,8 @@ const racePolylines = {}; // track polylines per race for highlight/dim
 const hitAreaPolylines = {}; // invisible wider polylines for touch
 const raceDecorators = {}; // directional arrow decorators
 const raceMarkers = {}; // start/finish markers per race
-const raceArrowsVisible = {}; // tracks whether arrows are toggled on per race
+const raceElevationData = {};
+const raceChartMeta = {};
 
 const startIcon = L.divIcon({
     className: '',
@@ -631,12 +652,131 @@ raceRoutes.forEach(race => {
     raceLayers[race.name] = L.layerGroup().addTo(map);
 });
 
+function buildElevationProfile(coords, offsetKm) {
+    // coords is [lon, lat, ele] format
+    const points = [];
+    let cumKm = offsetKm || 0;
+    for (let i = 0; i < coords.length; i++) {
+        if (i > 0) cumKm += haversineKm(coords[i-1][1], coords[i-1][0], coords[i][1], coords[i][0]);
+        if (coords[i][2] !== null && coords[i][2] !== undefined) {
+            points.push({ km: cumKm, ele: coords[i][2] });
+        }
+    }
+    return { points, totalKm: cumKm };
+}
+
+function renderElevationChart(elevPoints, color, raceName) {
+    if (!elevPoints || elevPoints.length < 2) return '';
+
+    const n = Math.min(elevPoints.length, 250);
+    const step = (elevPoints.length - 1) / (n - 1);
+    const sampled = Array.from({ length: n }, (_, i) => elevPoints[Math.round(i * step)]);
+
+    const totalKm = sampled[sampled.length - 1].km;
+    if (!totalKm) return '';
+
+    const eles = sampled.map(p => p.ele);
+    const minEle = Math.min(...eles);
+    const maxEle = Math.max(...eles);
+    const eleRange = maxEle - minEle || 1;
+
+    if (raceName) raceChartMeta[raceName] = { totalKm, minEle, eleRange };
+
+    const W = 300, H = 64;
+    const padL = 36, padR = 4, padT = 4, padB = 16;
+    const chartW = W - padL - padR;
+    const chartH = H - padT - padB;
+
+    const toX = km => padL + (km / totalKm) * chartW;
+    const toY = ele => padT + (1 - (ele - minEle) / eleRange) * chartH;
+
+    const pts = sampled.map(p => `${toX(p.km).toFixed(1)},${toY(p.ele).toFixed(1)}`);
+    const bottom = (padT + chartH).toFixed(1);
+    const pathD = `M ${pts.join(' L ')} L ${toX(totalKm).toFixed(1)},${bottom} L ${padL},${bottom} Z`;
+
+    return `<div class="elevation-chart-wrapper">
+        <svg viewBox="0 0 ${W} ${H}" class="elevation-chart" xmlns="http://www.w3.org/2000/svg">
+            <path d="${pathD}" fill="${color}" fill-opacity="0.2" stroke="${color}" stroke-width="1.5" stroke-linejoin="round"/>
+            <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT + chartH}" stroke="#ddd" stroke-width="0.5"/>
+            <line x1="${padL}" y1="${padT + chartH}" x2="${padL + chartW}" y2="${padT + chartH}" stroke="#ddd" stroke-width="0.5"/>
+            <text x="${padL - 3}" y="${padT + 8}" text-anchor="end" font-size="8" fill="#888">${Math.round(maxEle)}m</text>
+            <text x="${padL - 3}" y="${padT + chartH}" text-anchor="end" font-size="8" fill="#888">${Math.round(minEle)}m</text>
+            <text x="${padL}" y="${H - 2}" text-anchor="start" font-size="8" fill="#aaa">0</text>
+            <text x="${padL + chartW}" y="${H - 2}" text-anchor="end" font-size="8" fill="#aaa">${Math.round(totalKm)}km</text>
+            <line id="elev-cursor" x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT + chartH}" stroke="#333" stroke-width="1" stroke-dasharray="2,1" opacity="0" pointer-events="none"/>
+            <circle id="elev-dot" cx="${padL}" cy="${padT + chartH / 2}" r="3" fill="#111" stroke="white" stroke-width="1.5" opacity="0" pointer-events="none"/>
+        </svg>
+    </div>`;
+}
+
+function getLatLngAtKm(routePoints, km) {
+    if (!routePoints || routePoints.length === 0) return null;
+    let lo = 0, hi = routePoints.length - 1;
+    while (lo < hi) {
+        const mid = (lo + hi) >> 1;
+        if (routePoints[mid].cumDist < km) lo = mid + 1;
+        else hi = mid;
+    }
+    if (lo === 0) return routePoints[0];
+    const p1 = routePoints[lo - 1], p2 = routePoints[lo];
+    const span = p2.cumDist - p1.cumDist;
+    const t = span > 0 ? (km - p1.cumDist) / span : 0;
+    return { lat: p1.lat + t * (p2.lat - p1.lat), lng: p1.lng + t * (p2.lng - p1.lng) };
+}
+
+function getElevAtKm(raceName, km) {
+    const pts = raceElevationData[raceName];
+    if (!pts || pts.length === 0) return null;
+    let lo = 0, hi = pts.length - 1;
+    while (lo < hi) {
+        const mid = (lo + hi) >> 1;
+        if (pts[mid].km < km) lo = mid + 1;
+        else hi = mid;
+    }
+    if (lo === 0) return pts[0].ele;
+    const p1 = pts[lo - 1], p2 = pts[lo];
+    const t = (km - p1.km) / (p2.km - p1.km);
+    return p1.ele + t * (p2.ele - p1.ele);
+}
+
+function updateElevCursor(raceName, km, visible) {
+    const cursor = document.getElementById('elev-cursor');
+    const dot = document.getElementById('elev-dot');
+    if (!cursor || !dot) return;
+
+    const meta = raceChartMeta[raceName];
+    if (!meta || !visible) {
+        cursor.setAttribute('opacity', '0');
+        dot.setAttribute('opacity', '0');
+        return;
+    }
+
+    const padL = 36, padR = 4, padT = 4, padB = 16;
+    const W = 300, H = 64;
+    const chartW = W - padL - padR;
+    const chartH = H - padT - padB;
+
+    const x = (padL + (km / meta.totalKm) * chartW).toFixed(1);
+    cursor.setAttribute('x1', x);
+    cursor.setAttribute('x2', x);
+    cursor.setAttribute('opacity', '0.5');
+
+    const ele = getElevAtKm(raceName, km);
+    if (ele !== null) {
+        const y = (padT + (1 - (ele - meta.minEle) / meta.eleRange) * chartH).toFixed(1);
+        dot.setAttribute('cx', x);
+        dot.setAttribute('cy', y);
+        dot.setAttribute('opacity', '1');
+    }
+}
+
 // Load a single race's GPX files and add to map
 async function loadRace(race) {
     try {
         const allCoordinates = [];
         let totalDistance = 0;
         let totalElevationGain = 0;
+        if (!raceElevationData[race.name]) raceElevationData[race.name] = [];
 
         // Load all GPX segments for this race
         for (const gpxFile of race.files) {
@@ -655,6 +795,17 @@ async function loadRace(race) {
                 // Accumulate statistics
                 totalDistance += feature.properties.distance || 0;
                 totalElevationGain += feature.properties.elevationGain || 0;
+
+                // Only build elevation profile for races with sequential segments.
+                // Races with manualDistance have non-sequential files (different starting points)
+                // and concatenating their coords would give a wrong cumulative distance.
+                if (race.useCalculatedStats) {
+                    const offsetKm = raceElevationData[race.name].length > 0
+                        ? raceElevationData[race.name][raceElevationData[race.name].length - 1].km
+                        : 0;
+                    const { points } = buildElevationProfile(coords, offsetKm);
+                    raceElevationData[race.name].push(...points);
+                }
             }
         }
 
@@ -735,6 +886,7 @@ async function loadRaces(skip = null) {
 let distanceDotMarker = null;
 let activeRoutePoints = null;
 let dotMapMoveHandler = null;
+let chartTouchMarker = null;
 
 function haversineKm(lat1, lon1, lat2, lon2) {
     const R = 6371;
@@ -783,7 +935,7 @@ function enableDistanceDot(raceName) {
     if (isTouchDevice) return;
 
     const race = raceRoutes.find(r => r.name === raceName);
-    if (!race || race.files.length > 1) return;
+    if (!race) return;
 
     activeRoutePoints = buildRoutePoints(raceName);
     const color = race ? race.color : '#333';
@@ -812,7 +964,8 @@ function enableDistanceDot(raceName) {
         // Convert hit area pixel width (~50px) to km at current zoom
         const metersPerPixel = 156543 * Math.cos(lat * Math.PI / 180) / Math.pow(2, map.getZoom());
         const thresholdKm = (50 * metersPerPixel) / 1000;
-        if (nearest.dist < thresholdKm) {
+        const isNear = nearest.dist < thresholdKm;
+        if (isNear) {
             distanceDotMarker.setLatLng([nearest.lat, nearest.lng]);
             distanceDotMarker.setStyle({ fillOpacity: 1, opacity: 1 });
             distanceDotMarker.setTooltipContent(`${nearest.km.toFixed(1)} km`);
@@ -821,6 +974,7 @@ function enableDistanceDot(raceName) {
             distanceDotMarker.setStyle({ fillOpacity: 0, opacity: 0 });
             distanceDotMarker.getTooltip().setOpacity(0);
         }
+        updateElevCursor(raceName, nearest.km, isNear);
     };
     map.on('mousemove', dotMapMoveHandler);
 }
@@ -835,6 +989,120 @@ function disableDistanceDot() {
         dotMapMoveHandler = null;
     }
     activeRoutePoints = null;
+    const cursor = document.getElementById('elev-cursor');
+    const dot = document.getElementById('elev-dot');
+    if (cursor) cursor.setAttribute('opacity', '0');
+    if (dot) dot.setAttribute('opacity', '0');
+}
+
+function minimizeDetail() {
+    document.getElementById('race-detail-overlay').classList.add('minimized');
+    const btn = document.getElementById('minimize-detail');
+    if (btn) { btn.innerHTML = '&#9650;'; btn.title = 'Utvid'; }
+}
+
+function expandDetail() {
+    document.getElementById('race-detail-overlay').classList.remove('minimized');
+    const btn = document.getElementById('minimize-detail');
+    if (btn) { btn.innerHTML = '&#9660;'; btn.title = 'Minimer'; }
+}
+
+function enableChartMouse(raceName) {
+    const svg = document.querySelector('.elevation-chart');
+    if (!svg) return;
+
+    const routePoints = buildRoutePoints(raceName);
+    if (!routePoints || routePoints.length === 0) return;
+
+    svg.style.cursor = 'crosshair';
+
+    const handleMove = (e) => {
+        const rect = svg.getBoundingClientRect();
+        const svgX = (e.clientX - rect.left) / rect.width * 300;
+        const meta = raceChartMeta[raceName];
+        if (!meta) return;
+
+        const padL = 36, chartW = 260;
+        const km = Math.max(0, Math.min(meta.totalKm, (svgX - padL) / chartW * meta.totalKm));
+
+        updateElevCursor(raceName, km, true);
+
+        const pos = getLatLngAtKm(routePoints, km);
+        if (!pos) return;
+
+        if (!chartTouchMarker) {
+            chartTouchMarker = L.circleMarker([pos.lat, pos.lng], {
+                radius: 8, color: '#fff', weight: 2,
+                fillColor: '#111', fillOpacity: 0.85, interactive: false
+            }).addTo(map);
+            chartTouchMarker.bindTooltip(`${km.toFixed(1)} km`, {
+                permanent: true, direction: 'top', offset: [0, -10],
+                className: 'distance-dot-tooltip', opacity: 1
+            });
+        } else {
+            chartTouchMarker.setLatLng([pos.lat, pos.lng]);
+            chartTouchMarker.setTooltipContent(`${km.toFixed(1)} km`);
+        }
+    };
+
+    const handleLeave = () => {
+        if (chartTouchMarker) { chartTouchMarker.remove(); chartTouchMarker = null; }
+        updateElevCursor(raceName, 0, false);
+    };
+
+    svg.addEventListener('mousemove', handleMove);
+    svg.addEventListener('mouseleave', handleLeave);
+}
+
+function enableChartTouch(raceName) {
+    const svg = document.querySelector('.elevation-chart');
+    if (!svg) return;
+
+    const routePoints = buildRoutePoints(raceName);
+    if (!routePoints || routePoints.length === 0) return;
+
+    svg.classList.add('chart-interactive');
+
+    const handleTouch = (e) => {
+        e.preventDefault();
+        const touch = e.touches[0] || e.changedTouches[0];
+        const rect = svg.getBoundingClientRect();
+        const svgX = (touch.clientX - rect.left) / rect.width * 300;
+
+        const meta = raceChartMeta[raceName];
+        if (!meta) return;
+
+        const padL = 36, chartW = 260;
+        const km = Math.max(0, Math.min(meta.totalKm, (svgX - padL) / chartW * meta.totalKm));
+
+        updateElevCursor(raceName, km, true);
+
+        const pos = getLatLngAtKm(routePoints, km);
+        if (!pos) return;
+
+        if (!chartTouchMarker) {
+            chartTouchMarker = L.circleMarker([pos.lat, pos.lng], {
+                radius: 8, color: '#fff', weight: 2,
+                fillColor: '#111', fillOpacity: 0.85, interactive: false
+            }).addTo(map);
+            chartTouchMarker.bindTooltip(`${km.toFixed(1)} km`, {
+                permanent: true, direction: 'top', offset: [0, -10],
+                className: 'distance-dot-tooltip', opacity: 1
+            });
+        } else {
+            chartTouchMarker.setLatLng([pos.lat, pos.lng]);
+            chartTouchMarker.setTooltipContent(`${km.toFixed(1)} km`);
+        }
+    };
+
+    const handleTouchEnd = () => {
+        if (chartTouchMarker) { chartTouchMarker.remove(); chartTouchMarker = null; }
+        updateElevCursor(raceName, 0, false);
+    };
+
+    svg.addEventListener('touchstart', handleTouch, { passive: false });
+    svg.addEventListener('touchmove', handleTouch, { passive: false });
+    svg.addEventListener('touchend', handleTouchEnd);
 }
 
 // Highlight a specific race and grey out all others
@@ -850,9 +1118,8 @@ function highlightRace(activeName) {
             }
         });
         const race = raceRoutes.find(r => r.name === name);
-        const showArrows = isActive && !!raceArrowsVisible[name];
         (raceDecorators[name] || []).forEach(dec => {
-            dec.setPatterns(makeArrowPattern(race.color, showArrows ? 1 : 0));
+            dec.setPatterns(makeArrowPattern(race.color, 0));
         });
         const markers = raceMarkers[name];
         if (markers) {
@@ -882,13 +1149,6 @@ function resetRaceStyles() {
     }
 }
 
-function toggleRaceArrows(raceName, show) {
-    raceArrowsVisible[raceName] = show;
-    const race = raceRoutes.find(r => r.name === raceName);
-    (raceDecorators[raceName] || []).forEach(dec => {
-        dec.setPatterns(makeArrowPattern(race.color, show ? 1 : 0));
-    });
-}
 
 // Custom layer control (base map only)
 L.Control.CustomLayers = L.Control.extend({
@@ -1011,8 +1271,15 @@ function initRacePanel() {
     // Click/tap to toggle
     handle.addEventListener('click', togglePanel);
 
-    // Close detail overlay
+    // Close / minimize detail overlay
     document.getElementById('close-detail').addEventListener('click', closeRaceDetail);
+    document.getElementById('minimize-detail').addEventListener('click', () => {
+        if (document.getElementById('race-detail-overlay').classList.contains('minimized')) {
+            expandDetail();
+        } else {
+            minimizeDetail();
+        }
+    });
     document.getElementById('race-detail-overlay').addEventListener('click', (e) => {
         if (e.target.classList.contains('race-detail-overlay')) {
             closeRaceDetail();
@@ -1045,7 +1312,8 @@ function getVisibleRaces() {
         const raceMonth = new Date(race.date).getMonth();
         const matchesMonth = currentMonthFilter === null || raceMonth === currentMonthFilter;
         const matchesCategory = currentCategoryFilter === null || race.category === currentCategoryFilter;
-        return matchesMonth && matchesCategory;
+        const matchesSearch = !currentSearchFilter || race.name.toLowerCase().includes(currentSearchFilter);
+        return matchesMonth && matchesCategory && matchesSearch;
     }).sort((a, b) => new Date(a.date) - new Date(b.date));
 }
 
@@ -1104,6 +1372,8 @@ async function selectRace(raceName) {
     highlightRace(raceName);
     panToRace(raceName);
     showRaceDetailOverlay(race);
+    if (isTouchDevice) enableChartTouch(raceName);
+    else enableChartMouse(raceName);
 }
 
 function panToRace(raceName) {
@@ -1148,29 +1418,29 @@ function showRaceDetailOverlay(race, loading = false) {
     content.innerHTML = `
         <div class="race-popup">
             <h3>${race.name} <span class="popup-color-btn" onclick="changeRaceColor('${race.name}')" title="Endre farge">🎨</span></h3>
-            <div class="race-details">
-                <div><strong>Dato:</strong> ${formatDate(race.date)}</div>
-                <div><strong>Distanse:</strong> ${race.distance ? race.distance.toFixed(1) + ' km' : 'N/A'}</div>
-                <div><strong>Høydemeter:</strong> ${race.elevation ? race.elevation + ' m' : 'N/A'}</div>
-                <div><strong>GPX:</strong> ${downloadLinks}</div>
+            <div class="race-popup-details">
+                <div class="race-details">
+                    <div><strong>Dato:</strong> ${formatDate(race.date)}</div>
+                    <div><strong>Distanse:</strong> ${race.distance ? race.distance.toFixed(1) + ' km' : 'N/A'}</div>
+                    <div><strong>Høydemeter:</strong> ${race.elevation ? race.elevation + ' m' : 'N/A'}</div>
+                    <div><strong>GPX:</strong> ${downloadLinks}</div>
+                </div>
+                <div class="race-actions">
+                    <a href="${race.url}" target="_blank" rel="noopener noreferrer" class="race-link">
+                        Besøk nettside →
+                    </a>
+                    <button class="race-share-btn" onclick="shareRace('${race.name.replace(/'/g, "\\'")}')">
+                        Del løype
+                    </button>
+                </div>
             </div>
-            <label class="direction-toggle">
-                <input type="checkbox" onchange="toggleRaceArrows('${race.name}', this.checked)" ${raceArrowsVisible[race.name] ? 'checked' : ''}>
-                Vis retning
-            </label>
-            <p class="race-disclaimer">⚠️ Løyper kan endres. Bruk alltid siste versjon fra arrangørens nettside.</p>
-            <div class="race-actions">
-                <a href="${race.url}" target="_blank" rel="noopener noreferrer" class="race-link">
-                    Besøk nettside →
-                </a>
-                <button class="race-share-btn" onclick="shareRace('${race.name.replace(/'/g, "\\'")}')">
-                    Del løype
-                </button>
-            </div>
+            ${renderElevationChart(raceElevationData[race.name], race.color, race.name)}
         </div>
     `;
 
-    overlay.classList.remove('hidden');
+    overlay.classList.remove('hidden', 'minimized');
+    const minBtn = document.getElementById('minimize-detail');
+    if (minBtn) { minBtn.innerHTML = '&#9660;'; minBtn.title = 'Minimer'; }
 }
 
 function closeRaceDetail() {
@@ -1178,11 +1448,12 @@ function closeRaceDetail() {
     resetRaceStyles();
     selectedRaceName = null;
     history.replaceState(null, '', window.location.pathname);
+    if (chartTouchMarker) { chartTouchMarker.remove(); chartTouchMarker = null; }
+    document.getElementById('race-detail-overlay').classList.remove('minimized');
 
     document.querySelectorAll('.race-item').forEach(item => {
         item.classList.remove('selected');
     });
-
 }
 
 function shareRace(raceName) {
@@ -1258,7 +1529,8 @@ applyFilters = function() {
             const raceMonth = new Date(race.date).getMonth();
             const matchesMonth = currentMonthFilter === null || raceMonth === currentMonthFilter;
             const matchesCategory = currentCategoryFilter === null || race.category === currentCategoryFilter;
-            if (!matchesMonth || !matchesCategory) {
+            const matchesSearch = !currentSearchFilter || race.name.toLowerCase().includes(currentSearchFilter);
+            if (!matchesMonth || !matchesCategory || !matchesSearch) {
                 closeRaceDetail();
             }
         }

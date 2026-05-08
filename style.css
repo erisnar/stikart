@@ -133,25 +133,6 @@ body {
     opacity: 1;
 }
 
-.race-popup .direction-toggle {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 10px;
-    font-size: 0.85em;
-    cursor: pointer;
-    user-select: none;
-}
-
-.race-popup .race-disclaimer {
-    margin: 10px 0 0 0;
-    padding: 8px;
-    background: #fff3cd;
-    border-radius: 4px;
-    font-size: 0.8em;
-    color: #856404;
-    line-height: 1.3;
-}
 
 .race-download-link {
     color: #116A7B;
@@ -697,6 +678,68 @@ body {
     z-index: 1;
 }
 
+.minimize-detail {
+    display: none;
+    position: absolute;
+    top: 12px;
+    right: 48px;
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: #CDC2AE;
+    border-radius: 50%;
+    font-size: 12px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+@media (max-width: 768px) {
+    .minimize-detail {
+        display: flex;
+    }
+}
+
+/* Minimized state — mobile only */
+@media (max-width: 768px) {
+    .race-detail-overlay.minimized {
+        left: 0;
+        right: 0;
+        bottom: 38px;
+        padding: 0;
+    }
+
+    .race-detail-overlay.minimized .race-detail-card {
+        width: 100%;
+        border-radius: 12px 12px 0 0;
+        max-height: none;
+        overflow: hidden;
+    }
+
+    .race-detail-overlay.minimized .race-popup-details {
+        display: none;
+    }
+
+    .race-detail-overlay.minimized .race-popup h3 {
+        font-size: 0.9em;
+        margin-bottom: 0;
+        padding-bottom: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding-right: 72px;
+    }
+
+    .race-detail-overlay.minimized .elevation-chart-wrapper {
+        margin: 0;
+    }
+
+    .race-detail-overlay.minimized .race-popup {
+        padding: 10px 15px 8px;
+    }
+}
+
 /* Desktop adjustments */
 @media (min-width: 769px) {
     .race-panel {
@@ -915,6 +958,68 @@ body {
     color: #666;
     font-style: italic;
     margin-top: 8px;
+}
+
+.panel-search {
+    padding: 8px 12px;
+    border-bottom: 1px solid #CDC2AE;
+    flex-shrink: 0;
+}
+
+.search-input-wrapper {
+    display: flex;
+    align-items: center;
+    background: #f0f0f0;
+    border-radius: 8px;
+    padding: 6px 10px;
+    gap: 6px;
+}
+
+.search-input-wrapper svg {
+    flex-shrink: 0;
+    color: #888;
+}
+
+#search-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    color: #333;
+    outline: none;
+    min-width: 0;
+}
+
+#search-input::placeholder {
+    color: #aaa;
+}
+
+.search-clear-btn {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 15px;
+    color: #888;
+    padding: 0 2px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.search-clear-btn:hover {
+    color: #333;
+}
+
+.elevation-chart-wrapper {
+    margin: 8px 0 4px;
+}
+
+.elevation-chart {
+    width: 100%;
+    display: block;
+}
+
+.elevation-chart.chart-interactive {
+    touch-action: none;
 }
 
 .distance-dot-tooltip {
