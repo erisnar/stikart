@@ -1099,9 +1099,15 @@ function enableChartTouch(raceName) {
 
     const handleTouch = (e) => {
         e.preventDefault();
-        if (dotFrozen) return;
         const touch = e.touches[0] || e.changedTouches[0];
-        if (e.type === 'touchstart') touchStartX = touch.clientX;
+        if (e.type === 'touchstart') {
+            touchStartX = touch.clientX;
+            if (dotFrozen) {
+                dotFrozen = false;
+                if (chartTouchMarker) chartTouchMarker.setStyle({ color: '#fff', weight: 2 });
+            }
+        }
+        if (dotFrozen) return;
         const rect = svg.getBoundingClientRect();
         const svgX = (touch.clientX - rect.left) / rect.width * 300;
 
@@ -1149,8 +1155,9 @@ function enableChartTouch(raceName) {
             return;
         }
         if (dotFrozen) return;
-        if (chartTouchMarker) { chartTouchMarker.remove(); chartTouchMarker = null; }
-        updateElevCursor(raceName, 0, false);
+        // Lock in last scrubbed position
+        dotFrozen = true;
+        if (chartTouchMarker) chartTouchMarker.setStyle({ color: '#e67e22', weight: 3 });
     };
 
     svg.addEventListener('touchstart', handleTouch, { passive: false });
