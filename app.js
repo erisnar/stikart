@@ -766,11 +766,17 @@ function gradeFactor(gradePct) {
     return g <= 20 ? 1 - 0.015 * g : 0.7 + 0.01 * (g - 20);
 }
 
+// Arrival time at effort-progress p (0–1) with fatigue coefficient f.
+// Integrates a linearly increasing pace penalty: at finish you are (1+f)x slower than start.
+// Normalized so fatiguedArrival(1, t, f) === t always.
+function fatiguedArrival(p, targetMinutes, f) {
+    return targetMinutes * (p + f * p * p / 2) / (1 + f / 2);
+}
+
 function calcCheckpointSplits(raceName, checkpoints, targetMinutes) {
     const elevPoints = raceElevationData[raceName];
     if (!elevPoints || elevPoints.length < 2) return null;
 
-    // Build waypoints: start + checkpoints + finish
     const totalKm = elevPoints[elevPoints.length - 1].km;
     const waypoints = [
         { name: 'Start', km: 0 },
@@ -780,7 +786,6 @@ function calcCheckpointSplits(raceName, checkpoints, targetMinutes) {
         { name: 'Mål', km: totalKm }
     ];
 
-    // For each inter-waypoint segment, sum grade-adjusted effort
     function effortForSegment(fromKm, toKm) {
         let effort = 0;
         for (let i = 1; i < elevPoints.length; i++) {
@@ -796,11 +801,9 @@ function calcCheckpointSplits(raceName, checkpoints, targetMinutes) {
         return effort;
     }
 
-    // Total effort across whole course
     const totalEffort = effortForSegment(0, totalKm);
     if (totalEffort === 0) return null;
 
-    // Elevation gain per segment
     function eleGainForSegment(fromKm, toKm) {
         let gain = 0;
         for (let i = 1; i < elevPoints.length; i++) {
@@ -812,15 +815,36 @@ function calcCheckpointSplits(raceName, checkpoints, targetMinutes) {
         return Math.round(gain);
     }
 
-    let cumMinutes = 0;
+    // Fatigue coefficients scale with race duration:
+    // a 5h race fatigues less than a 30h race.
+    const targetHours = targetMinutes / 60;
+    const fCenter = 0.1 + 0.02 * targetHours;
+    const fLow = fCenter * 0.5;   // optimistic: even pacing
+    const fHigh = fCenter * 2.0;  // realistic: significant slowdown late
+
+    let cumEffort = 0;
+    let prevArrival = 0;
     const splits = waypoints.map((wp, i) => {
-        if (i === 0) return { ...wp, arrivalMinutes: 0, segmentMinutes: 0, eleGain: 0 };
+        if (i === 0) return { ...wp, arrivalMinutes: 0, arrivalRange: null, segmentMinutes: 0, eleGain: 0 };
         const prev = waypoints[i - 1];
         const segEffort = effortForSegment(prev.km, wp.km);
-        const segMinutes = (segEffort / totalEffort) * targetMinutes;
         const eleGain = eleGainForSegment(prev.km, wp.km);
-        cumMinutes += segMinutes;
-        return { ...wp, arrivalMinutes: cumMinutes, segmentMinutes: segMinutes, eleGain };
+        cumEffort += segEffort;
+        const p = cumEffort / totalEffort;
+        const tA = fatiguedArrival(p, targetMinutes, fLow);
+        const tB = fatiguedArrival(p, targetMinutes, fHigh);
+        const arrivalMinutes = (tA + tB) / 2;
+        const segmentMinutes = arrivalMinutes - prevArrival;
+        prevArrival = arrivalMinutes;
+        const isFinish = i === waypoints.length - 1;
+        return {
+            ...wp,
+            arrivalMinutes,
+            // high fatigue → faster early → earlier checkpoint arrival; sort so [earlier, later]
+            arrivalRange: isFinish ? null : [Math.min(tA, tB), Math.max(tA, tB)],
+            segmentMinutes,
+            eleGain
+        };
     });
 
     return splits;
@@ -833,6 +857,27 @@ function fmtTime(minutes) {
     return h > 0 ? `${h}t ${m.toString().padStart(2, '0')}m` : `${m}m`;
 }
 
+function roundTo5(minutes) {
+    return Math.round(minutes / 5) * 5;
+}
+
+function parseStartTime(raw) {
+    const mFull = raw.trim().match(/^(\d{1,2}):(\d{2})$/);
+    const mHours = raw.trim().match(/^(\d{1,2})$/);
+    if (!mFull && !mHours) return null;
+    const h = parseInt(mFull ? mFull[1] : mHours[1]);
+    const min = mFull ? parseInt(mFull[2]) : 0;
+    if (h > 23 || min > 59) return null;
+    return h * 60 + min;
+}
+
+function fmtClock(startMinutes, elapsedMinutes) {
+    const total = Math.round(startMinutes + elapsedMinutes) % (24 * 60);
+    const h = Math.floor(total / 60);
+    const m = total % 60;
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+}
+
 function fmtPace(segKm, segMinutes) {
     if (segKm <= 0) return '–';
     const minkm = segMinutes / segKm;
@@ -841,7 +886,7 @@ function fmtPace(segKm, segMinutes) {
     return `${m}:${s.toString().padStart(2, '0')}/km`;
 }
 
-const PACE_DESC = 'Splittider beregnes basert på løypeprofil og stigningsgrad. Teknisk terreng med mye stigning gir lavere fart. Posisjoner for checkpoints er ikke presise.';
+const PACE_DESC = 'Stigningsjustering: +3% lenger per 1% oppoverbakke (10% stigning = 33% tregere enn flatt). Slak nedoverbakke gir opptil 20% raskere fart. Fatigue: for et 24-timersløp antar modellen at du løper 30–110% tregere mot slutten enn i starten. Checkpointposisjoner kan avvike noe fra offisiell avstand.';
 
 // Resolve checkpoints: convert {lat,lng} entries to {km} using nearest point on route
 function resolveCheckpoints(checkpoints, raceName) {
@@ -868,22 +913,67 @@ function renderPacePlanner(race) {
     return `<div class="pace-planner">
         <div class="pace-planner-header">
             <span class="pace-planner-title">Pacing-kalkulator</span>
-            <input type="text" class="pace-target-input" id="pace-target-input"
-                placeholder="t:mm" maxlength="7"
-                oninput="updatePacePlanner()">
+            <div class="pace-inputs-row">
+                <span class="pace-input-label">Antatt sluttid</span>
+                <input type="text" class="pace-target-input pace-target-input-sm" id="pace-target-input"
+                    placeholder="0:00" maxlength="5"
+                    oninput="updatePacePlanner()">
+                <span class="pace-input-label">Start kl.</span>
+                <input type="text" class="pace-target-input pace-target-input-sm" id="pace-start-input"
+                    placeholder="0:00" maxlength="5"
+                    oninput="updatePacePlanner()">
+            </div>
         </div>
-        <p class="pace-desc">${PACE_DESC}</p>
-        <div id="pace-splits-table"><p class="pace-hint">Skriv inn måltid for å se splits</p></div>
+        <div id="pace-splits-table"><p class="pace-hint">Skriv inn antatt sluttid for å se splits</p></div>
+        <details class="pace-desc-details">
+            <summary class="pace-desc-summary">Utregning av tid</summary>
+            <p class="pace-desc">${PACE_DESC}</p>
+        </details>
     </div>`;
 }
 
 let pacePlannerRace = null;
+let _lastSplitsExport = null;
+
+function copySplits() {
+    if (!_lastSplitsExport) return;
+    const { raceName, targetRaw, startRaw, splits, startMinutes } = _lastSplitsExport;
+    const fmt = (e) => startMinutes !== null ? fmtClock(startMinutes, e) : fmtTime(e);
+
+    const lines = [raceName];
+    const meta = [];
+    if (targetRaw) meta.push(`Antatt sluttid: ${targetRaw}`);
+    if (startRaw) meta.push(`Start: ${startRaw}`);
+    if (meta.length) lines.push(meta.join('  |  '));
+    lines.push('');
+
+    splits.slice(1).forEach((sp, i) => {
+        const prev = splits[i];
+        const segKm = sp.km - prev.km;
+        const pace = fmtPace(segKm, sp.segmentMinutes);
+        const arriveStr = sp.arrivalRange
+            ? `${fmt(roundTo5(sp.arrivalRange[0]))} – ${fmt(roundTo5(sp.arrivalRange[1]))}`
+            : fmt(sp.arrivalMinutes);
+        lines.push(`${sp.name.padEnd(28)}${arriveStr.padEnd(20)}${(sp.km.toFixed(0) + ' km').padEnd(9)}+${sp.eleGain}m  ${pace}`);
+    });
+
+    navigator.clipboard.writeText(lines.join('\n')).then(() => {
+        const btn = document.querySelector('.pace-copy-btn');
+        if (!btn) return;
+        const orig = btn.textContent;
+        btn.textContent = '✓ Kopiert';
+        btn.disabled = true;
+        setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 1800);
+    });
+}
 
 function openPacePlanner(raceName) {
     pacePlannerRace = raceName;
     document.getElementById('pace-overlay-title').textContent = raceName;
     document.getElementById('pace-overlay-input').value = '';
-    document.getElementById('pace-overlay-table').innerHTML = `<p class="pace-hint">Skriv inn måltid for å se splits per post</p><p class="pace-desc">${PACE_DESC}</p>`;
+    document.getElementById('pace-overlay-start-input').value = '';
+    document.getElementById('pace-overlay-desc').textContent = PACE_DESC;
+    document.getElementById('pace-overlay-table').innerHTML = `<p class="pace-hint">Skriv inn måltid for å se splits per post</p>`;
     document.getElementById('pace-overlay').classList.remove('hidden');
     setTimeout(() => document.getElementById('pace-overlay-input').focus(), 50);
 }
@@ -903,14 +993,14 @@ function updatePacePlanner() {
     const matchHours = raw.match(/^(\d+)$/);
     if (!matchFull && !matchHours) {
         tableEl.innerHTML = raw
-            ? '<p class="pace-hint pace-hint-err">Format: t:mm – f.eks. 24:00</p>'
+            ? '<p class="pace-hint pace-hint-err">Format: t:mm – f.eks. 24:00 eller 9:00</p>'
             : '<p class="pace-hint">Skriv inn måltid for å se splits per post</p>';
         return;
     }
 
     const hours = parseInt(matchFull ? matchFull[1] : matchHours[1]);
     const mins = matchFull ? parseInt(matchFull[2]) : 0;
-    if (mins >= 60) { tableEl.innerHTML = '<p class="pace-hint pace-hint-err">Format: t:mm – f.eks. 24:00</p>'; return; }
+    if (mins >= 60) { tableEl.innerHTML = '<p class="pace-hint pace-hint-err">Format: t:mm – f.eks. 24:00 eller 9:00</p>'; return; }
     const targetMinutes = hours * 60 + mins;
 
     const race = raceRoutes.find(r => r.name === pacePlannerRace);
@@ -918,20 +1008,36 @@ function updatePacePlanner() {
     const splits = calcCheckpointSplits(pacePlannerRace, race.checkpoints, targetMinutes);
     if (!splits) return;
 
+    const startInput = document.getElementById(isTouchDevice ? 'pace-overlay-start-input' : 'pace-start-input');
+    const startMinutes = startInput ? parseStartTime(startInput.value) : null;
+
+    _lastSplitsExport = {
+        raceName: pacePlannerRace,
+        targetRaw: input.value.trim(),
+        startRaw: startInput ? startInput.value.trim() : '',
+        splits,
+        startMinutes
+    };
+
+    const fmt = (elapsed) => startMinutes !== null ? fmtClock(startMinutes, elapsed) : fmtTime(elapsed);
+
     const rows = splits.map((sp, i) => {
         if (i === 0) return '';
         const prev = splits[i - 1];
         const segKm = sp.km - prev.km;
         const pace = fmtPace(segKm, sp.segmentMinutes);
         const isFinish = i === splits.length - 1;
+        const arriveStr = sp.arrivalRange
+            ? `${fmt(roundTo5(sp.arrivalRange[0]))} – ${fmt(roundTo5(sp.arrivalRange[1]))}`
+            : fmt(sp.arrivalMinutes);
         return `<div class="spl-row${isFinish ? ' spl-row-finish' : ''}">
             <span class="spl-name">${sp.name}</span>
-            <span class="spl-arrive">${fmtTime(sp.arrivalMinutes)}</span>
+            <span class="spl-arrive">${arriveStr}</span>
             <span class="spl-meta">${sp.km.toFixed(0)} km · +${sp.eleGain}m · ${pace}</span>
         </div>`;
     }).join('');
 
-    tableEl.innerHTML = `<div class="splits-list">${rows}</div>`;
+    tableEl.innerHTML = `<div class="splits-list">${rows}</div><button class="pace-copy-btn" onclick="copySplits()">Kopier tabell</button>`;
 }
 
 function getLatLngAtKm(routePoints, km) {
@@ -1741,6 +1847,10 @@ function showRaceDetailOverlay(race, loading = false) {
     if (loading) {
         content.innerHTML = `<div class="race-popup"><h3>${race.name}</h3><p class="race-loading">Laster løype…</p></div>`;
         overlay.classList.remove('hidden');
+        if (isTouchDevice) {
+            overlay.classList.add('minimized');
+            document.getElementById('race-panel').style.display = 'none';
+        }
         return;
     }
 
@@ -1775,15 +1885,23 @@ function showRaceDetailOverlay(race, loading = false) {
         </div>
     `;
 
-    overlay.classList.remove('hidden', 'minimized');
+    overlay.classList.remove('hidden');
     const minBtn = document.getElementById('minimize-detail');
-    if (minBtn) { minBtn.innerHTML = '&#9660;'; minBtn.title = 'Minimer'; }
-    if (!isTouchDevice) pacePlannerRace = race.name;
+    if (isTouchDevice) {
+        overlay.classList.add('minimized');
+        if (minBtn) { minBtn.innerHTML = '&#9650;'; minBtn.title = 'Utvid'; }
+        document.getElementById('race-panel').style.display = 'none';
+    } else {
+        overlay.classList.remove('minimized');
+        if (minBtn) { minBtn.innerHTML = '&#9660;'; minBtn.title = 'Minimer'; }
+        pacePlannerRace = race.name;
+    }
 }
 
 function closeRaceDetail() {
     const overlay = document.getElementById('race-detail-overlay');
     overlay.classList.add('hidden');
+    if (isTouchDevice) document.getElementById('race-panel').style.display = '';
     // Reset desktop positioning so CSS defaults apply next time
     overlay.style.left = '';
     overlay.style.top = '';

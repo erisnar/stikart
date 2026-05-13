@@ -695,24 +695,39 @@ body {
     z-index: 1;
 }
 
+/* Mobile: card always full-width at bottom */
 @media (max-width: 768px) {
     .minimize-detail {
         display: flex;
     }
-}
 
-/* Minimized state — mobile only */
-@media (max-width: 768px) {
-    .race-detail-overlay.minimized {
+    .close-detail,
+    .minimize-detail {
+        width: 22px;
+        height: 22px;
+        font-size: 13px;
+    }
+
+    .minimize-detail {
+        right: 40px;
+    }
+
+    .race-detail-overlay {
         left: 0;
         right: 0;
-        bottom: 38px;
+        bottom: 0;
         padding: 0;
     }
 
-    .race-detail-overlay.minimized .race-detail-card {
+    .race-detail-card {
         width: 100%;
         border-radius: 12px 12px 0 0;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+
+    /* Minimized: show only name + elevation chart */
+    .race-detail-overlay.minimized .race-detail-card {
         max-height: none;
         overflow: hidden;
     }
@@ -728,7 +743,7 @@ body {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        padding-right: 72px;
+        padding-right: 60px;
     }
 
     .race-detail-overlay.minimized .elevation-chart-wrapper {
@@ -755,6 +770,7 @@ body {
     .race-detail-card {
         width: 420px;
         max-height: 85vh;
+        overflow-y: auto;
         font-size: 1.05em;
     }
 }
@@ -1121,8 +1137,8 @@ body {
 
 .pace-overlay-label {
     font-size: 14px;
-    font-weight: 500;
-    color: #555;
+    font-weight: 600;
+    color: #222;
     white-space: nowrap;
 }
 
@@ -1140,6 +1156,7 @@ body {
 .pace-overlay-input:focus {
     border-color: #555;
 }
+
 
 .pace-overlay-table-wrap {
     flex: 1;
@@ -1161,9 +1178,16 @@ body {
 
 .pace-planner-header {
     display: flex;
-    align-items: center;
-    gap: 8px;
+    flex-direction: column;
+    gap: 5px;
     margin-bottom: 4px;
+}
+
+.pace-inputs-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
 }
 
 .pace-planner-title {
@@ -1188,11 +1212,79 @@ body {
     border-color: #666;
 }
 
-.pace-desc {
+.pace-target-input-sm {
+    width: 80px;
+}
+
+.pace-input-label {
     font-size: 10px;
-    color: #bbb;
-    margin: 3px 0 6px;
-    line-height: 1.4;
+    font-weight: 600;
+    color: #333;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.pace-copy-btn {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    padding: 6px 0;
+    background: none;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: inherit;
+    color: #666;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+}
+
+.pace-copy-btn:hover {
+    border-color: #999;
+    color: #222;
+}
+
+.pace-copy-btn:disabled {
+    color: #4caf50;
+    border-color: #4caf50;
+}
+
+.pace-desc-details {
+    margin-top: 8px;
+}
+
+.pace-desc-details-overlay {
+    padding: 0 4px 12px;
+}
+
+.pace-desc-summary {
+    font-size: 11px;
+    font-weight: 500;
+    color: #555;
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.pace-desc-summary::before {
+    content: '▸';
+    font-size: 10px;
+    transition: transform 0.15s;
+}
+
+details[open] .pace-desc-summary::before {
+    transform: rotate(90deg);
+}
+
+.pace-desc {
+    font-size: 11px;
+    color: #333;
+    margin: 6px 0 0;
+    line-height: 1.5;
 }
 
 .pace-hint {
@@ -1212,7 +1304,7 @@ body {
 
 .spl-row {
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     grid-template-rows: auto auto;
     padding: 7px 0;
     border-bottom: 1px solid #f0f0f0;

@@ -94,12 +94,22 @@
                 <span class="pace-overlay-title" id="pace-overlay-title">Pacing-kalkulator</span>
             </div>
             <div class="pace-overlay-input-row">
-                <label class="pace-overlay-label">Måltid</label>
+                <label class="pace-overlay-label">Antatt sluttid</label>
                 <input type="text" id="pace-overlay-input" class="pace-overlay-input"
-                    placeholder="t:mm  (f.eks. 24:00)" maxlength="7"
+                    placeholder="0:00" maxlength="5"
+                    oninput="updatePacePlanner()">
+            </div>
+            <div class="pace-overlay-input-row">
+                <label class="pace-overlay-label">Starttid</label>
+                <input type="text" id="pace-overlay-start-input" class="pace-overlay-input"
+                    placeholder="0:00" maxlength="5"
                     oninput="updatePacePlanner()">
             </div>
             <div id="pace-overlay-table" class="pace-overlay-table-wrap"></div>
+            <details class="pace-desc-details pace-desc-details-overlay">
+                <summary class="pace-desc-summary">Utregning av tid</summary>
+                <p class="pace-desc" id="pace-overlay-desc"></p>
+            </details>
         </div>
     </div>
 
