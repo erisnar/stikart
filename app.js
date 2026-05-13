@@ -1746,7 +1746,7 @@ function showRaceDetailOverlay(race, loading = false) {
 
     const downloadLinks = race.files.map((file, index) => {
         const fileName = file.split('/').pop();
-        const githubUrl = `https://raw.githubusercontent.com/erisnar/Stikart/main/${encodeURI(file)}`;
+        const githubUrl = `https://raw.githubusercontent.com/erisnar/stikart/main/${encodeURI(file)}`;
         const label = race.files.length > 1 ? `GPX ${index + 1}` : 'Last ned GPX';
         return `<a href="#" onclick="downloadGpx('${githubUrl}', '${fileName}'); return false;" class="race-download-link">${label}</a>`;
     }).join(' ');

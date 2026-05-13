@@ -27,7 +27,7 @@ Stikart is built by the Norwegian trail running community, for the Norwegian tra
 
 ### If you're not a developer
 
-[Open an issue](https://github.com/erisnar/Stikart/issues/new) with:
+[Open an issue](https://github.com/erisnar/stikart/issues/new) with:
 
 - Race name and website URL
 - Distance category
@@ -36,7 +36,7 @@ Stikart is built by the Norwegian trail running community, for the Norwegian tra
 
 ## Updating race info
 
-Race dates change and routes get updated. If you spot outdated or incorrect information, [open an issue](https://github.com/erisnar/Stikart/issues/new) or send a pull request directly.
+Race dates change and routes get updated. If you spot outdated or incorrect information, [open an issue](https://github.com/erisnar/stikart/issues/new) or send a pull request directly.
 
 ## GPX files
 
