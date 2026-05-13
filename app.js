@@ -472,7 +472,7 @@ const raceRoutes = [
         url: 'https://www.vhut.no/loyper/',
         useCalculatedStats: true,
         category: '100-miles',
-        date: '2026-05-18'
+        date: '2026-06-06'
     },
     {
         name: 'Vestfold Historic Ultra 87K',
@@ -481,7 +481,7 @@ const raceRoutes = [
         url: 'https://www.vhut.no/loyper/',
         useCalculatedStats: true,
         category: '50-miles',
-        date: '2026-05-18'
+        date: '2026-06-06'
     },
     {
         name: 'Vestfold Historic Ultra 50K',
@@ -490,7 +490,7 @@ const raceRoutes = [
         url: 'https://www.vhut.no/loyper/',
         useCalculatedStats: true,
         category: '50k',
-        date: '2026-05-18'
+        date: '2026-06-07'
     },
     {
         name: 'Jotunheimen Trail Run',
