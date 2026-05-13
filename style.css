@@ -753,8 +753,8 @@ body {
     }
 
     .race-detail-card {
-        width: 360px;
-        max-height: 80vh;
+        width: 420px;
+        max-height: 85vh;
         font-size: 1.05em;
     }
 }
@@ -1036,4 +1036,219 @@ body {
 
 .distance-dot-tooltip::before {
     display: none;
+}
+
+/* ── Pace planner ─────────────────────────────────────────────────────────── */
+
+.pace-planner-btn {
+    margin-top: 8px;
+    padding: 6px 12px;
+    background: none;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: inherit;
+    color: #333;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+}
+
+.pace-planner-btn:hover {
+    background: #f5f5f5;
+    border-color: #999;
+}
+
+/* Fullscreen overlay */
+.pace-overlay {
+    position: fixed;
+    inset: 0;
+    background: #fff;
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.pace-overlay.hidden {
+    display: none;
+}
+
+.pace-overlay-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-width: 600px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 16px 16px;
+}
+
+.pace-overlay-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0 12px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 16px;
+}
+
+.pace-overlay-back {
+    background: none;
+    border: none;
+    font-size: 15px;
+    color: #333;
+    cursor: pointer;
+    padding: 4px 8px 4px 0;
+    white-space: nowrap;
+}
+
+.pace-overlay-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #111;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.pace-overlay-input-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.pace-overlay-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #555;
+    white-space: nowrap;
+}
+
+.pace-overlay-input {
+    flex: 1;
+    max-width: 200px;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 18px;
+    font-family: inherit;
+    outline: none;
+}
+
+.pace-overlay-input:focus {
+    border-color: #555;
+}
+
+.pace-overlay-table-wrap {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.pace-overlay-table-wrap .pace-desc {
+    font-size: 12px;
+    color: #aaa;
+    margin: 0 0 12px;
+    line-height: 1.5;
+}
+
+.pace-planner {
+    margin-top: 10px;
+    border-top: 1px solid #eee;
+    padding-top: 8px;
+}
+
+.pace-planner-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.pace-planner-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.pace-target-input {
+    width: 120px;
+    padding: 3px 7px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 13px;
+    font-family: inherit;
+    outline: none;
+}
+
+.pace-target-input:focus {
+    border-color: #666;
+}
+
+.pace-desc {
+    font-size: 10px;
+    color: #bbb;
+    margin: 3px 0 6px;
+    line-height: 1.4;
+}
+
+.pace-hint {
+    font-size: 13px;
+    color: #aaa;
+    margin: 4px 0;
+}
+
+.pace-hint-err {
+    color: #c0392b;
+}
+
+.splits-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.spl-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    padding: 7px 0;
+    border-bottom: 1px solid #f0f0f0;
+    gap: 1px 8px;
+}
+
+.spl-row-finish {
+    border-bottom: none;
+    font-weight: 700;
+}
+
+.spl-name {
+    font-weight: 500;
+    font-size: 13px;
+    color: #111;
+    grid-column: 1;
+    grid-row: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.spl-arrive {
+    font-weight: 600;
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+    color: #111;
+    grid-column: 2;
+    grid-row: 1;
+    white-space: nowrap;
+}
+
+.spl-meta {
+    font-size: 11px;
+    color: #999;
+    grid-column: 1 / -1;
+    grid-row: 2;
+    font-variant-numeric: tabular-nums;
 }

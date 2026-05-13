@@ -192,7 +192,13 @@ const raceRoutes = [
         url: 'https://soriamoriatilverdensende.com',
         useCalculatedStats: true,
         category: '100-miles',
-        date: '2026-05-30'
+        date: '2026-05-30',
+        checkpoints: [
+            { name: 'CP1 Drammen', lat: 59.740395, lng: 10.214029 },
+            { name: 'CP2 Sande', lat: 59.587464, lng: 10.210863 },
+            { name: 'CP3 Hengsrød', lat: 59.393109, lng: 10.308104 },
+            { name: 'CP4 Teie', lat: 59.249809, lng: 10.400786 },
+        ]
     },
     {
         name: 'Nøsen Hundreds',
@@ -201,7 +207,11 @@ const raceRoutes = [
         url: 'https://www.nosenhundreds.com/',
         useCalculatedStats: true,
         category: '100k',
-        date: '2026-06-13'
+        date: '2026-06-13',
+        checkpoints: [
+            { name: 'Syndinstøga', km: 42 },
+            { name: 'Pikkhaug', km: 72 },
+        ]
     },
     {
         name: 'Dobbeltravern - Nordmarkstraveren',
@@ -237,7 +247,15 @@ const raceRoutes = [
         url: 'https://www.endless-shore.no/',
         useCalculatedStats: true,
         category: '100-miles',
-        date: '2026-05-23'
+        date: '2026-05-23',
+        checkpoints: [
+            { name: 'Heyerdalbukta, Jeløy', km: 25 },
+            { name: 'Brevikbukta', km: 52 },
+            { name: 'Sogsti Skole, Drøbak', km: 80 },
+            { name: 'Digerud, Nesodden', km: 103 },
+            { name: 'Dal, Frogn', km: 117 },
+            { name: 'Alværn, Nesodden', km: 143 },
+        ]
     },
     {
         name: 'Sandnes 100 Miles',
@@ -357,7 +375,12 @@ const raceRoutes = [
         url: 'https://www.lustrafjordeninn.no/',
         useCalculatedStats: true,
         category: '100k',
-        date: '2026-08-14'
+        date: '2026-08-14',
+        checkpoints: [
+            { name: 'Solvorn', km: 31.5 },
+            { name: 'Gaupne', km: 54 },
+            { name: 'Luster', km: 77.5 },
+        ]
     },
     {
         name: 'Hornindal Rundt 75K',
@@ -384,7 +407,11 @@ const raceRoutes = [
         url: 'https://www.nosenhundreds.com/50km',
         useCalculatedStats: true,
         category: '50k',
-        date: '2026-06-14'
+        date: '2026-06-14',
+        checkpoints: [
+            { name: 'Syndinstøga', km: 27 },
+            { name: 'Grønsenstølane', km: 40 },
+        ]
     },
     {
         name: 'KRSUltra 60',
@@ -411,7 +438,14 @@ const raceRoutes = [
         url: 'https://oslo.ecotrail.com/en/race-ecotrail-oslo/trail-80-km',
         useCalculatedStats: true,
         category: '50-miles',
-        date: '2026-05-30'
+        date: '2026-05-30',
+        checkpoints: [
+            { name: 'Maridalen Kirke', km: 13 },
+            { name: 'Holmenkollen', km: 32 },
+            { name: 'Sørkedalen', km: 51 },
+            { name: 'Fossum', km: 61 },
+            { name: 'Thaugland', km: 73 },
+        ]
     },
     {
         name: 'Ecotrail Oslo 50K',
@@ -618,6 +652,7 @@ const racePolylines = {}; // track polylines per race for highlight/dim
 const hitAreaPolylines = {}; // invisible wider polylines for touch
 const raceDecorators = {}; // directional arrow decorators
 const raceMarkers = {}; // start/finish markers per race
+let activeCheckpointMarkers = []; // checkpoint markers for the highlighted race
 const raceElevationData = {};
 const raceChartMeta = {};
 
@@ -665,7 +700,7 @@ function buildElevationProfile(coords, offsetKm) {
     return { points, totalKm: cumKm };
 }
 
-function renderElevationChart(elevPoints, color, raceName) {
+function renderElevationChart(elevPoints, color, raceName, checkpoints) {
     if (!elevPoints || elevPoints.length < 2) return '';
 
     const n = Math.min(elevPoints.length, 250);
@@ -694,9 +729,21 @@ function renderElevationChart(elevPoints, color, raceName) {
     const bottom = (padT + chartH).toFixed(1);
     const pathD = `M ${pts.join(' L ')} L ${toX(totalKm).toFixed(1)},${bottom} L ${padL},${bottom} Z`;
 
+    const cpLines = resolveCheckpoints(checkpoints, raceName)
+        .filter(cp => cp.km > 0)
+        .map(cp => {
+            const x = Math.min(toX(cp.km), padL + chartW).toFixed(1);
+            const base = padT + chartH;
+            return `<line x1="${x}" y1="${padT + 4}" x2="${x}" y2="${base}" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
+                    <line x1="${x}" y1="${padT + 4}" x2="${x}" y2="${base}" stroke="rgba(0,0,0,0.45)" stroke-width="1" stroke-dasharray="3,2"/>
+                    <circle cx="${x}" cy="${padT + 4}" r="2.5" fill="#444" stroke="white" stroke-width="1"/>
+                    <line x1="${x}" y1="${base}" x2="${x}" y2="${base + 5}" stroke="#444" stroke-width="2"/>`;
+        }).join('');
+
     return `<div class="elevation-chart-wrapper">
         <svg viewBox="0 0 ${W} ${H}" class="elevation-chart" xmlns="http://www.w3.org/2000/svg">
             <path d="${pathD}" fill="${color}" fill-opacity="0.2" stroke="${color}" stroke-width="1.5" stroke-linejoin="round"/>
+            ${cpLines}
             <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT + chartH}" stroke="#ddd" stroke-width="0.5"/>
             <line x1="${padL}" y1="${padT + chartH}" x2="${padL + chartW}" y2="${padT + chartH}" stroke="#ddd" stroke-width="0.5"/>
             <text x="${padL - 3}" y="${padT + 8}" text-anchor="end" font-size="8" fill="#888">${Math.round(maxEle)}m</text>
@@ -707,6 +754,184 @@ function renderElevationChart(elevPoints, color, raceName) {
             <circle id="elev-dot" cx="${padL}" cy="${padT + chartH / 2}" r="3" fill="#111" stroke="white" stroke-width="1.5" opacity="0" pointer-events="none"/>
         </svg>
     </div>`;
+}
+
+// ── Pace planner ──────────────────────────────────────────────────────────────
+
+function gradeFactor(gradePct) {
+    if (gradePct >= 0) {
+        return 1 + 0.033 * gradePct;
+    }
+    const g = Math.abs(gradePct);
+    return g <= 20 ? 1 - 0.015 * g : 0.7 + 0.01 * (g - 20);
+}
+
+function calcCheckpointSplits(raceName, checkpoints, targetMinutes) {
+    const elevPoints = raceElevationData[raceName];
+    if (!elevPoints || elevPoints.length < 2) return null;
+
+    // Build waypoints: start + checkpoints + finish
+    const totalKm = elevPoints[elevPoints.length - 1].km;
+    const waypoints = [
+        { name: 'Start', km: 0 },
+        ...resolveCheckpoints(checkpoints, raceName)
+            .filter(cp => cp.km > 0)
+            .map(cp => ({ ...cp, km: Math.min(cp.km, totalKm) })),
+        { name: 'Mål', km: totalKm }
+    ];
+
+    // For each inter-waypoint segment, sum grade-adjusted effort
+    function effortForSegment(fromKm, toKm) {
+        let effort = 0;
+        for (let i = 1; i < elevPoints.length; i++) {
+            const p0 = elevPoints[i - 1], p1 = elevPoints[i];
+            if (p1.km <= fromKm || p0.km >= toKm) continue;
+            const segKm = Math.min(p1.km, toKm) - Math.max(p0.km, fromKm);
+            if (segKm <= 0) continue;
+            const rise = p1.ele - p0.ele;
+            const horiz = (p1.km - p0.km) * 1000;
+            const grade = horiz > 0 ? (rise / horiz) * 100 : 0;
+            effort += segKm * gradeFactor(grade);
+        }
+        return effort;
+    }
+
+    // Total effort across whole course
+    const totalEffort = effortForSegment(0, totalKm);
+    if (totalEffort === 0) return null;
+
+    // Elevation gain per segment
+    function eleGainForSegment(fromKm, toKm) {
+        let gain = 0;
+        for (let i = 1; i < elevPoints.length; i++) {
+            const p0 = elevPoints[i - 1], p1 = elevPoints[i];
+            if (p1.km <= fromKm || p0.km >= toKm) continue;
+            const rise = p1.ele - p0.ele;
+            if (rise > 0) gain += rise;
+        }
+        return Math.round(gain);
+    }
+
+    let cumMinutes = 0;
+    const splits = waypoints.map((wp, i) => {
+        if (i === 0) return { ...wp, arrivalMinutes: 0, segmentMinutes: 0, eleGain: 0 };
+        const prev = waypoints[i - 1];
+        const segEffort = effortForSegment(prev.km, wp.km);
+        const segMinutes = (segEffort / totalEffort) * targetMinutes;
+        const eleGain = eleGainForSegment(prev.km, wp.km);
+        cumMinutes += segMinutes;
+        return { ...wp, arrivalMinutes: cumMinutes, segmentMinutes: segMinutes, eleGain };
+    });
+
+    return splits;
+}
+
+function fmtTime(minutes) {
+    let h = Math.floor(minutes / 60);
+    let m = Math.round(minutes % 60);
+    if (m === 60) { h += 1; m = 0; }
+    return h > 0 ? `${h}t ${m.toString().padStart(2, '0')}m` : `${m}m`;
+}
+
+function fmtPace(segKm, segMinutes) {
+    if (segKm <= 0) return '–';
+    const minkm = segMinutes / segKm;
+    const m = Math.floor(minkm);
+    const s = Math.round((minkm - m) * 60);
+    return `${m}:${s.toString().padStart(2, '0')}/km`;
+}
+
+const PACE_DESC = 'Splittider beregnes basert på løypeprofil og stigningsgrad. Teknisk terreng med mye stigning gir lavere fart. Posisjoner for checkpoints er ikke presise.';
+
+// Resolve checkpoints: convert {lat,lng} entries to {km} using nearest point on route
+function resolveCheckpoints(checkpoints, raceName) {
+    if (!checkpoints || checkpoints.length === 0) return [];
+    const routePoints = buildRoutePoints(raceName);
+    return checkpoints.map(cp => {
+        if (cp.km !== undefined) return cp;
+        if (cp.lat !== undefined && cp.lng !== undefined && routePoints && routePoints.length > 0) {
+            const nearest = nearestOnRoute(routePoints, cp.lat, cp.lng);
+            return { name: cp.name, km: nearest.km };
+        }
+        return null;
+    }).filter(Boolean);
+}
+
+function renderPacePlanner(race) {
+    if (!race.checkpoints || race.checkpoints.length === 0) return '';
+    if (!raceElevationData[race.name] || raceElevationData[race.name].length < 2) return '';
+
+    if (isTouchDevice) {
+        return `<button class="pace-planner-btn" onclick="openPacePlanner('${race.name.replace(/'/g, "\\'")}')">Beregn pacing →</button>`;
+    }
+
+    return `<div class="pace-planner">
+        <div class="pace-planner-header">
+            <span class="pace-planner-title">Pacing-kalkulator</span>
+            <input type="text" class="pace-target-input" id="pace-target-input"
+                placeholder="t:mm" maxlength="7"
+                oninput="updatePacePlanner()">
+        </div>
+        <p class="pace-desc">${PACE_DESC}</p>
+        <div id="pace-splits-table"><p class="pace-hint">Skriv inn måltid for å se splits</p></div>
+    </div>`;
+}
+
+let pacePlannerRace = null;
+
+function openPacePlanner(raceName) {
+    pacePlannerRace = raceName;
+    document.getElementById('pace-overlay-title').textContent = raceName;
+    document.getElementById('pace-overlay-input').value = '';
+    document.getElementById('pace-overlay-table').innerHTML = `<p class="pace-hint">Skriv inn måltid for å se splits per post</p><p class="pace-desc">${PACE_DESC}</p>`;
+    document.getElementById('pace-overlay').classList.remove('hidden');
+    setTimeout(() => document.getElementById('pace-overlay-input').focus(), 50);
+}
+
+function closePacePlanner() {
+    document.getElementById('pace-overlay').classList.add('hidden');
+    pacePlannerRace = null;
+}
+
+function updatePacePlanner() {
+    const input = document.getElementById(isTouchDevice ? 'pace-overlay-input' : 'pace-target-input');
+    const tableEl = document.getElementById(isTouchDevice ? 'pace-overlay-table' : 'pace-splits-table');
+    if (!input || !tableEl || !pacePlannerRace) return;
+
+    const raw = input.value.trim();
+    const matchFull = raw.match(/^(\d+):(\d{1,2})$/);
+    const matchHours = raw.match(/^(\d+)$/);
+    if (!matchFull && !matchHours) {
+        tableEl.innerHTML = raw
+            ? '<p class="pace-hint pace-hint-err">Format: t:mm – f.eks. 24:00</p>'
+            : '<p class="pace-hint">Skriv inn måltid for å se splits per post</p>';
+        return;
+    }
+
+    const hours = parseInt(matchFull ? matchFull[1] : matchHours[1]);
+    const mins = matchFull ? parseInt(matchFull[2]) : 0;
+    if (mins >= 60) { tableEl.innerHTML = '<p class="pace-hint pace-hint-err">Format: t:mm – f.eks. 24:00</p>'; return; }
+    const targetMinutes = hours * 60 + mins;
+
+    const race = raceRoutes.find(r => r.name === pacePlannerRace);
+    if (!race) return;
+    const splits = calcCheckpointSplits(pacePlannerRace, race.checkpoints, targetMinutes);
+    if (!splits) return;
+
+    const rows = splits.map((sp, i) => {
+        if (i === 0) return '';
+        const prev = splits[i - 1];
+        const segKm = sp.km - prev.km;
+        const pace = fmtPace(segKm, sp.segmentMinutes);
+        const isFinish = i === splits.length - 1;
+        return `<div class="spl-row${isFinish ? ' spl-row-finish' : ''}">
+            <span class="spl-name">${sp.name}</span>
+            <span class="spl-arrive">${fmtTime(sp.arrivalMinutes)}</span>
+            <span class="spl-meta">${sp.km.toFixed(0)} km · +${sp.eleGain}m · ${pace}</span>
+        </div>`;
+    }).join('');
+
+    tableEl.innerHTML = `<div class="splits-list">${rows}</div>`;
 }
 
 function getLatLngAtKm(routePoints, km) {
@@ -1188,11 +1413,41 @@ function highlightRace(activeName) {
         }
     }
     enableDistanceDot(activeName);
+
+    // Add checkpoint markers for the active race
+    activeCheckpointMarkers.forEach(m => m.remove());
+    activeCheckpointMarkers = [];
+    const activeRace = raceRoutes.find(r => r.name === activeName);
+    if (activeRace && activeRace.checkpoints && activeRace.checkpoints.length > 0) {
+        const routePoints = buildRoutePoints(activeName);
+        if (routePoints && routePoints.length > 0) {
+            const cpIcon = L.divIcon({
+                className: '',
+                html: `<svg width="12" height="12" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="6,1 11,6 6,11 1,6" fill="#fff" stroke="#333" stroke-width="1.5"/>
+                </svg>`,
+                iconSize: [12, 12],
+                iconAnchor: [6, 6]
+            });
+            resolveCheckpoints(activeRace.checkpoints, activeName).forEach(cp => {
+                const pos = getLatLngAtKm(routePoints, cp.km);
+                if (!pos) return;
+                const marker = L.marker([pos.lat, pos.lng], { icon: cpIcon, interactive: true }).addTo(map);
+                marker.bindTooltip(`${cp.name} (~${cp.km} km)`, {
+                    permanent: false, direction: 'top', offset: [0, -6],
+                    className: 'distance-dot-tooltip'
+                });
+                activeCheckpointMarkers.push(marker);
+            });
+        }
+    }
 }
 
 // Reset all race styles back to normal
 function resetRaceStyles() {
     disableDistanceDot();
+    activeCheckpointMarkers.forEach(m => m.remove());
+    activeCheckpointMarkers = [];
     for (const [name, polylines] of Object.entries(racePolylines)) {
         const race = raceRoutes.find(r => r.name === name);
         polylines.forEach(pl => {
@@ -1435,8 +1690,26 @@ async function selectRace(raceName) {
     highlightRace(raceName);
     panToRace(raceName);
     showRaceDetailOverlay(race);
+    positionDetailNearRace();
     if (isTouchDevice) enableChartTouch(raceName);
     else enableChartMouse(raceName);
+}
+
+function positionDetailNearRace() {
+    if (isTouchDevice) return;
+
+    const overlay = document.getElementById('race-detail-overlay');
+    const margin = 16;
+
+    requestAnimationFrame(() => {
+        const card = overlay.querySelector('.race-detail-card');
+        const cardH = card ? card.offsetHeight : 500;
+        const top = Math.max(margin, (window.innerHeight - cardH) / 2);
+        overlay.style.left = margin + 'px';
+        overlay.style.top = top + 'px';
+        overlay.style.bottom = 'auto';
+        overlay.style.right = 'auto';
+    });
 }
 
 function panToRace(raceName) {
@@ -1497,17 +1770,25 @@ function showRaceDetailOverlay(race, loading = false) {
                     </button>
                 </div>
             </div>
-            ${renderElevationChart(raceElevationData[race.name], race.color, race.name)}
+            ${renderElevationChart(raceElevationData[race.name], race.color, race.name, race.checkpoints)}
+            ${renderPacePlanner(race)}
         </div>
     `;
 
     overlay.classList.remove('hidden', 'minimized');
     const minBtn = document.getElementById('minimize-detail');
     if (minBtn) { minBtn.innerHTML = '&#9660;'; minBtn.title = 'Minimer'; }
+    if (!isTouchDevice) pacePlannerRace = race.name;
 }
 
 function closeRaceDetail() {
-    document.getElementById('race-detail-overlay').classList.add('hidden');
+    const overlay = document.getElementById('race-detail-overlay');
+    overlay.classList.add('hidden');
+    // Reset desktop positioning so CSS defaults apply next time
+    overlay.style.left = '';
+    overlay.style.top = '';
+    overlay.style.bottom = '';
+    overlay.style.right = '';
     resetRaceStyles();
     selectedRaceName = null;
     history.replaceState(null, '', window.location.pathname);
