@@ -242,19 +242,60 @@ const raceRoutes = [
     },
     {
         name: 'Endless Shore Ultra',
-        files: ['race-calendar/EndlessShores/Endless_Shores_Ultra_Trail_100_miles_2025_FINAL.gpx'],
+        files: ['race-calendar/EndlessShores/Endless_Shores_Ultra_Trail_100M_2026.gpx'],
         color: '#16a085',
         url: 'https://www.endless-shore.no/',
         useCalculatedStats: true,
         category: '100-miles',
         date: '2026-05-23',
+        gpxYear: 2026,
         checkpoints: [
-            { name: 'Heyerdalbukta, Jeløy', km: 25 },
-            { name: 'Brevikbukta', km: 52 },
-            { name: 'Sogsti Skole, Drøbak', km: 80 },
-            { name: 'Digerud, Nesodden', km: 103 },
-            { name: 'Dal, Frogn', km: 117 },
-            { name: 'Alværn, Nesodden', km: 143 },
+            { name: 'Heyerdalbukta', lat: 59.482713, lng: 10.631641 },
+            { name: 'Kajakklubben', lat: 59.447482, lng: 10.656835 },
+            { name: 'Brevikbukta', lat: 59.510237, lng: 10.683111 },
+            { name: 'Krokstrand', lat: 59.564564, lng: 10.651957 },
+            { name: 'Sogsti Skole', lat: 59.654717, lng: 10.646298 },
+            { name: 'Ytre Hallangspollen', lat: 59.692277, lng: 10.65055 },
+            { name: 'Digerud', lat: 59.720203, lng: 10.593213 },
+            { name: 'Dal', lat: 59.750848, lng: 10.710993 },
+            { name: 'Sørby', lat: 59.819259, lng: 10.683071 },
+            { name: 'Alværn', lat: 59.822009, lng: 10.63258 },
+            { name: 'Brattbakken', lat: 59.841784, lng: 10.656458 },
+        ]
+    },
+    {
+        name: 'Endless Shore Ultra 50 Miles',
+        files: ['race-calendar/EndlessShores/Endless_Shores_Ultra_trail_50M_2026.gpx'],
+        color: '#0e6655',
+        url: 'https://www.endless-shore.no/',
+        useCalculatedStats: true,
+        category: '50-miles',
+        date: '2026-05-23',
+        gpxYear: 2026,
+        checkpoints: [
+            { name: 'Brevikbukta', lat: 59.510195, lng: 10.683005 },
+            { name: 'Krokstrand', lat: 59.564560, lng: 10.651890 },
+            { name: 'Sogsti Skole', lat: 59.654714, lng: 10.646178 },
+            { name: 'Ytre Hallangspollen', lat: 59.692200, lng: 10.650400 },
+            { name: 'Dal', lat: 59.750777, lng: 10.711067 },
+            { name: 'Sørby', lat: 59.819294, lng: 10.683225 },
+            { name: 'Alværn', lat: 59.821878, lng: 10.632846 },
+        ]
+    },
+    {
+        name: 'Endless Shore Ultra 50K',
+        files: ['race-calendar/EndlessShores/Endless_Shores_Ultra_Trail_50KM_2026.gpx'],
+        color: '#1abc9c',
+        url: 'https://www.endless-shore.no/',
+        useCalculatedStats: true,
+        category: '50k',
+        date: '2026-05-23',
+        gpxYear: 2026,
+        checkpoints: [
+            { name: 'Ytre Hallangspollen', lat: 59.692251, lng: 10.650388 },
+            { name: 'Dal', lat: 59.750837, lng: 10.711050 },
+            { name: 'Sørby', lat: 59.819244, lng: 10.683128 },
+            { name: 'Alværn', lat: 59.821952, lng: 10.632900 },
         ]
     },
     {
@@ -273,7 +314,19 @@ const raceRoutes = [
         url: 'https://thearctictriple.no/lofoten-ultra-trail-100-miles',
         useCalculatedStats: true,
         category: '100-miles',
-        date: '2026-05-28'
+        date: '2026-05-28',
+        checkpoints: [
+            { name: 'Selfjord', lat: 68.047998, lng: 13.119021 },
+            { name: 'Fredvang', lat: 68.088564, lng: 13.163508 },
+            { name: 'Nusfjord', lat: 68.035028, lng: 13.348398 },
+            { name: 'CP1 Napp', lat: 68.131976, lng: 13.439697 },
+            { name: 'Leknes', lat: 68.145805, lng: 13.612806 },
+            { name: 'Brustranda', lat: 68.204105, lng: 13.887845 },
+            { name: 'CP2 Torvdalshalsen', lat: 68.258771, lng: 13.826776 },
+            { name: 'Vikjorden', lat: 68.227608, lng: 14.076982 },
+            { name: 'CP3 Kleppstad', lat: 68.260001, lng: 14.271559 },
+            { name: 'CP4 Kongmarka', lat: 68.235273, lng: 14.490144 },
+        ]
     },
     {
         name: 'Lofoten Ultra Trail 50 Miles',
@@ -282,7 +335,14 @@ const raceRoutes = [
         url: 'https://thearctictriple.no/lofoten-ultra-trail-50-miles',
         useCalculatedStats: true,
         category: '50-miles',
-        date: '2026-05-28'
+        date: '2026-05-28',
+        checkpoints: [
+            { name: 'Brustranda', lat: 68.204072, lng: 13.887895 },
+            { name: 'Torvdalshalsen', lat: 68.258771, lng: 13.826776 },
+            { name: 'Vikjorden', lat: 68.227608, lng: 14.076982 },
+            { name: 'CP1 Kleppstad', lat: 68.260001, lng: 14.271559 },
+            { name: 'CP2 Kongmarka', lat: 68.235119, lng: 14.490814 },
+        ]
     },
     {
         name: 'Lofoten Ultra Trail 48K',
@@ -291,7 +351,12 @@ const raceRoutes = [
         url: 'https://thearctictriple.no/lofoten-ultra-trail-48-km',
         useCalculatedStats: true,
         category: '50k',
-        date: '2026-05-28'
+        date: '2026-05-28',
+        checkpoints: [
+            { name: 'Vikjorden', lat: 68.227608, lng: 14.076982 },
+            { name: 'CP1 Kleppstad', lat: 68.260001, lng: 14.271559 },
+            { name: 'CP2 Kongmarka', lat: 68.235154, lng: 14.489769 },
+        ]
     },
     {
         name: 'MMC 100 Miles',
@@ -420,7 +485,14 @@ const raceRoutes = [
         url: 'https://www.krsultra.no/lop/krsultra-60',
         useCalculatedStats: true,
         category: '50k',
-        date: '2026-04-11'
+        date: '2026-04-11',
+        gpxYear: 2025,
+        checkpoints: [
+            { name: 'Grostøl', lat: 58.210648, lng: 8.006189 },
+            { name: 'Grønn Slette', lat: 58.168240, lng: 8.010513 },
+            { name: 'Hommeren', lat: 58.204165, lng: 7.928620 },
+            { name: 'Ravnedalen', lat: 58.156649, lng: 7.974291 },
+        ]
     },
     {
         name: 'Skogvokteren',
@@ -429,7 +501,15 @@ const raceRoutes = [
         url: 'https://grenlandultrarunners.no/skogvokteren-ultra-2/',
         useCalculatedStats: true,
         category: '50-miles',
-        date: '2026-05-02'
+        date: '2026-05-02',
+        gpxYear: 2025,
+        checkpoints: [
+            { name: 'SP1 Jarseng', lat: 59.1716, lng: 9.72562 },
+            { name: 'SP2 Solvika', lat: 59.26213, lng: 9.68922 },
+            { name: 'SP3 Bliva', lat: 59.28268, lng: 9.52663 },
+            { name: 'SP4 Løveid', lat: 59.21094, lng: 9.51384 },
+            { name: 'SP5 Voldsvegen', lat: 59.16806, lng: 9.5667 },
+        ]
     },
     {
         name: 'Ecotrail Oslo 80K',
@@ -652,7 +732,25 @@ const racePolylines = {}; // track polylines per race for highlight/dim
 const hitAreaPolylines = {}; // invisible wider polylines for touch
 const raceDecorators = {}; // directional arrow decorators
 const raceMarkers = {}; // start/finish markers per race
-let activeCheckpointMarkers = []; // checkpoint markers for the highlighted race
+let activeCheckpointMarkers = []; // [{marker, km, name}] for the highlighted race
+
+const cpIcon = L.divIcon({
+    className: '',
+    html: `<svg width="12" height="12" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="6,1 11,6 6,11 1,6" fill="#fff" stroke="#333" stroke-width="1.5"/>
+    </svg>`,
+    iconSize: [12, 12],
+    iconAnchor: [6, 6]
+});
+
+const cpIconHighlighted = L.divIcon({
+    className: '',
+    html: `<svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="9,1 17,9 9,17 1,9" fill="#ff6b00" stroke="#fff" stroke-width="2"/>
+    </svg>`,
+    iconSize: [18, 18],
+    iconAnchor: [9, 9]
+});
 const raceElevationData = {};
 const raceChartMeta = {};
 
@@ -782,7 +880,8 @@ function calcCheckpointSplits(raceName, checkpoints, targetMinutes) {
         { name: 'Start', km: 0 },
         ...resolveCheckpoints(checkpoints, raceName)
             .filter(cp => cp.km > 0)
-            .map(cp => ({ ...cp, km: Math.min(cp.km, totalKm) })),
+            .map(cp => ({ ...cp, km: Math.min(cp.km, totalKm) }))
+            .sort((a, b) => a.km - b.km),
         { name: 'Mål', km: totalKm }
     ];
 
@@ -871,6 +970,37 @@ function parseStartTime(raw) {
     return h * 60 + min;
 }
 
+function zoomToCheckpoint(raceName, km) {
+    const routePoints = buildRoutePoints(raceName);
+    if (!routePoints) return;
+    const pos = getLatLngAtKm(routePoints, km);
+    if (!pos) return;
+
+    // Reset all markers to default style
+    activeCheckpointMarkers.forEach(({ marker, km: mKm, name: mName }) => {
+        marker.setIcon(cpIcon);
+        marker.unbindTooltip();
+        marker.bindTooltip(`${mName} (${mKm.toFixed(1)} km)`, {
+            permanent: false, direction: 'top', offset: [0, -6],
+            className: 'distance-dot-tooltip'
+        });
+    });
+
+    // Highlight the clicked marker
+    const entry = activeCheckpointMarkers.find(m => Math.abs(m.km - km) < 1.0);
+    if (entry) {
+        entry.marker.setIcon(cpIconHighlighted);
+        entry.marker.unbindTooltip();
+        entry.marker.bindTooltip(entry.name, {
+            permanent: true, direction: 'top', offset: [0, -9],
+            className: 'distance-dot-tooltip'
+        });
+        entry.marker.openTooltip();
+    }
+
+    map.setView([pos.lat, pos.lng], 14, { animate: true });
+}
+
 function fmtClock(startMinutes, elapsedMinutes) {
     const total = Math.round(startMinutes + elapsedMinutes) % (24 * 60);
     const h = Math.floor(total / 60);
@@ -914,11 +1044,11 @@ function renderPacePlanner(race) {
         <div class="pace-planner-header">
             <span class="pace-planner-title">Pacing-kalkulator</span>
             <div class="pace-inputs-row">
-                <span class="pace-input-label">Antatt sluttid</span>
+                <span class="pace-input-label">Sluttid</span>
                 <input type="text" class="pace-target-input pace-target-input-sm" id="pace-target-input"
                     placeholder="0:00" maxlength="5"
                     oninput="updatePacePlanner()">
-                <span class="pace-input-label">Start kl.</span>
+                <span class="pace-input-label">Start</span>
                 <input type="text" class="pace-target-input pace-target-input-sm" id="pace-start-input"
                     placeholder="0:00" maxlength="5"
                     oninput="updatePacePlanner()">
@@ -937,27 +1067,33 @@ let _lastSplitsExport = null;
 
 function copySplits() {
     if (!_lastSplitsExport) return;
-    const { raceName, targetRaw, startRaw, splits, startMinutes } = _lastSplitsExport;
+    const { raceName, splits, startMinutes, targetMinutes } = _lastSplitsExport;
     const fmt = (e) => startMinutes !== null ? fmtClock(startMinutes, e) : fmtTime(e);
 
-    const lines = [raceName];
-    const meta = [];
-    if (targetRaw) meta.push(`Antatt sluttid: ${targetRaw}`);
-    if (startRaw) meta.push(`Start: ${startRaw}`);
-    if (meta.length) lines.push(meta.join('  |  '));
-    lines.push('');
+    const startStr = startMinutes !== null ? fmtClock(0, startMinutes) : null;
+    const finishStr = fmt(targetMinutes);
 
-    splits.slice(1).forEach((sp, i) => {
-        const prev = splits[i];
-        const segKm = sp.km - prev.km;
-        const pace = fmtPace(segKm, sp.segmentMinutes);
+    // Compute column widths from data
+    const rows = splits.slice(1).map(sp => {
         const arriveStr = sp.arrivalRange
             ? `${fmt(roundTo5(sp.arrivalRange[0]))} – ${fmt(roundTo5(sp.arrivalRange[1]))}`
             : fmt(sp.arrivalMinutes);
-        lines.push(`${sp.name.padEnd(28)}${arriveStr.padEnd(20)}${(sp.km.toFixed(0) + ' km').padEnd(9)}+${sp.eleGain}m  ${pace}`);
+        return { name: sp.name, arrive: arriveStr, km: sp.km.toFixed(0) };
     });
+    const timeW = Math.max(...rows.map(r => r.arrive.length)) + 2;
 
-    navigator.clipboard.writeText(lines.join('\n')).then(() => {
+    const tableLines = rows.map(r =>
+        `${r.arrive.padEnd(timeW)}${r.km.padStart(3)} km  ${r.name}`
+    );
+
+    const header = [];
+    header.push(raceName);
+    if (startStr) header.push(`Start: ${startStr}  ->  Mal: ~${finishStr}`);
+    else header.push(`Antatt sluttid: ${fmtTime(targetMinutes)}`);
+
+    const text = [...header, '', ...tableLines].join('\n');
+
+    navigator.clipboard.writeText(text).then(() => {
         const btn = document.querySelector('.pace-copy-btn');
         if (!btn) return;
         const orig = btn.textContent;
@@ -1016,7 +1152,8 @@ function updatePacePlanner() {
         targetRaw: input.value.trim(),
         startRaw: startInput ? startInput.value.trim() : '',
         splits,
-        startMinutes
+        startMinutes,
+        targetMinutes
     };
 
     const fmt = (elapsed) => startMinutes !== null ? fmtClock(startMinutes, elapsed) : fmtTime(elapsed);
@@ -1030,10 +1167,11 @@ function updatePacePlanner() {
         const arriveStr = sp.arrivalRange
             ? `${fmt(roundTo5(sp.arrivalRange[0]))} – ${fmt(roundTo5(sp.arrivalRange[1]))}`
             : fmt(sp.arrivalMinutes);
-        return `<div class="spl-row${isFinish ? ' spl-row-finish' : ''}">
+        const escapedRace = pacePlannerRace.replace(/'/g, "\\'");
+        return `<div class="spl-row spl-row-clickable${isFinish ? ' spl-row-finish' : ''}" onclick="zoomToCheckpoint('${escapedRace}', ${sp.km})">
             <span class="spl-name">${sp.name}</span>
             <span class="spl-arrive">${arriveStr}</span>
-            <span class="spl-meta">${sp.km.toFixed(0)} km · +${sp.eleGain}m · ${pace}</span>
+            <span class="spl-meta">${sp.km.toFixed(0)} km · +${segKm.toFixed(0)} km · +${sp.eleGain}m · ${pace}</span>
         </div>`;
     }).join('');
 
@@ -1168,7 +1306,12 @@ async function loadRace(race) {
             hitAreaPolylines[race.name].push(hitArea);
             hitArea.on('click', (e) => {
                 L.DomEvent.stopPropagation(e);
-                if (selectedRaceName) {
+                const cp = map.latLngToContainerPoint(e.latlng);
+                const nearby = findRacesNearClick(cp);
+                if (nearby.length > 1) {
+                    if (selectedRaceName) closeRaceDetail();
+                    showRacePicker(e.latlng, nearby);
+                } else if (selectedRaceName) {
                     closeRaceDetail();
                 } else {
                     selectRace(race.name);
@@ -1223,6 +1366,53 @@ let activeRoutePoints = null;
 let dotMapMoveHandler = null;
 let chartTouchMarker = null;
 let dotFrozen = false;
+
+function pointToSegmentDist(p, a, b) {
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const lenSq = dx * dx + dy * dy;
+    const t = lenSq > 0 ? Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / lenSq)) : 0;
+    return Math.sqrt((a.x + t * dx - p.x) ** 2 + (a.y + t * dy - p.y) ** 2);
+}
+
+function findRacesNearClick(containerPoint) {
+    const threshold = 25;
+    const nearby = [];
+    for (const [raceName, polylines] of Object.entries(racePolylines)) {
+        if (!raceLayers[raceName] || !map.hasLayer(raceLayers[raceName])) continue;
+        let found = false;
+        outer: for (const pl of polylines) {
+            const lls = pl.getLatLngs();
+            for (let i = 0; i < lls.length - 1; i++) {
+                const a = map.latLngToContainerPoint(lls[i]);
+                const b = map.latLngToContainerPoint(lls[i + 1]);
+                if (pointToSegmentDist(containerPoint, a, b) <= threshold) { found = true; break outer; }
+            }
+        }
+        if (found) {
+            const race = raceRoutes.find(r => r.name === raceName);
+            if (race) nearby.push(race);
+        }
+    }
+    return nearby;
+}
+
+let racePickerPopup = null;
+
+function showRacePicker(latlng, races) {
+    if (racePickerPopup) { map.closePopup(racePickerPopup); racePickerPopup = null; }
+    const items = races.map(r =>
+        `<div class="race-picker-item" onclick="pickRace('${r.name.replace(/'/g, "\\'")}')">${r.name}</div>`
+    ).join('');
+    racePickerPopup = L.popup({ closeButton: false, className: 'race-picker-popup', maxWidth: 260 })
+        .setLatLng(latlng)
+        .setContent(`<div class="race-picker">${items}</div>`)
+        .openOn(map);
+}
+
+function pickRace(name) {
+    if (racePickerPopup) { map.closePopup(racePickerPopup); racePickerPopup = null; }
+    selectRace(name);
+}
 
 function haversineKm(lat1, lon1, lat2, lon2) {
     const R = 6371;
@@ -1521,30 +1711,28 @@ function highlightRace(activeName) {
     enableDistanceDot(activeName);
 
     // Add checkpoint markers for the active race
-    activeCheckpointMarkers.forEach(m => m.remove());
+    activeCheckpointMarkers.forEach(m => m.marker.remove());
     activeCheckpointMarkers = [];
     const activeRace = raceRoutes.find(r => r.name === activeName);
     if (activeRace && activeRace.checkpoints && activeRace.checkpoints.length > 0) {
         const routePoints = buildRoutePoints(activeName);
         if (routePoints && routePoints.length > 0) {
-            const cpIcon = L.divIcon({
-                className: '',
-                html: `<svg width="12" height="12" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
-                    <polygon points="6,1 11,6 6,11 1,6" fill="#fff" stroke="#333" stroke-width="1.5"/>
-                </svg>`,
-                iconSize: [12, 12],
-                iconAnchor: [6, 6]
-            });
-            resolveCheckpoints(activeRace.checkpoints, activeName).forEach(cp => {
-                const pos = getLatLngAtKm(routePoints, cp.km);
-                if (!pos) return;
-                const marker = L.marker([pos.lat, pos.lng], { icon: cpIcon, interactive: true }).addTo(map);
-                marker.bindTooltip(`${cp.name} (~${cp.km} km)`, {
-                    permanent: false, direction: 'top', offset: [0, -6],
-                    className: 'distance-dot-tooltip'
+            resolveCheckpoints(activeRace.checkpoints, activeName)
+                .sort((a, b) => a.km - b.km)
+                .forEach(cp => {
+                    const pos = getLatLngAtKm(routePoints, cp.km);
+                    if (!pos) return;
+                    const marker = L.marker([pos.lat, pos.lng], { icon: cpIcon, interactive: true }).addTo(map);
+                    marker.bindTooltip(`${cp.name} (${cp.km.toFixed(1)} km)`, {
+                        permanent: false, direction: 'top', offset: [0, -6],
+                        className: 'distance-dot-tooltip'
+                    });
+                    marker.on('click', (e) => {
+                        L.DomEvent.stopPropagation(e);
+                        zoomToCheckpoint(activeName, cp.km);
+                    });
+                    activeCheckpointMarkers.push({ marker, km: cp.km, name: cp.name });
                 });
-                activeCheckpointMarkers.push(marker);
-            });
         }
     }
 }
@@ -1552,7 +1740,7 @@ function highlightRace(activeName) {
 // Reset all race styles back to normal
 function resetRaceStyles() {
     disableDistanceDot();
-    activeCheckpointMarkers.forEach(m => m.remove());
+    activeCheckpointMarkers.forEach(m => m.marker.remove());
     activeCheckpointMarkers = [];
     for (const [name, polylines] of Object.entries(racePolylines)) {
         const race = raceRoutes.find(r => r.name === name);
@@ -1659,8 +1847,9 @@ if (priorityRace) {
     loadRaces();
 }
 
-// Clicking the map background closes the detail card
+// Clicking the map background closes the detail card and any picker popup
 map.on('click', () => {
+    if (racePickerPopup) { map.closePopup(racePickerPopup); racePickerPopup = null; }
     if (selectedRaceName) closeRaceDetail();
 });
 
@@ -1796,27 +1985,10 @@ async function selectRace(raceName) {
     highlightRace(raceName);
     panToRace(raceName);
     showRaceDetailOverlay(race);
-    positionDetailNearRace();
     if (isTouchDevice) enableChartTouch(raceName);
     else enableChartMouse(raceName);
 }
 
-function positionDetailNearRace() {
-    if (isTouchDevice) return;
-
-    const overlay = document.getElementById('race-detail-overlay');
-    const margin = 16;
-
-    requestAnimationFrame(() => {
-        const card = overlay.querySelector('.race-detail-card');
-        const cardH = card ? card.offsetHeight : 500;
-        const top = Math.max(margin, (window.innerHeight - cardH) / 2);
-        overlay.style.left = margin + 'px';
-        overlay.style.top = top + 'px';
-        overlay.style.bottom = 'auto';
-        overlay.style.right = 'auto';
-    });
-}
 
 function panToRace(raceName) {
     const polylines = racePolylines[raceName];
@@ -1869,6 +2041,7 @@ function showRaceDetailOverlay(race, loading = false) {
                     <div><strong>Dato:</strong> ${formatDate(race.date)}</div>
                     <div><strong>Distanse:</strong> ${race.distance ? race.distance.toFixed(1) + ' km' : 'N/A'}</div>
                     <div><strong>Høydemeter:</strong> ${race.elevation ? race.elevation + ' m' : 'N/A'}</div>
+                    ${race.gpxYear ? `<div><strong>Løypeår:</strong> ${race.gpxYear}${race.gpxYear < 2026 ? ' ⚠️' : ''}</div>` : ''}
                     <div><strong>GPX:</strong> ${downloadLinks}</div>
                 </div>
                 <div class="race-actions">

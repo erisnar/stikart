@@ -38,6 +38,30 @@ body {
     padding: 4px 8px 0 0;
 }
 
+/* Race picker popup */
+.race-picker-popup .leaflet-popup-content-wrapper {
+    padding: 0;
+    border-radius: 10px;
+    min-width: 0;
+    overflow: hidden;
+}
+.race-picker-popup .leaflet-popup-content {
+    margin: 0;
+    min-width: 0;
+}
+.race-picker-popup .leaflet-popup-tip-container { display: none; }
+.race-picker { padding: 4px 0; }
+.race-picker-item {
+    padding: 9px 18px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    border-bottom: 1px solid #f0f0f0;
+}
+.race-picker-item:last-child { border-bottom: none; }
+.race-picker-item:hover { background: #f5f5f5; }
+
 /* Race popup styling */
 .race-popup {
     padding: 15px;
@@ -767,11 +791,21 @@ body {
         transform: translateX(-50%) translateY(0);
     }
 
+    .race-detail-overlay {
+        left: 0;
+        top: 0;
+        bottom: 0;
+        right: auto;
+    }
+
     .race-detail-card {
-        width: 420px;
-        max-height: 85vh;
+        width: 400px;
+        height: 100%;
+        max-height: 100vh;
+        border-radius: 0;
         overflow-y: auto;
         font-size: 1.05em;
+        box-shadow: 4px 0 20px rgba(0,0,0,0.15);
     }
 }
 
@@ -1314,6 +1348,16 @@ details[open] .pace-desc-summary::before {
 .spl-row-finish {
     border-bottom: none;
     font-weight: 700;
+}
+
+.spl-row-clickable {
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background 0.1s;
+}
+
+.spl-row-clickable:hover {
+    background: #f5f5f5;
 }
 
 .spl-name {
