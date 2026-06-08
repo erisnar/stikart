@@ -77,6 +77,14 @@ function parseGPXToGeoJSON(gpxText) {
 
     const stats = calculateGPXStats(coordinates);
 
+    const waypoints = Array.from(gpxDoc.querySelectorAll('wpt'))
+        .map(wpt => ({
+            name: wpt.querySelector('name')?.textContent?.trim() || 'Sjekkpunkt',
+            lat: parseFloat(wpt.getAttribute('lat')),
+            lng: parseFloat(wpt.getAttribute('lon'))
+        }))
+        .filter(wp => !isNaN(wp.lat) && !isNaN(wp.lng));
+
     return {
         type: 'FeatureCollection',
         features: [{
@@ -89,6 +97,7 @@ function parseGPXToGeoJSON(gpxText) {
                 distance: stats.distance,
                 elevationGain: stats.elevationGain
             }
-        }]
+        }],
+        waypoints
     };
 }

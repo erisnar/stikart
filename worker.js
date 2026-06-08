@@ -109,6 +109,7 @@ function buildRaceEntry(raceData) {
     ];
     if (raceData.url)          fields.push(`        url: ${JSON.stringify(raceData.url)}`);
     if (raceData.description)  fields.push(`        description: ${JSON.stringify(raceData.description)}`);
+    if (raceData.gpxUpdated)   fields.push(`        gpxUpdated: ${JSON.stringify(raceData.gpxUpdated)}`);
     fields.push(`        useCalculatedStats: true`);
     if (raceData.manualDistance) fields.push(`        manualDistance: ${raceData.manualDistance}`);
     fields.push(`        category: ${JSON.stringify(raceData.category)}`);
@@ -221,7 +222,8 @@ async function createRacePR(payload, token) {
     } else {
         newEntries = [buildRaceEntry({
             id: isEdit ? originalId : slug,
-            name, files: filePaths, color, url, date, description, category
+            name, files: filePaths, color, url, date, description, category,
+            gpxUpdated: gpxContent ? new Date().toISOString().substring(0, 10) : undefined
         })];
     }
 

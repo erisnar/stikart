@@ -756,7 +756,8 @@ body {
         overflow: hidden;
     }
 
-    .race-detail-overlay.minimized .race-popup-details {
+    .race-detail-overlay.minimized .race-popup-details,
+    .race-detail-overlay.minimized .race-description {
         display: none;
     }
 
@@ -1124,6 +1125,19 @@ body {
     cursor: not-allowed;
 }
 
+.pace-auto-splits-note {
+    font-size: 0.8em;
+    color: #999;
+    margin: 0 0 8px 0;
+    font-style: italic;
+}
+
+.gpx-date {
+    color: #999;
+    font-size: 0.85em;
+    margin-left: 4px;
+}
+
 .race-description {
     font-size: 0.9em;
     color: #555;
@@ -1348,23 +1362,40 @@ body {
 
 /* ── Pace planner ─────────────────────────────────────────────────────────── */
 
-.pace-planner-btn {
+.pace-section {
+    border-top: 1px solid #f0ece8;
     margin-top: 8px;
-    padding: 6px 12px;
-    background: none;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 13px;
-    font-family: inherit;
-    color: #333;
-    cursor: pointer;
+}
+
+.pace-section-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     width: 100%;
+    padding: 10px 15px;
+    background: none;
+    border: none;
+    font-size: 0.9em;
+    font-weight: 600;
+    color: #444;
+    cursor: pointer;
+    font-family: inherit;
+    list-style: none;
     text-align: left;
 }
 
-.pace-planner-btn:hover {
-    background: #f5f5f5;
-    border-color: #999;
+.pace-section-toggle::-webkit-details-marker { display: none; }
+
+.pace-section-toggle:hover { background: #fafafa; }
+
+.pace-section-chevron {
+    font-size: 1.1em;
+    color: #aaa;
+    transition: transform 0.15s;
+}
+
+details.pace-section[open] .pace-section-chevron {
+    transform: rotate(90deg);
 }
 
 /* Fullscreen overlay */

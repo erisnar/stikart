@@ -170,6 +170,7 @@ const raceRoutes = [
         id: "lommedalen-rundt",
         name: "Lommedalen Rundt",
         files: ["race-calendar/lommedalen-rundt/lommedalen-rundt-2025-published.gpx"],
+        gpxUpdated: '2026-06-08',
         color: "#8338ec",
         url: "https://www.lommedalenrundt.no/omlr",
         description: "Lommedalen Rundt er et løp på åsene rundt Lommedalen i Bærum, arrangert første gang i 2015.",
@@ -182,6 +183,7 @@ const raceRoutes = [
         id: 'nsm-ultra-2025',
         name: 'NSM Ultra 2025',
         files: ['race-calendar/NordmarkaSkogsmaraton/NSM_Ultra_2025.gpx'],
+        gpxUpdated: '2026-01-30',
         color: '#ff6b35',
         url: 'https://nordmarkaskogsmaraton.no/',
         useCalculatedStats: true,
@@ -197,6 +199,7 @@ const raceRoutes = [
             'race-calendar/OsloBergenTrail/M3_Voss-Bergen.gpx',
             'race-calendar/OsloBergenTrail/M4_Gullbotn-Bergen.gpx'
         ],
+        gpxUpdated: '2026-01-30',
         color: '#3498db',
         url: 'https://oslobergentrail.com/',
         manualDistance: 500,
@@ -208,36 +211,29 @@ const raceRoutes = [
         id: 'smve-soria-moria-til-verdens-ende',
         name: 'SMVE - Soria Moria til Verdens Ende',
         files: ['race-calendar/SoriaMoriaTilVerdensEnde/SMVE_2024_100_miles_02.gpx'],
+        gpxUpdated: '2026-01-30',
         color: '#9b59b6',
         url: 'https://soriamoriatilverdensende.com',
         useCalculatedStats: true,
         category: '100-miles',
         date: '2026-05-30',
-        checkpoints: [
-            { name: 'CP1 Drammen', lat: 59.740395, lng: 10.214029 },
-            { name: 'CP2 Sande', lat: 59.587464, lng: 10.210863 },
-            { name: 'CP3 Hengsrød', lat: 59.393109, lng: 10.308104 },
-            { name: 'CP4 Teie', lat: 59.249809, lng: 10.400786 },
-        ]
     },
     {
         id: 'noesen-hundreds',
         name: 'Nøsen Hundreds',
         files: ['race-calendar/Nøsen/Nosen_100.gpx'],
+        gpxUpdated: '2026-01-30',
         color: '#e74c3c',
         url: 'https://www.nosenhundreds.com/',
         useCalculatedStats: true,
         category: '100k',
         date: '2026-06-13',
-        checkpoints: [
-            { name: 'Syndinstøga', km: 42 },
-            { name: 'Pikkhaug', km: 72 },
-        ]
     },
     {
         id: 'dobbeltravern-nordmarkstraveren',
         name: 'Dobbeltravern - Nordmarkstraveren',
         files: ['race-calendar/Nordmakstravern/dobbeltravern_60km_1_.gpx'],
+        gpxUpdated: '2026-01-30',
         color: '#f39c12',
         url: 'http://www.nordmarkstravern.no/',
         useCalculatedStats: true,
@@ -248,6 +244,7 @@ const raceRoutes = [
         id: 'lillomarka-rundt',
         name: 'Lillomarka Rundt',
         files: ['race-calendar/Sidespor-SkyBlazers/Lillomarka_rundt_51_km_Frysja_161025.gpx'],
+        gpxUpdated: '2026-02-17',
         color: '#1abc9c',
         url: 'https://www.sidespor.no/lop/lillomarka-rundt',
         useCalculatedStats: true,
@@ -258,6 +255,7 @@ const raceRoutes = [
         id: 'flyktningeruta',
         name: 'Flyktningeruta',
         files: ['race-calendar/ØstmarkaTrailChallenge/Flyktningeruta_2025.gpx'],
+        gpxUpdated: '2026-02-17',
         color: '#e67e22',
         url: 'https://www.ostmarkatrail.no/flyktningeruta/',
         useCalculatedStats: true,
@@ -267,68 +265,44 @@ const raceRoutes = [
     {
         id: 'endless-shore-ultra',
         name: 'Endless Shore Ultra',
-        files: ['race-calendar/EndlessShores/Endless_Shores_Ultra_Trail_100_miles_2025_FINAL.gpx'],
+        files: ['race-calendar/EndlessShores/Endless_Shores_Ultra_Trail_100M_2026.gpx'],
+        gpxUpdated: '2026-05-18',
         color: '#16a085',
         url: 'https://www.endless-shore.no/',
         useCalculatedStats: true,
         category: '100-miles',
         date: '2026-05-23',
         gpxYear: 2026,
-        checkpoints: [
-            { name: 'Heyerdalbukta', lat: 59.482713, lng: 10.631641 },
-            { name: 'Kajakklubben', lat: 59.447482, lng: 10.656835 },
-            { name: 'Brevikbukta', lat: 59.510237, lng: 10.683111 },
-            { name: 'Krokstrand', lat: 59.564564, lng: 10.651957 },
-            { name: 'Sogsti Skole', lat: 59.654717, lng: 10.646298 },
-            { name: 'Ytre Hallangspollen', lat: 59.692277, lng: 10.65055 },
-            { name: 'Digerud', lat: 59.720203, lng: 10.593213 },
-            { name: 'Dal', lat: 59.750848, lng: 10.710993 },
-            { name: 'Sørby', lat: 59.819259, lng: 10.683071 },
-            { name: 'Alværn', lat: 59.822009, lng: 10.63258 },
-            { name: 'Brattbakken', lat: 59.841784, lng: 10.656458 },
-        ]
     },
     {
         id: 'endless-shore-ultra-50-miles',
         name: 'Endless Shore Ultra 50 Miles',
         files: ['race-calendar/EndlessShores/Endless_Shores_Ultra_trail_50M_2026.gpx'],
+        gpxUpdated: '2026-05-18',
         color: '#0e6655',
         url: 'https://www.endless-shore.no/',
         useCalculatedStats: true,
         category: '50-miles',
         date: '2026-05-23',
         gpxYear: 2026,
-        checkpoints: [
-            { name: 'Brevikbukta', lat: 59.510195, lng: 10.683005 },
-            { name: 'Krokstrand', lat: 59.564560, lng: 10.651890 },
-            { name: 'Sogsti Skole', lat: 59.654714, lng: 10.646178 },
-            { name: 'Ytre Hallangspollen', lat: 59.692200, lng: 10.650400 },
-            { name: 'Dal', lat: 59.750777, lng: 10.711067 },
-            { name: 'Sørby', lat: 59.819294, lng: 10.683225 },
-            { name: 'Alværn', lat: 59.821878, lng: 10.632846 },
-        ]
     },
     {
         id: 'endless-shore-ultra-50k',
         name: 'Endless Shore Ultra 50K',
         files: ['race-calendar/EndlessShores/Endless_Shores_Ultra_Trail_50KM_2026.gpx'],
+        gpxUpdated: '2026-05-18',
         color: '#1abc9c',
         url: 'https://www.endless-shore.no/',
         useCalculatedStats: true,
         category: '50k',
         date: '2026-05-23',
         gpxYear: 2026,
-        checkpoints: [
-            { name: 'Ytre Hallangspollen', lat: 59.692251, lng: 10.650388 },
-            { name: 'Dal', lat: 59.750837, lng: 10.711050 },
-            { name: 'Sørby', lat: 59.819244, lng: 10.683128 },
-            { name: 'Alværn', lat: 59.821952, lng: 10.632900 },
-        ]
     },
     {
         id: 'sandnes-100-miles',
         name: 'Sandnes 100 Miles',
         files: ['race-calendar/SandsnesUltraTrail/sandnes100-miles.gpx'],
+        gpxUpdated: '2026-01-30',
         color: '#c0392b',
         url: 'https://www.sandnes100miles.no/',
         useCalculatedStats: true,
@@ -339,60 +313,40 @@ const raceRoutes = [
         id: 'lofoten-ultra-trail-100-miles',
         name: 'Lofoten Ultra Trail 100 Miles',
         files: ['race-calendar/LofotenUltraTrail/lofoten-ultra-trail-100-miles.gpx'],
+        gpxUpdated: '2026-02-02',
         color: '#2980b9',
         url: 'https://thearctictriple.no/lofoten-ultra-trail-100-miles',
         useCalculatedStats: true,
         category: '100-miles',
         date: '2026-05-28',
-        checkpoints: [
-            { name: 'Selfjord', lat: 68.047998, lng: 13.119021 },
-            { name: 'Fredvang', lat: 68.088564, lng: 13.163508 },
-            { name: 'Nusfjord', lat: 68.035028, lng: 13.348398 },
-            { name: 'CP1 Napp', lat: 68.131976, lng: 13.439697 },
-            { name: 'Leknes', lat: 68.145805, lng: 13.612806 },
-            { name: 'Brustranda', lat: 68.204105, lng: 13.887845 },
-            { name: 'CP2 Torvdalshalsen', lat: 68.258771, lng: 13.826776 },
-            { name: 'Vikjorden', lat: 68.227608, lng: 14.076982 },
-            { name: 'CP3 Kleppstad', lat: 68.260001, lng: 14.271559 },
-            { name: 'CP4 Kongmarka', lat: 68.235273, lng: 14.490144 },
-        ]
     },
     {
         id: 'lofoten-ultra-trail-50-miles',
         name: 'Lofoten Ultra Trail 50 Miles',
         files: ['race-calendar/LofotenUltraTrail/lofoten-ultra-trail-50-miles.gpx'],
+        gpxUpdated: '2026-02-02',
         color: '#5dade2',
         url: 'https://thearctictriple.no/lofoten-ultra-trail-50-miles',
         useCalculatedStats: true,
         category: '50-miles',
         date: '2026-05-28',
-        checkpoints: [
-            { name: 'Brustranda', lat: 68.204072, lng: 13.887895 },
-            { name: 'Torvdalshalsen', lat: 68.258771, lng: 13.826776 },
-            { name: 'Vikjorden', lat: 68.227608, lng: 14.076982 },
-            { name: 'CP1 Kleppstad', lat: 68.260001, lng: 14.271559 },
-            { name: 'CP2 Kongmarka', lat: 68.235119, lng: 14.490814 },
-        ]
     },
     {
         id: 'lofoten-ultra-trail-48k',
         name: 'Lofoten Ultra Trail 48K',
         files: ['race-calendar/LofotenUltraTrail/lofoten-ultra-trail-48km.gpx'],
+        gpxUpdated: '2026-02-02',
         color: '#85c1e9',
         url: 'https://thearctictriple.no/lofoten-ultra-trail-48-km',
         useCalculatedStats: true,
         category: '50k',
         date: '2026-05-28',
-        checkpoints: [
-            { name: 'Vikjorden', lat: 68.227608, lng: 14.076982 },
-            { name: 'CP1 Kleppstad', lat: 68.260001, lng: 14.271559 },
-            { name: 'CP2 Kongmarka', lat: 68.235154, lng: 14.489769 },
-        ]
     },
     {
         id: 'mmc-100-miles',
         name: 'MMC 100 Miles',
         files: ['race-calendar/MeråkerMountainChallenge/MMC_100M.gpx'],
+        gpxUpdated: '2026-02-02',
         color: '#8e44ad',
         url: 'https://mmctrail.no/100m',
         useCalculatedStats: true,
@@ -403,6 +357,7 @@ const raceRoutes = [
         id: 'mmc-100k',
         name: 'MMC 100K',
         files: ['race-calendar/MeråkerMountainChallenge/MMC_100K.gpx'],
+        gpxUpdated: '2026-02-02',
         color: '#a569bd',
         url: 'https://mmctrail.no/100k',
         useCalculatedStats: true,
@@ -413,6 +368,7 @@ const raceRoutes = [
         id: 'mmc-70k',
         name: 'MMC 70K',
         files: ['race-calendar/MeråkerMountainChallenge/MMC_70K.gpx'],
+        gpxUpdated: '2026-02-02',
         color: '#bb8fce',
         url: 'https://mmctrail.no/70k',
         useCalculatedStats: true,
@@ -423,6 +379,7 @@ const raceRoutes = [
         id: 'hardangerjoekulen-ultra-95k',
         name: 'Hardangerjøkulen Ultra 95K',
         files: ['race-calendar/HardangerjøkulenUltra/hardangerjokulen-ultra-95k.gpx'],
+        gpxUpdated: '2026-02-02',
         color: '#27ae60',
         url: 'https://xtremeidfjord.no/hardangerjokulen-ultra/',
         useCalculatedStats: true,
@@ -433,6 +390,7 @@ const raceRoutes = [
         id: 'hardangerjoekulen-ultra-34k',
         name: 'Hardangerjøkulen Ultra 34K',
         files: ['race-calendar/HardangerjøkulenUltra/hardangerjokulen-ultra-34k.gpx'],
+        gpxUpdated: '2026-02-02',
         color: '#58d68d',
         url: 'https://xtremeidfjord.no/hardangerjokulen-ultra/',
         useCalculatedStats: true,
@@ -446,6 +404,7 @@ const raceRoutes = [
             'race-calendar/OsloTrailChallenge/OTC_200K_First_Half.gpx',
             'race-calendar/OsloTrailChallenge/OTC_100K.gpx'
         ],
+        gpxUpdated: '2026-02-02',
         color: '#d35400',
         url: 'https://langtoglenge.org/en/events_en/otc_en.html',
         useCalculatedStats: true,
@@ -456,6 +415,7 @@ const raceRoutes = [
         id: 'oslo-trail-challenge-100k',
         name: 'Oslo Trail Challenge 100K',
         files: ['race-calendar/OsloTrailChallenge/OTC_100K.gpx'],
+        gpxUpdated: '2026-02-02',
         color: '#dc7633',
         url: 'https://langtoglenge.org/en/events_en/otc_en.html',
         useCalculatedStats: true,
@@ -466,6 +426,7 @@ const raceRoutes = [
         id: 'oslo-trail-challenge-55k',
         name: 'Oslo Trail Challenge 55K',
         files: ['race-calendar/OsloTrailChallenge/OTC_2024_55K_FINAL.gpx'],
+        gpxUpdated: '2026-02-02',
         color: '#f0b27a',
         url: 'https://langtoglenge.org/en/events_en/otc_en.html',
         useCalculatedStats: true,
@@ -476,21 +437,18 @@ const raceRoutes = [
         id: 'lustrafjorden-inn-ultra-100',
         name: 'Lustrafjorden Inn Ultra 100',
         files: ['race-calendar/LustrafjordenInn/Lustrafjorden_Inn_2024_Ultra100.gpx'],
+        gpxUpdated: '2026-02-17',
         color: '#1a5276',
         url: 'https://www.lustrafjordeninn.no/',
         useCalculatedStats: true,
         category: '100k',
         date: '2026-08-14',
-        checkpoints: [
-            { name: 'Solvorn', km: 31.5 },
-            { name: 'Gaupne', km: 54 },
-            { name: 'Luster', km: 77.5 },
-        ]
     },
     {
         id: 'hornindal-rundt-75k',
         name: 'Hornindal Rundt 75K',
         files: ['race-calendar/HornindalRundt/HornindalRundt75K.gpx'],
+        gpxUpdated: '2026-02-02',
         color: '#7d3c98',
         url: 'https://hornindalrundt.no/',
         useCalculatedStats: true,
@@ -501,6 +459,7 @@ const raceRoutes = [
         id: 'dynafit-hardangervidda-maraton-43k',
         name: 'Dynafit Hardangervidda Maraton 43K',
         files: ['race-calendar/HardangerviddaMaraton/hardangervidda-marathon-43k.gpx'],
+        gpxUpdated: '2026-02-02',
         color: '#d4ac0d',
         url: 'https://xtremeidfjord.no/hardangerjokulen-ultra/',
         useCalculatedStats: true,
@@ -511,72 +470,53 @@ const raceRoutes = [
         id: 'noesen-50k',
         name: 'Nøsen 50K',
         files: ['race-calendar/Nøsen/Nosen_50km.gpx'],
+        gpxUpdated: '2026-02-17',
         color: '#cb4335',
         url: 'https://www.nosenhundreds.com/50km',
         useCalculatedStats: true,
         category: '50k',
         date: '2026-06-14',
-        checkpoints: [
-            { name: 'Syndinstøga', km: 27 },
-            { name: 'Grønsenstølane', km: 40 },
-        ]
     },
     {
         id: 'krsultra-60',
         name: 'KRSUltra 60',
         files: ['race-calendar/KRSUltra/krsultra-60k-2025-v1.gpx'],
+        gpxUpdated: '2026-02-17',
         color: '#e55039',
         url: 'https://www.krsultra.no/lop/krsultra-60',
         useCalculatedStats: true,
         category: '50k',
         date: '2026-04-11',
         gpxYear: 2025,
-        checkpoints: [
-            { name: 'Grostøl', lat: 58.210648, lng: 8.006189 },
-            { name: 'Grønn Slette', lat: 58.168240, lng: 8.010513 },
-            { name: 'Hommeren', lat: 58.204165, lng: 7.928620 },
-            { name: 'Ravnedalen', lat: 58.156649, lng: 7.974291 },
-        ]
     },
     {
         id: 'skogvokteren',
         name: 'Skogvokteren',
         files: ['race-calendar/Skogvokteren/Skogvokteren_2025.gpx'],
+        gpxUpdated: '2026-02-17',
         color: '#2d6a4f',
         url: 'https://grenlandultrarunners.no/skogvokteren-ultra-2/',
         useCalculatedStats: true,
         category: '50-miles',
         date: '2026-05-02',
         gpxYear: 2025,
-        checkpoints: [
-            { name: 'SP1 Jarseng', lat: 59.1716, lng: 9.72562 },
-            { name: 'SP2 Solvika', lat: 59.26213, lng: 9.68922 },
-            { name: 'SP3 Bliva', lat: 59.28268, lng: 9.52663 },
-            { name: 'SP4 Løveid', lat: 59.21094, lng: 9.51384 },
-            { name: 'SP5 Voldsvegen', lat: 59.16806, lng: 9.5667 },
-        ]
     },
     {
         id: 'ecotrail-oslo-80k',
         name: 'Ecotrail Oslo 80K',
         files: ['race-calendar/ecotrail/ecotrail_oslo_80km_2026.gpx'],
+        gpxUpdated: '2026-02-17',
         color: '#40916c',
         url: 'https://oslo.ecotrail.com/en/race-ecotrail-oslo/trail-80-km',
         useCalculatedStats: true,
         category: '50-miles',
         date: '2026-05-30',
-        checkpoints: [
-            { name: 'Maridalen Kirke', km: 13 },
-            { name: 'Holmenkollen', km: 32 },
-            { name: 'Sørkedalen', km: 51 },
-            { name: 'Fossum', km: 61 },
-            { name: 'Thaugland', km: 73 },
-        ]
     },
     {
         id: 'ecotrail-oslo-50k',
         name: 'Ecotrail Oslo 50K',
         files: ['race-calendar/ecotrail/ecotrail_oslo_50km_2026.gpx'],
+        gpxUpdated: '2026-02-17',
         color: '#74c69d',
         url: 'https://oslo.ecotrail.com/en/race-ecotrail-oslo/trail-80-km',
         useCalculatedStats: true,
@@ -587,6 +527,7 @@ const raceRoutes = [
         id: 'sognefjord-trail-run-50k',
         name: 'Sognefjord Trail Run 50K',
         files: ['race-calendar/SognefjordTrail/STR+50K+2026.gpx'],
+        gpxUpdated: '2026-02-17',
         color: '#0077b6',
         url: 'https://www.sognefjordtrailrun.com/50k',
         useCalculatedStats: true,
@@ -597,6 +538,7 @@ const raceRoutes = [
         id: 'vestfold-historic-ultra-147k',
         name: 'Vestfold Historic Ultra 147K',
         files: ['race-calendar/VestfoldHistoricUltra/VHUT_2025_147km.gpx'],
+        gpxUpdated: '2026-02-17',
         color: '#6930c3',
         url: 'https://www.vhut.no/loyper/',
         useCalculatedStats: true,
@@ -607,6 +549,7 @@ const raceRoutes = [
         id: 'vestfold-historic-ultra-87k',
         name: 'Vestfold Historic Ultra 87K',
         files: ['race-calendar/VestfoldHistoricUltra/VHUT_2025_87km.gpx'],
+        gpxUpdated: '2026-02-17',
         color: '#7400b8',
         url: 'https://www.vhut.no/loyper/',
         useCalculatedStats: true,
@@ -617,6 +560,7 @@ const raceRoutes = [
         id: 'vestfold-historic-ultra-50k',
         name: 'Vestfold Historic Ultra 50K',
         files: ['race-calendar/VestfoldHistoricUltra/VHUT_2025_50km.gpx'],
+        gpxUpdated: '2026-02-17',
         color: '#9d4edd',
         url: 'https://www.vhut.no/loyper/',
         useCalculatedStats: true,
@@ -627,6 +571,7 @@ const raceRoutes = [
         id: 'jotunheimen-trail-run',
         name: 'Jotunheimen Trail Run',
         files: ['race-calendar/JotunheimenTrail/JTR+ULTRA+2026.gpx'],
+        gpxUpdated: '2026-02-17',
         color: '#023e8a',
         url: 'https://www.jotunheimentrailrun.com/',
         useCalculatedStats: true,
@@ -637,6 +582,7 @@ const raceRoutes = [
         id: 'bodoeryggen-ultra',
         name: 'Bodøryggen Ultra',
         files: ['race-calendar/Bodoryggen/Bodoryggen_2025_ultra.gpx'],
+        gpxUpdated: '2026-02-17',
         color: '#00b4d8',
         url: 'https://bodorunfestival.no/bodoryggen/',
         useCalculatedStats: true,
@@ -647,6 +593,7 @@ const raceRoutes = [
         id: 'stranda-fjord-trail-55k',
         name: 'Stranda Fjord Trail 55K',
         files: ['race-calendar/StrandaFjordTrail/55k.gpx'],
+        gpxUpdated: '2026-02-17',
         color: '#ff6d00',
         url: 'https://strandafjordtrailrace.com/',
         useCalculatedStats: true,
@@ -657,6 +604,7 @@ const raceRoutes = [
         id: 'stranda-fjord-trail-95k',
         name: 'Stranda Fjord Trail 95K',
         files: ['race-calendar/StrandaFjordTrail/95K.gpx'],
+        gpxUpdated: '2026-02-17',
         color: '#ff9500',
         url: 'https://strandafjordtrailrace.com/',
         useCalculatedStats: true,
@@ -667,6 +615,7 @@ const raceRoutes = [
         id: 'trollheimen-ultra-100k',
         name: 'Trollheimen Ultra 100K',
         files: ['race-calendar/TrollheimenUltra/trollheimen-ultra-trip.gpx'],
+        gpxUpdated: '2026-02-17',
         color: '#6a040f',
         url: 'https://trollheimenultra100km.webnode.page/',
         useCalculatedStats: true,
@@ -677,6 +626,7 @@ const raceRoutes = [
         id: 'tromsoe-mountain-challenge-50k',
         name: 'Tromsø Mountain Challenge 50K',
         files: ['race-calendar/TromsoMountainChallenge/TMC_Ultra_50km_2025.gpx'],
+        gpxUpdated: '2026-02-17',
         color: '#4cc9f0',
         url: 'https://msm.no/en/mountain-challenge/loypekart-tromso-mountain-challenge/',
         useCalculatedStats: true,
@@ -687,6 +637,7 @@ const raceRoutes = [
         id: 'blefjell-troll-57k',
         name: 'Blefjell Troll 57K',
         files: ['race-calendar/Blefjell/BB_01_Troll_4.gpx'],
+        gpxUpdated: '2026-02-18',
         color: '#5c4033',
         url: 'https://blefjellsbeste.com/',
         useCalculatedStats: true,
@@ -702,6 +653,7 @@ const raceRoutes = [
             'race-calendar/Blefjell/BB_10K_Smatusser.gpx',
             'race-calendar/Blefjell/BB_05K_Smatroll.gpx'
         ],
+        gpxUpdated: '2026-02-18',
         color: '#3d2817',
         url: 'https://blefjellsbeste.com/',
         useCalculatedStats: true,
@@ -718,6 +670,7 @@ let currentMonthFilter = null;
 
 // Current category filter (null = show all)
 let currentCategoryFilter = null;
+
 
 // Format date for display
 function formatDate(dateStr) {
@@ -1075,7 +1028,7 @@ function fmtPace(segKm, segMinutes) {
     return `${m}:${s.toString().padStart(2, '0')}/km`;
 }
 
-const PACE_DESC = 'Stigningsjustering: +3% lenger per 1% oppoverbakke (10% stigning = 33% tregere enn flatt). Slak nedoverbakke gir opptil 20% raskere fart. Fatigue: for et 24-timersløp antar modellen at du løper 30–110% tregere mot slutten enn i starten. Checkpointposisjoner kan avvike noe fra offisiell avstand.';
+const PACE_DESC = 'Stigningsjustering: +3% lenger per 1% oppoverbakke (10% stigning = 33% tregere enn flatt). Slak nedoverbakke gir opptil 20% raskere fart. Fatigue: for et 24-timersløp antar modellen at du løper 30–110% tregere mot slutten enn i starten.';
 
 // Resolve checkpoints: convert {lat,lng} entries to {km} using nearest point on route
 function resolveCheckpoints(checkpoints, raceName) {
@@ -1095,30 +1048,42 @@ function renderPacePlanner(race) {
     if (!race.checkpoints || race.checkpoints.length === 0) return '';
     if (!raceElevationData[race.name] || raceElevationData[race.name].length < 2) return '';
 
+    const safeName = race.name.replace(/'/g, "\\'");
+    const autoNote = race.autoCheckpoints
+        ? `<p class="pace-auto-splits-note">GPX-filen mangler sjekkpunkter — bruker standard 25/50/75 % deling.</p>`
+        : '';
+
     if (isTouchDevice) {
-        return `<button class="pace-planner-btn" onclick="openPacePlanner('${race.name.replace(/'/g, "\\'")}')">Beregn pacing →</button>`;
+        return `<button class="pace-section-toggle" onclick="openPacePlanner('${safeName}')">
+            Pacing-kalkulator <span class="pace-section-chevron">›</span>
+        </button>`;
     }
 
-    return `<div class="pace-planner">
-        <div class="pace-planner-header">
-            <span class="pace-planner-title">Pacing-kalkulator</span>
-            <div class="pace-inputs-row">
-                <span class="pace-input-label">Sluttid</span>
-                <input type="text" class="pace-target-input pace-target-input-sm" id="pace-target-input"
-                    placeholder="0:00" maxlength="5"
-                    oninput="updatePacePlanner()">
-                <span class="pace-input-label">Start</span>
-                <input type="text" class="pace-target-input pace-target-input-sm" id="pace-start-input"
-                    placeholder="0:00" maxlength="5"
-                    oninput="updatePacePlanner()">
+    return `<details class="pace-section">
+        <summary class="pace-section-toggle">
+            Pacing-kalkulator <span class="pace-section-chevron">›</span>
+        </summary>
+        <div class="pace-planner">
+            ${autoNote}
+            <div class="pace-planner-header">
+                <div class="pace-inputs-row">
+                    <span class="pace-input-label">Sluttid</span>
+                    <input type="text" class="pace-target-input pace-target-input-sm" id="pace-target-input"
+                        placeholder="0:00" maxlength="5"
+                        oninput="updatePacePlanner()">
+                    <span class="pace-input-label">Start</span>
+                    <input type="text" class="pace-target-input pace-target-input-sm" id="pace-start-input"
+                        placeholder="0:00" maxlength="5"
+                        oninput="updatePacePlanner()">
+                </div>
             </div>
+            <div id="pace-splits-table"><p class="pace-hint">Skriv inn antatt sluttid for å se splits</p></div>
+            <details class="pace-desc-details">
+                <summary class="pace-desc-summary">Utregning av tid</summary>
+                <p class="pace-desc">${PACE_DESC}</p>
+            </details>
         </div>
-        <div id="pace-splits-table"><p class="pace-hint">Skriv inn antatt sluttid for å se splits</p></div>
-        <details class="pace-desc-details">
-            <summary class="pace-desc-summary">Utregning av tid</summary>
-            <p class="pace-desc">${PACE_DESC}</p>
-        </details>
-    </div>`;
+    </details>`;
 }
 
 let pacePlannerRace = null;
@@ -1304,6 +1269,7 @@ async function loadRace(race) {
         const allCoordinates = [];
         let totalDistance = 0;
         let totalElevationGain = 0;
+        const allWaypoints = [];
         if (!raceElevationData[race.name]) raceElevationData[race.name] = [];
 
         // Load all GPX segments for this race
@@ -1334,11 +1300,24 @@ async function loadRace(race) {
                     const { points } = buildElevationProfile(coords, offsetKm);
                     raceElevationData[race.name].push(...points);
                 }
+
+                if (geoJSON.waypoints?.length) allWaypoints.push(...geoJSON.waypoints);
             }
         }
 
+        if (!race.checkpoints && allWaypoints.length) race.checkpoints = allWaypoints;
+
         // Use manual stats if provided, otherwise use calculated
         race.distance = race.manualDistance !== undefined ? race.manualDistance : totalDistance;
+
+        // Fall back to evenly-spaced splits for races without checkpoints
+        if (!race.checkpoints && race.distance > 0) {
+            race.checkpoints = [0.25, 0.50, 0.75].map(p => {
+                const km = Math.round(race.distance * p * 10) / 10;
+                return { name: `~${Math.round(km)} km`, km };
+            });
+            race.autoCheckpoints = true;
+        }
         race.elevation = race.manualElevation !== undefined ? race.manualElevation : totalElevationGain;
 
         // Create polyline for each segment
@@ -2102,7 +2081,7 @@ function showRaceDetailOverlay(race, loading = false) {
                     <div><strong>Distanse:</strong> ${race.distance ? race.distance.toFixed(1) + ' km' : 'N/A'}</div>
                     <div><strong>Høydemeter:</strong> ${race.elevation ? race.elevation + ' m' : 'N/A'}</div>
                     ${race.gpxYear ? `<div><strong>Løypeår:</strong> ${race.gpxYear}${race.gpxYear < 2026 ? ' ⚠️' : ''}</div>` : ''}
-                    <div><strong>GPX:</strong> ${downloadLinks}</div>
+                    <div><strong>GPX:</strong> ${downloadLinks}${race.gpxUpdated ? ` <em class="gpx-date">${formatDate(race.gpxUpdated)}</em>` : ''}</div>
                 </div>
                 <div class="race-actions">
                     <a href="${race.url}" target="_blank" rel="noopener noreferrer" class="race-link">
@@ -2357,7 +2336,8 @@ function onGpxFileSelect(input) {
             return;
         }
         _parsedGpxStats = result;
-        statsEl.textContent = `${result.distance.toFixed(1)} km · ${result.elevation} hm · ${result.points} punkter`;
+        const cpNote = result.checkpoints.length ? ` · ${result.checkpoints.length} sjekkpunkter` : '';
+        statsEl.textContent = `${result.distance.toFixed(1)} km · ${result.elevation} hm · ${result.points} punkter${cpNote}`;
         statsEl.className = 'gpx-stats gpx-stats-ok';
         statsEl.style.display = '';
         const isLoop = result.distance < 30;
@@ -2383,7 +2363,16 @@ function parseGPXForStats(gpxText) {
     ]);
     const geoCoords = coords.map(([lat, lon, ele]) => [lon, lat, ele]);
     const stats = calculateGPXStats(geoCoords);
-    return { distance: stats.distance, elevation: stats.elevationGain, points: trkpts.length };
+
+    const checkpoints = Array.from(doc.querySelectorAll('wpt'))
+        .map(wpt => ({
+            name: wpt.querySelector('name')?.textContent?.trim() || 'Sjekkpunkt',
+            lat: parseFloat(wpt.getAttribute('lat')),
+            lng: parseFloat(wpt.getAttribute('lon'))
+        }))
+        .filter(cp => !isNaN(cp.lat) && !isNaN(cp.lng));
+
+    return { distance: stats.distance, elevation: stats.elevationGain, points: trkpts.length, checkpoints };
 }
 
 function distanceToCategory(km) {
