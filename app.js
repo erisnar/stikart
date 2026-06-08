@@ -169,8 +169,8 @@ const raceRoutes = [
     {
         id: "lommedalen-rundt",
         name: "Lommedalen Rundt",
-        files: ["race-calendar/lommedalen-rundt/lommedalen-rundt-100-miles-startetappe-fra-varmestue-til-golfbanen.gpx"],
-        color: "#bf360c",
+        files: ["race-calendar/lommedalen-rundt/lommedalen-rundt-2025-published.gpx"],
+        color: "#8338ec",
         url: "https://www.lommedalenrundt.no/omlr",
         description: "Lommedalen Rundt er et løp på åsene rundt Lommedalen i Bærum, arrangert første gang i 2015.",
         useCalculatedStats: true,
