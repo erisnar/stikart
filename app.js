@@ -167,6 +167,18 @@ const raceCategories = [
 // GPX race routes configuration
 const raceRoutes = [
     {
+        id: "lommedalen-rundt-100",
+        name: "Lommedalen rundt 100",
+        files: ["race-calendar/lommedalen-rundt/lommedalen-rundt-100-miles-startetappe-fra-varmestue-til-golfbanen.gpx"],
+        color: "#e91e63",
+        url: "https://www.lommedalenrundt.no/",
+        description: "Lommedalen Rundt er et løp på åsene rundt Lommedalen i Bærum, arrangert første gang i 2015.",
+        useCalculatedStats: true,
+        manualDistance: 50,
+        category: "50k",
+        date: "2026-06-24"
+    },
+    {
         name: 'NSM Ultra 2025',
         files: ['race-calendar/NordmarkaSkogsmaraton/NSM_Ultra_2025.gpx'],
         color: '#ff6b35',
