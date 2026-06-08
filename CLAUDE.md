@@ -32,7 +32,6 @@ The Python server is needed to avoid CORS errors when fetching local GPX files.
 | `wrangler.toml` | Cloudflare Worker config |
 | `race-calendar/` | GPX files, one folder per race |
 | `.github/workflows/validate-race.yml` | CI: validates GPX and auto-merges valid race PRs |
-| `.github/workflows/deploy-worker.yml` | CI: auto-deploys worker.js to Cloudflare on push to main |
 
 ## Race entry format
 
@@ -127,7 +126,7 @@ Users submit new races and propose edits via "Mangler det et løp?" in the info 
 ## Cloudflare Worker
 
 - **URL config**: `WORKER_URL` constant at the top of `app.js`
-- **Deploy**: automatic via `deploy-worker.yml` on push to main; or `wrangler deploy` manually
+- **Deploy**: `wrangler deploy` from the repo root
 - **Secret**: `wrangler secret put GITHUB_TOKEN` — fine-grained PAT: `Contents: write` + `Pull requests: write` on this repo
 - **CORS**: origin-checked against `ALLOWED_ORIGINS` env var (default: `https://stikart.no,http://localhost:8000`)
 
@@ -137,8 +136,6 @@ Users submit new races and propose edits via "Mangler det et løp?" in the info 
 - Validates GPX has `<trkpt>` track points and total distance ≥ 30 km
 - Loop race exception: if GPX < 30 km, checks `manualDistance` in the app.js diff instead
 - Comments result on the PR; squash-merges and deletes branch on pass
-
-**`deploy-worker.yml`** — triggers on push to `main` when `worker.js` or `wrangler.toml` change.
 
 ## Updating `gpxUpdated` for all races
 
