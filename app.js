@@ -167,6 +167,7 @@ const raceCategories = [
 // GPX race routes configuration
 const raceRoutes = [
     {
+        id: 'nsm-ultra-2025',
         name: 'NSM Ultra 2025',
         files: ['race-calendar/NordmarkaSkogsmaraton/NSM_Ultra_2025.gpx'],
         color: '#ff6b35',
@@ -176,6 +177,7 @@ const raceRoutes = [
         date: '2026-06-20'
     },
     {
+        id: 'obt-oslo-bergen-trail',
         name: 'OBT Oslo-Bergen Trail',
         files: [
             'race-calendar/OsloBergenTrail/M1_Oslo-Bergen.gpx',
@@ -191,6 +193,7 @@ const raceRoutes = [
         date: '2027-07-01'
     },
     {
+        id: 'smve-soria-moria-til-verdens-ende',
         name: 'SMVE - Soria Moria til Verdens Ende',
         files: ['race-calendar/SoriaMoriaTilVerdensEnde/SMVE_2024_100_miles_02.gpx'],
         color: '#9b59b6',
@@ -206,6 +209,7 @@ const raceRoutes = [
         ]
     },
     {
+        id: 'noesen-hundreds',
         name: 'Nøsen Hundreds',
         files: ['race-calendar/Nøsen/Nosen_100.gpx'],
         color: '#e74c3c',
@@ -219,6 +223,7 @@ const raceRoutes = [
         ]
     },
     {
+        id: 'dobbeltravern-nordmarkstraveren',
         name: 'Dobbeltravern - Nordmarkstraveren',
         files: ['race-calendar/Nordmakstravern/dobbeltravern_60km_1_.gpx'],
         color: '#f39c12',
@@ -228,6 +233,7 @@ const raceRoutes = [
         date: '2026-09-05'
     },
     {
+        id: 'lillomarka-rundt',
         name: 'Lillomarka Rundt',
         files: ['race-calendar/Sidespor-SkyBlazers/Lillomarka_rundt_51_km_Frysja_161025.gpx'],
         color: '#1abc9c',
@@ -237,6 +243,7 @@ const raceRoutes = [
         date: '2026-10-25'
     },
     {
+        id: 'flyktningeruta',
         name: 'Flyktningeruta',
         files: ['race-calendar/ØstmarkaTrailChallenge/Flyktningeruta_2025.gpx'],
         color: '#e67e22',
@@ -246,6 +253,7 @@ const raceRoutes = [
         date: '2026-08-26'
     },
     {
+        id: 'endless-shore-ultra',
         name: 'Endless Shore Ultra',
         files: ['race-calendar/EndlessShores/Endless_Shores_Ultra_Trail_100_miles_2025_FINAL.gpx'],
         color: '#16a085',
@@ -269,6 +277,7 @@ const raceRoutes = [
         ]
     },
     {
+        id: 'endless-shore-ultra-50-miles',
         name: 'Endless Shore Ultra 50 Miles',
         files: ['race-calendar/EndlessShores/Endless_Shores_Ultra_trail_50M_2026.gpx'],
         color: '#0e6655',
@@ -288,6 +297,7 @@ const raceRoutes = [
         ]
     },
     {
+        id: 'endless-shore-ultra-50k',
         name: 'Endless Shore Ultra 50K',
         files: ['race-calendar/EndlessShores/Endless_Shores_Ultra_Trail_50KM_2026.gpx'],
         color: '#1abc9c',
@@ -304,6 +314,7 @@ const raceRoutes = [
         ]
     },
     {
+        id: 'sandnes-100-miles',
         name: 'Sandnes 100 Miles',
         files: ['race-calendar/SandsnesUltraTrail/sandnes100-miles.gpx'],
         color: '#c0392b',
@@ -313,6 +324,7 @@ const raceRoutes = [
         date: '2026-04-17'
     },
     {
+        id: 'lofoten-ultra-trail-100-miles',
         name: 'Lofoten Ultra Trail 100 Miles',
         files: ['race-calendar/LofotenUltraTrail/lofoten-ultra-trail-100-miles.gpx'],
         color: '#2980b9',
@@ -334,6 +346,7 @@ const raceRoutes = [
         ]
     },
     {
+        id: 'lofoten-ultra-trail-50-miles',
         name: 'Lofoten Ultra Trail 50 Miles',
         files: ['race-calendar/LofotenUltraTrail/lofoten-ultra-trail-50-miles.gpx'],
         color: '#5dade2',
@@ -350,6 +363,7 @@ const raceRoutes = [
         ]
     },
     {
+        id: 'lofoten-ultra-trail-48k',
         name: 'Lofoten Ultra Trail 48K',
         files: ['race-calendar/LofotenUltraTrail/lofoten-ultra-trail-48km.gpx'],
         color: '#85c1e9',
@@ -364,6 +378,7 @@ const raceRoutes = [
         ]
     },
     {
+        id: 'mmc-100-miles',
         name: 'MMC 100 Miles',
         files: ['race-calendar/MeråkerMountainChallenge/MMC_100M.gpx'],
         color: '#8e44ad',
@@ -373,6 +388,7 @@ const raceRoutes = [
         date: '2026-08-01'
     },
     {
+        id: 'mmc-100k',
         name: 'MMC 100K',
         files: ['race-calendar/MeråkerMountainChallenge/MMC_100K.gpx'],
         color: '#a569bd',
@@ -382,6 +398,7 @@ const raceRoutes = [
         date: '2026-08-01'
     },
     {
+        id: 'mmc-70k',
         name: 'MMC 70K',
         files: ['race-calendar/MeråkerMountainChallenge/MMC_70K.gpx'],
         color: '#bb8fce',
@@ -391,6 +408,7 @@ const raceRoutes = [
         date: '2026-08-01'
     },
     {
+        id: 'hardangerjoekulen-ultra-95k',
         name: 'Hardangerjøkulen Ultra 95K',
         files: ['race-calendar/HardangerjøkulenUltra/hardangerjokulen-ultra-95k.gpx'],
         color: '#27ae60',
@@ -400,6 +418,7 @@ const raceRoutes = [
         date: '2026-07-11'
     },
     {
+        id: 'hardangerjoekulen-ultra-34k',
         name: 'Hardangerjøkulen Ultra 34K',
         files: ['race-calendar/HardangerjøkulenUltra/hardangerjokulen-ultra-34k.gpx'],
         color: '#58d68d',
@@ -409,6 +428,7 @@ const raceRoutes = [
         date: '2026-07-11'
     },
     {
+        id: 'oslo-trail-challenge-200k',
         name: 'Oslo Trail Challenge 200K',
         files: [
             'race-calendar/OsloTrailChallenge/OTC_200K_First_Half.gpx',
@@ -421,6 +441,7 @@ const raceRoutes = [
         date: '2026-09-20'
     },
     {
+        id: 'oslo-trail-challenge-100k',
         name: 'Oslo Trail Challenge 100K',
         files: ['race-calendar/OsloTrailChallenge/OTC_100K.gpx'],
         color: '#dc7633',
@@ -430,6 +451,7 @@ const raceRoutes = [
         date: '2026-09-27'
     },
     {
+        id: 'oslo-trail-challenge-55k',
         name: 'Oslo Trail Challenge 55K',
         files: ['race-calendar/OsloTrailChallenge/OTC_2024_55K_FINAL.gpx'],
         color: '#f0b27a',
@@ -439,6 +461,7 @@ const raceRoutes = [
         date: '2026-09-27'
     },
     {
+        id: 'lustrafjorden-inn-ultra-100',
         name: 'Lustrafjorden Inn Ultra 100',
         files: ['race-calendar/LustrafjordenInn/Lustrafjorden_Inn_2024_Ultra100.gpx'],
         color: '#1a5276',
@@ -453,6 +476,7 @@ const raceRoutes = [
         ]
     },
     {
+        id: 'hornindal-rundt-75k',
         name: 'Hornindal Rundt 75K',
         files: ['race-calendar/HornindalRundt/HornindalRundt75K.gpx'],
         color: '#7d3c98',
@@ -462,6 +486,7 @@ const raceRoutes = [
         date: '2026-07-04'
     },
     {
+        id: 'dynafit-hardangervidda-maraton-43k',
         name: 'Dynafit Hardangervidda Maraton 43K',
         files: ['race-calendar/HardangerviddaMaraton/hardangervidda-marathon-43k.gpx'],
         color: '#d4ac0d',
@@ -471,6 +496,7 @@ const raceRoutes = [
         date: '2026-08-29'
     },
     {
+        id: 'noesen-50k',
         name: 'Nøsen 50K',
         files: ['race-calendar/Nøsen/Nosen_50km.gpx'],
         color: '#cb4335',
@@ -484,6 +510,7 @@ const raceRoutes = [
         ]
     },
     {
+        id: 'krsultra-60',
         name: 'KRSUltra 60',
         files: ['race-calendar/KRSUltra/krsultra-60k-2025-v1.gpx'],
         color: '#e55039',
@@ -500,6 +527,7 @@ const raceRoutes = [
         ]
     },
     {
+        id: 'skogvokteren',
         name: 'Skogvokteren',
         files: ['race-calendar/Skogvokteren/Skogvokteren_2025.gpx'],
         color: '#2d6a4f',
@@ -517,6 +545,7 @@ const raceRoutes = [
         ]
     },
     {
+        id: 'ecotrail-oslo-80k',
         name: 'Ecotrail Oslo 80K',
         files: ['race-calendar/ecotrail/ecotrail_oslo_80km_2026.gpx'],
         color: '#40916c',
@@ -533,6 +562,7 @@ const raceRoutes = [
         ]
     },
     {
+        id: 'ecotrail-oslo-50k',
         name: 'Ecotrail Oslo 50K',
         files: ['race-calendar/ecotrail/ecotrail_oslo_50km_2026.gpx'],
         color: '#74c69d',
@@ -542,6 +572,7 @@ const raceRoutes = [
         date: '2026-05-30'
     },
     {
+        id: 'sognefjord-trail-run-50k',
         name: 'Sognefjord Trail Run 50K',
         files: ['race-calendar/SognefjordTrail/STR+50K+2026.gpx'],
         color: '#0077b6',
@@ -551,6 +582,7 @@ const raceRoutes = [
         date: '2026-06-06'
     },
     {
+        id: 'vestfold-historic-ultra-147k',
         name: 'Vestfold Historic Ultra 147K',
         files: ['race-calendar/VestfoldHistoricUltra/VHUT_2025_147km.gpx'],
         color: '#6930c3',
@@ -560,6 +592,7 @@ const raceRoutes = [
         date: '2026-06-06'
     },
     {
+        id: 'vestfold-historic-ultra-87k',
         name: 'Vestfold Historic Ultra 87K',
         files: ['race-calendar/VestfoldHistoricUltra/VHUT_2025_87km.gpx'],
         color: '#7400b8',
@@ -569,6 +602,7 @@ const raceRoutes = [
         date: '2026-06-06'
     },
     {
+        id: 'vestfold-historic-ultra-50k',
         name: 'Vestfold Historic Ultra 50K',
         files: ['race-calendar/VestfoldHistoricUltra/VHUT_2025_50km.gpx'],
         color: '#9d4edd',
@@ -578,6 +612,7 @@ const raceRoutes = [
         date: '2026-06-07'
     },
     {
+        id: 'jotunheimen-trail-run',
         name: 'Jotunheimen Trail Run',
         files: ['race-calendar/JotunheimenTrail/JTR+ULTRA+2026.gpx'],
         color: '#023e8a',
@@ -587,6 +622,7 @@ const raceRoutes = [
         date: '2026-07-31'
     },
     {
+        id: 'bodoeryggen-ultra',
         name: 'Bodøryggen Ultra',
         files: ['race-calendar/Bodoryggen/Bodoryggen_2025_ultra.gpx'],
         color: '#00b4d8',
@@ -596,6 +632,7 @@ const raceRoutes = [
         date: '2026-08-01'
     },
     {
+        id: 'stranda-fjord-trail-55k',
         name: 'Stranda Fjord Trail 55K',
         files: ['race-calendar/StrandaFjordTrail/55k.gpx'],
         color: '#ff6d00',
@@ -605,6 +642,7 @@ const raceRoutes = [
         date: '2026-08-12'
     },
     {
+        id: 'stranda-fjord-trail-95k',
         name: 'Stranda Fjord Trail 95K',
         files: ['race-calendar/StrandaFjordTrail/95K.gpx'],
         color: '#ff9500',
@@ -614,6 +652,7 @@ const raceRoutes = [
         date: '2026-08-12'
     },
     {
+        id: 'trollheimen-ultra-100k',
         name: 'Trollheimen Ultra 100K',
         files: ['race-calendar/TrollheimenUltra/trollheimen-ultra-trip.gpx'],
         color: '#6a040f',
@@ -623,6 +662,7 @@ const raceRoutes = [
         date: '2026-08-15'
     },
     {
+        id: 'tromsoe-mountain-challenge-50k',
         name: 'Tromsø Mountain Challenge 50K',
         files: ['race-calendar/TromsoMountainChallenge/TMC_Ultra_50km_2025.gpx'],
         color: '#4cc9f0',
@@ -632,6 +672,7 @@ const raceRoutes = [
         date: '2026-08-22'
     },
     {
+        id: 'blefjell-troll-57k',
         name: 'Blefjell Troll 57K',
         files: ['race-calendar/Blefjell/BB_01_Troll_4.gpx'],
         color: '#5c4033',
@@ -641,6 +682,7 @@ const raceRoutes = [
         date: '2026-07-24'
     },
     {
+        id: 'blefjell-storetroll-96k',
         name: 'Blefjell Storetroll 96K',
         files: [
             'race-calendar/Blefjell/BB_01_Troll_4.gpx',
@@ -2057,6 +2099,9 @@ function showRaceDetailOverlay(race, loading = false) {
                     <button class="race-share-btn" onclick="shareRace('${race.name.replace(/'/g, "\\'")}')">
                         Del løype
                     </button>
+                    <button class="race-edit-btn" onclick="openEditRaceForm('${race.name.replace(/'/g, "\\'")}')">
+                        Foreslå endring
+                    </button>
                 </div>
             </div>
             ${renderElevationChart(raceElevationData[race.name], race.color, race.name, race.checkpoints)}
@@ -2206,17 +2251,79 @@ document.addEventListener('DOMContentLoaded', initRacePanel);
 // ── Race submission ────────────────────────────────────────────────────────
 
 let _parsedGpxStats = null;
+let _editMode = null; // null = new race, { originalId, originalName, originalFiles, originalColor }
 
-function showSubmitRaceForm() {
-    document.getElementById('info-main-panel').style.display = 'none';
-    document.getElementById('info-submit-panel').style.display = '';
+function _resetSubmitForm() {
+    document.getElementById('submit-race-form').reset();
+    document.getElementById('gpx-file-text').textContent = 'Velg GPX-fil…';
+    document.getElementById('gpx-stats').style.display = 'none';
+    document.getElementById('manual-distance-group').style.display = 'none';
+    document.getElementById('loop-distances-list').innerHTML = '';
     document.getElementById('submit-race-error').style.display = 'none';
     document.getElementById('submit-race-success').style.display = 'none';
+    document.getElementById('submit-race-btn').style.display = '';
+    document.getElementById('submit-race-btn').disabled = false;
+    _parsedGpxStats = null;
+}
+
+function _setFormMode(isEdit) {
+    document.getElementById('submit-form-title').textContent = isEdit ? 'Foreslå endring' : 'Legg til løp';
+    document.getElementById('submit-form-intro').textContent = isEdit
+        ? 'Endre informasjon om løpet. Last kun opp ny GPX-fil ved endring av løype.'
+        : 'Fyll inn info og last opp GPX-filen. Løpet legges til automatisk hvis GPX-en er gyldig og distansen er over 30 km.';
+    document.getElementById('gpx-required-label').textContent = isEdit ? '' : '*';
+    document.getElementById('gpx-file-input').required = !isEdit;
+    document.getElementById('gpx-edit-hint').style.display = isEdit ? '' : 'none';
+    document.getElementById('submit-race-btn').textContent = isEdit ? 'Send inn endring' : 'Send inn løp';
+    document.getElementById('original-race-id').value = isEdit ? (_editMode?.originalId || '') : '';
+}
+
+function showSubmitRaceForm() {
+    _editMode = null;
+    _resetSubmitForm();
+    _setFormMode(false);
+    document.getElementById('info-main-panel').style.display = 'none';
+    document.getElementById('info-submit-panel').style.display = '';
 }
 
 function closeSubmitRaceForm() {
+    _editMode = null;
     document.getElementById('info-submit-panel').style.display = 'none';
     document.getElementById('info-main-panel').style.display = '';
+}
+
+function openEditRaceForm(raceName) {
+    const race = raceRoutes.find(r => r.name === raceName);
+    if (!race) return;
+    closeRaceDetail();
+    _editMode = {
+        originalId: race.id || slugify(raceName),
+        originalName: raceName,
+        originalFiles: race.files,
+        originalColor: race.color
+    };
+    _resetSubmitForm();
+    _setFormMode(true);
+    document.getElementById('race-name-input').value = race.name;
+    document.getElementById('race-url-input').value = race.url || '';
+    document.getElementById('race-date-input').value = race.date || '';
+    document.getElementById('race-description-input').value = race.description || '';
+    document.getElementById('info-overlay').classList.remove('hidden');
+    document.getElementById('info-main-panel').style.display = 'none';
+    document.getElementById('info-submit-panel').style.display = '';
+}
+
+function addLoopDistance(defaultKm = '') {
+    const list = document.getElementById('loop-distances-list');
+    const isFirst = list.children.length === 0;
+    const div = document.createElement('div');
+    div.className = 'loop-distance-entry';
+    div.innerHTML = `
+        <input type="number" class="form-input loop-dist-km" placeholder="km, f.eks. 50"
+               step="0.1" min="1" required ${defaultKm ? `value="${defaultKm}"` : ''}>
+        ${!isFirst ? `<button type="button" class="loop-dist-remove" onclick="this.parentElement.remove()">×</button>` : '<span></span>'}
+    `;
+    list.appendChild(div);
 }
 
 function onGpxFileSelect(input) {
@@ -2230,7 +2337,6 @@ function onGpxFileSelect(input) {
         const result = parseGPXForStats(e.target.result);
         const statsEl = document.getElementById('gpx-stats');
         const manualGroup = document.getElementById('manual-distance-group');
-        const manualInput = document.getElementById('race-manual-distance-input');
         if (result.error) {
             statsEl.textContent = result.error;
             statsEl.className = 'gpx-stats gpx-stats-error';
@@ -2243,9 +2349,11 @@ function onGpxFileSelect(input) {
         statsEl.className = 'gpx-stats gpx-stats-ok';
         statsEl.style.display = '';
         const isLoop = result.distance < 30;
+        if (isLoop && manualGroup.style.display === 'none') {
+            document.getElementById('loop-distances-list').innerHTML = '';
+            addLoopDistance();
+        }
         manualGroup.style.display = isLoop ? '' : 'none';
-        manualInput.required = isLoop;
-        if (!isLoop) manualInput.value = '';
     };
     reader.readAsText(file);
 }
@@ -2281,6 +2389,7 @@ async function handleRaceSubmit(event) {
     const errorEl = document.getElementById('submit-race-error');
     const successEl = document.getElementById('submit-race-success');
     const btn = document.getElementById('submit-race-btn');
+    const isEdit = !!_editMode;
 
     function showError(msg) {
         errorEl.textContent = msg;
@@ -2291,21 +2400,36 @@ async function handleRaceSubmit(event) {
     errorEl.style.display = 'none';
     successEl.style.display = 'none';
 
+    // Honeypot: bots often fill hidden fields
+    if (document.getElementById('race-hp').value) return;
+
     const gpxFile = document.getElementById('gpx-file-input').files[0];
-    if (!gpxFile) {
+
+    if (!isEdit && !gpxFile) {
         showError('Last opp en GPX-fil.');
         return;
     }
-
-    if (!_parsedGpxStats) {
+    if (gpxFile && !_parsedGpxStats) {
         showError('GPX-filen kunne ikke leses. Sjekk at filen er gyldig.');
         return;
     }
 
-    const manualDistanceVal = parseFloat(document.getElementById('race-manual-distance-input').value) || null;
-    const effectiveDistance = manualDistanceVal || _parsedGpxStats.distance;
+    // Collect loop distances if the section is visible
+    const loopMode = document.getElementById('manual-distance-group').style.display !== 'none';
+    let loopDistances = null;
+    let effectiveDistance = _parsedGpxStats ? _parsedGpxStats.distance : null;
 
-    if (effectiveDistance < 30) {
+    if (loopMode) {
+        const entries = Array.from(document.querySelectorAll('.loop-distance-entry'));
+        loopDistances = entries.map(el => ({
+            km: parseFloat(el.querySelector('.loop-dist-km').value)
+        }));
+        if (loopDistances.some(e => isNaN(e.km) || e.km < 30)) {
+            showError('Alle distanser må være minst 30 km.');
+            return;
+        }
+        effectiveDistance = Math.max(...loopDistances.map(e => e.km));
+    } else if (!isEdit && effectiveDistance !== null && effectiveDistance < 30) {
         showError(`Distansen er for kort (${effectiveDistance.toFixed(1)} km). Minimum 30 km.`);
         return;
     }
@@ -2314,32 +2438,36 @@ async function handleRaceSubmit(event) {
     btn.textContent = 'Sender inn…';
 
     try {
-        const gpxContent = await gpxFile.text();
+        const name = document.getElementById('race-name-input').value.trim();
+        const payload = {
+            name,
+            url: document.getElementById('race-url-input').value.trim(),
+            date: document.getElementById('race-date-input').value,
+            description: document.getElementById('race-description-input').value.trim(),
+            submitter: document.getElementById('race-submitter-input').value.trim() || undefined,
+            category: effectiveDistance ? distanceToCategory(effectiveDistance) : undefined,
+            loopDistances: loopDistances || undefined,
+            originalId: isEdit ? _editMode.originalId : undefined,
+            originalName: isEdit ? _editMode.originalName : undefined,
+            originalFiles: (isEdit && !gpxFile) ? _editMode.originalFiles : undefined,
+            originalColor: isEdit ? _editMode.originalColor : undefined,
+            gpxContent: gpxFile ? await gpxFile.text() : undefined,
+            gpxFilename: gpxFile ? gpxFile.name : undefined
+        };
+
         const res = await fetch(WORKER_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                name: document.getElementById('race-name-input').value.trim(),
-                url: document.getElementById('race-url-input').value.trim(),
-                date: document.getElementById('race-date-input').value,
-                description: document.getElementById('race-description-input').value.trim(),
-                category: distanceToCategory(effectiveDistance),
-                manualDistance: manualDistanceVal || undefined,
-                gpxContent,
-                gpxFilename: gpxFile.name
-            })
+            body: JSON.stringify(payload)
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
 
-        successEl.innerHTML = `Løpet er sendt inn! <a href="${data.prUrl}" target="_blank" rel="noopener">Se PR #${data.prNumber} →</a><br><small>Løpet merges automatisk hvis GPX-en valideres OK.</small>`;
+        const verb = isEdit ? 'Endringen er sendt inn' : 'Løpet er sendt inn';
+        successEl.innerHTML = `${verb}! <a href="${data.prUrl}" target="_blank" rel="noopener">Se PR #${data.prNumber} →</a><br><small>Merges automatisk etter validering.</small>`;
         successEl.style.display = '';
         btn.style.display = 'none';
-        document.getElementById('submit-race-form').reset();
-        document.getElementById('gpx-file-text').textContent = 'Velg GPX-fil…';
-        document.getElementById('gpx-stats').style.display = 'none';
-        document.getElementById('manual-distance-group').style.display = 'none';
-        _parsedGpxStats = null;
+        _editMode = null;
     } catch (err) {
         showError(`Feil: ${err.message}`);
         btn.disabled = false;

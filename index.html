@@ -170,10 +170,11 @@
             <!-- Submit race form panel -->
             <div id="info-submit-panel" class="info-content" style="display:none">
                 <button class="submit-race-back" onclick="closeSubmitRaceForm()">← Tilbake</button>
-                <h2>Legg til løp</h2>
-                <p class="submit-race-intro">Fyll inn info og last opp GPX-filen. Løpet legges til automatisk hvis GPX-en er gyldig og distansen er over 30 km.</p>
+                <h2 id="submit-form-title">Legg til løp</h2>
+                <p id="submit-form-intro" class="submit-race-intro">Fyll inn info og last opp GPX-filen. Løpet legges til automatisk hvis GPX-en er gyldig og distansen er over 30 km.</p>
 
                 <form id="submit-race-form" onsubmit="handleRaceSubmit(event)">
+                    <input type="hidden" id="original-race-id" value="">
                     <div class="form-group">
                         <label class="form-label" for="race-name-input">Løpsnavn *</label>
                         <input type="text" id="race-name-input" class="form-input" required
@@ -181,21 +182,22 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">GPX-fil *</label>
+                        <label class="form-label">GPX-fil <span id="gpx-required-label">*</span></label>
                         <label class="gpx-file-label" id="gpx-file-label">
                             <input type="file" id="gpx-file-input" accept=".gpx"
                                 onchange="onGpxFileSelect(this)">
                             <span class="gpx-file-icon">↑</span>
                             <span id="gpx-file-text">Velg GPX-fil…</span>
                         </label>
+                        <p id="gpx-edit-hint" class="form-hint" style="display:none">La feltet tomt for å beholde eksisterende løype.</p>
                         <div id="gpx-stats" class="gpx-stats" style="display:none"></div>
                     </div>
 
                     <div id="manual-distance-group" class="form-group" style="display:none">
-                        <label class="form-label" for="race-manual-distance-input">Total distanse (km) *</label>
-                        <p class="form-hint">GPX-filen viser kun én runde. Skriv inn total distanse for hele løpet.</p>
-                        <input type="number" id="race-manual-distance-input" class="form-input"
-                            step="0.1" min="30" placeholder="f.eks. 100">
+                        <label class="form-label">Distanser *</label>
+                        <p class="form-hint">GPX-filen viser kun én runde. Legg til én eller flere distanser.</p>
+                        <div id="loop-distances-list"></div>
+                        <button type="button" class="add-distance-btn" onclick="addLoopDistance()">+ Legg til distanse</button>
                     </div>
 
                     <div class="form-group">
@@ -214,6 +216,16 @@
                         <textarea id="race-description-input" class="form-input form-textarea"
                             rows="3" placeholder="Kort beskrivelse av løpet…"></textarea>
                     </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="race-submitter-input">Ditt navn</label>
+                        <input type="text" id="race-submitter-input" class="form-input"
+                            placeholder="Valgfritt — brukes i pull request">
+                    </div>
+
+                    <!-- honeypot: must stay empty -->
+                    <input type="text" id="race-hp" name="website" autocomplete="off"
+                        tabindex="-1" style="display:none" aria-hidden="true">
 
                     <div id="submit-race-error" class="submit-race-error" style="display:none"></div>
                     <div id="submit-race-success" class="submit-race-success" style="display:none"></div>

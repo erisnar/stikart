@@ -29,6 +29,15 @@ function slugify(name) {
         .replace(/^-|-$/g, '');
 }
 
+function distanceToCategory(km) {
+    if (km < 50) return 'marathon-trail';
+    if (km < 65) return '50k';
+    if (km < 130) return '50-miles';
+    if (km < 160) return '100k';
+    if (km < 500) return '100-miles';
+    return '100-miles-plus';
+}
+
 function toBase64(str) {
     const bytes = new TextEncoder().encode(str);
     let binary = '';
@@ -43,45 +52,102 @@ function fromBase64(b64) {
     return new TextDecoder().decode(bytes);
 }
 
-function buildRaceEntryJs(raceData, gpxPath) {
+// Find the start/end positions of a race entry block by its id or name.
+// Uses bracket-counting so nested objects (e.g. checkpoints) are handled correctly.
+function findEntryBounds(appJs, originalId, originalName) {
+    let searchPos = -1;
+    const candidates = [
+        `id: ${JSON.stringify(originalId)}`,          // new entries with id field
+        `name: ${JSON.stringify(originalName)}`,       // legacy double-quoted name
+        `name: '${originalName}'`                      // legacy single-quoted name
+    ];
+    for (const c of candidates) {
+        const idx = appJs.indexOf(c);
+        if (idx !== -1) { searchPos = idx; break; }
+    }
+    if (searchPos === -1) return null;
+
+    // Scan backwards to opening {
+    let depth = 0;
+    let openBrace = searchPos;
+    while (openBrace > 0) {
+        openBrace--;
+        if (appJs[openBrace] === '}') depth++;
+        else if (appJs[openBrace] === '{') {
+            if (depth === 0) break;
+            depth--;
+        }
+    }
+
+    // Include leading whitespace (the 4-space indent before {)
+    let lineStart = openBrace;
+    while (lineStart > 0 && appJs[lineStart - 1] !== '\n') lineStart--;
+
+    // Scan forward to matching }
+    depth = 0;
+    let closeBrace = openBrace;
+    while (closeBrace < appJs.length) {
+        if (appJs[closeBrace] === '{') depth++;
+        else if (appJs[closeBrace] === '}') { depth--; if (depth === 0) break; }
+        closeBrace++;
+    }
+
+    // Consume trailing comma and newline
+    let blockEnd = closeBrace + 1;
+    if (blockEnd < appJs.length && appJs[blockEnd] === ',') blockEnd++;
+    if (blockEnd < appJs.length && appJs[blockEnd] === '\n') blockEnd++;
+
+    return { start: lineStart, end: blockEnd };
+}
+
+function buildRaceEntry(raceData) {
     const fields = [
+        `        id: ${JSON.stringify(raceData.id)}`,
         `        name: ${JSON.stringify(raceData.name)}`,
-        `        files: [${JSON.stringify(gpxPath)}]`,
+        `        files: [${raceData.files.map(f => JSON.stringify(f)).join(', ')}]`,
         `        color: ${JSON.stringify(raceData.color)}`,
     ];
-    if (raceData.url) fields.push(`        url: ${JSON.stringify(raceData.url)}`);
-    if (raceData.description) fields.push(`        description: ${JSON.stringify(raceData.description)}`);
+    if (raceData.url)          fields.push(`        url: ${JSON.stringify(raceData.url)}`);
+    if (raceData.description)  fields.push(`        description: ${JSON.stringify(raceData.description)}`);
     fields.push(`        useCalculatedStats: true`);
     if (raceData.manualDistance) fields.push(`        manualDistance: ${raceData.manualDistance}`);
     fields.push(`        category: ${JSON.stringify(raceData.category)}`);
-    if (raceData.date) fields.push(`        date: ${JSON.stringify(raceData.date)}`);
+    if (raceData.date)         fields.push(`        date: ${JSON.stringify(raceData.date)}`);
     return `    {\n${fields.join(',\n')}\n    }`;
 }
 
-function buildPRBody(raceData) {
+function buildPRBody({ name, url, date, description, category, loopDistances, isEdit, originalName, submitter }) {
     const catLabels = {
         'marathon-trail': '< 50K', '50k': '50K', '50-miles': '50 Miles',
         '100k': '100K', '100-miles': '100 Miles', '100-miles-plus': '100 Miles+'
     };
-    return [
-        `## Nytt løp: ${raceData.name}`,
-        '',
-        '| Felt | Verdi |',
-        '|---|---|',
-        `| Kategori | ${catLabels[raceData.category] || raceData.category} |`,
-        raceData.date        ? `| Dato | ${raceData.date} |`               : '',
-        raceData.url         ? `| Nettside | ${raceData.url} |`            : '',
-        raceData.description ? `| Beskrivelse | ${raceData.description} |` : '',
-        '',
-        '_Sendt inn via stikart.no_'
-    ].filter(Boolean).join('\n');
+    const title = isEdit ? `## Endring: ${originalName}` : `## Nytt løp: ${name}`;
+    const rows = [title, '', '| Felt | Verdi |', '|---|---|'];
+    if (loopDistances?.length > 0) {
+        loopDistances.forEach(ld => {
+            rows.push(`| Distanse | ${ld.km} km (${catLabels[distanceToCategory(ld.km)] || ''}) |`);
+        });
+    } else {
+        rows.push(`| Kategori | ${catLabels[category] || category} |`);
+    }
+    if (date)        rows.push(`| Dato | ${date} |`);
+    if (url)         rows.push(`| Nettside | ${url} |`);
+    if (description) rows.push(`| Beskrivelse | ${description} |`);
+    if (submitter)   rows.push(`| Sendt inn av | ${submitter} |`);
+    rows.push('', '_Sendt inn via stikart.no_');
+    return rows.filter(r => r !== null).join('\n');
 }
 
-async function createRacePR(raceData, gpxContent, gpxFilename, token) {
-    const slug = slugify(raceData.name);
-    const gpxFileSlug = slugify(gpxFilename.replace(/\.gpx$/i, '')) + '.gpx';
-    const gpxPath = `race-calendar/${slug}/${gpxFileSlug}`;
-    const branch = `add-race/${slug}-${Date.now().toString(36)}`;
+async function createRacePR(payload, token) {
+    const {
+        name, url, date, description, category, loopDistances,
+        originalId, originalName, originalFiles, originalColor,
+        gpxContent, gpxFilename
+    } = payload;
+
+    const isEdit = !!originalId;
+    const slug = slugify(name);
+    const branch = `${isEdit ? 'edit' : 'add'}-race/${slug}-${Date.now().toString(36)}`;
     const apiBase = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}`;
     const headers = {
         Authorization: `Bearer ${token}`,
@@ -100,46 +166,100 @@ async function createRacePR(raceData, gpxContent, gpxFilename, token) {
         return res.json();
     }
 
+    // 1. Create branch from main
     const mainRef = await gh('/git/ref/heads/main');
-    const mainSha = mainRef.object.sha;
-
     await gh('/git/refs', {
         method: 'POST',
-        body: JSON.stringify({ ref: `refs/heads/${branch}`, sha: mainSha })
+        body: JSON.stringify({ ref: `refs/heads/${branch}`, sha: mainRef.object.sha })
     });
 
-    await gh(`/contents/${gpxPath}`, {
-        method: 'PUT',
-        body: JSON.stringify({
-            message: `Add GPX for ${raceData.name}`,
-            content: toBase64(gpxContent),
-            branch
-        })
-    });
+    // 2. Upload GPX if provided
+    let filePaths = originalFiles || [];
+    if (gpxContent && gpxFilename) {
+        const gpxFileSlug = slugify(gpxFilename.replace(/\.gpx$/i, '')) + '.gpx';
+        const gpxPath = `race-calendar/${slug}/${gpxFileSlug}`;
 
+        // Check if a file already exists at this path on the branch (needed for update)
+        let existingSha;
+        try {
+            const existing = await gh(`/contents/${gpxPath}?ref=${encodeURIComponent(branch)}`);
+            existingSha = existing.sha;
+        } catch (_) { /* new file */ }
+
+        await gh(`/contents/${gpxPath}`, {
+            method: 'PUT',
+            body: JSON.stringify({
+                message: `${isEdit ? 'Update' : 'Add'} GPX for ${name}`,
+                content: toBase64(gpxContent),
+                ...(existingSha ? { sha: existingSha } : {}),
+                branch
+            })
+        });
+        filePaths = [gpxPath];
+    }
+
+    // 3. Fetch app.js and build new entries
     const appJsFile = await gh(`/contents/app.js?ref=${encodeURIComponent(branch)}`);
-    const appJsContent = fromBase64(appJsFile.content);
-    const marker = 'const raceRoutes = [';
-    const markerIdx = appJsContent.indexOf(marker);
-    if (markerIdx === -1) throw new Error('raceRoutes not found in app.js');
-    const insertAt = markerIdx + marker.length;
-    const newAppJs = appJsContent.slice(0, insertAt) + '\n' + buildRaceEntryJs(raceData, gpxPath) + ',' + appJsContent.slice(insertAt);
+    let appJs = fromBase64(appJsFile.content);
 
+    const color = originalColor || darkColorPool[Math.floor(Math.random() * darkColorPool.length)];
+
+    let newEntries;
+    if (loopDistances?.length > 0) {
+        const multi = loopDistances.length > 1;
+        newEntries = loopDistances.map(ld => {
+            const label = `${Math.round(ld.km)}K`;
+            const fullName = multi ? `${name} ${label}` : name;
+            return buildRaceEntry({
+                id: slugify(fullName), name: fullName, files: filePaths,
+                color: darkColorPool[Math.floor(Math.random() * darkColorPool.length)],
+                url, date, description,
+                manualDistance: ld.km,
+                category: distanceToCategory(ld.km)
+            });
+        });
+    } else {
+        newEntries = [buildRaceEntry({
+            id: isEdit ? originalId : slug,
+            name, files: filePaths, color, url, date, description, category
+        })];
+    }
+
+    // 4. Remove old entry for edits, then prepend new entries
+    if (isEdit) {
+        const bounds = findEntryBounds(appJs, originalId, originalName);
+        if (!bounds) throw new Error(`Fant ikke løpet "${originalName}" i app.js`);
+        appJs = appJs.slice(0, bounds.start) + appJs.slice(bounds.end);
+    }
+
+    const marker = 'const raceRoutes = [';
+    const insertAt = appJs.indexOf(marker) + marker.length;
+    if (insertAt < marker.length) throw new Error('raceRoutes not found in app.js');
+    appJs = appJs.slice(0, insertAt) + '\n' + newEntries.join(',\n') + ',' + appJs.slice(insertAt);
+
+    // 5. Commit app.js
     await gh('/contents/app.js', {
         method: 'PUT',
         body: JSON.stringify({
-            message: `Add race: ${raceData.name}`,
-            content: toBase64(newAppJs),
+            message: isEdit ? `Update race: ${name}` : `Add race: ${name}`,
+            content: toBase64(appJs),
             sha: appJsFile.sha,
             branch
         })
     });
 
+    // 6. Open PR
+    const prTitle = isEdit
+        ? `Update race: ${name}`
+        : loopDistances?.length > 1
+            ? `Add race: ${name} (${loopDistances.length} distanser)`
+            : `Add race: ${name}`;
+
     return gh('/pulls', {
         method: 'POST',
         body: JSON.stringify({
-            title: `Add race: ${raceData.name}`,
-            body: buildPRBody(raceData),
+            title: prTitle,
+            body: buildPRBody({ name, url, date, description, category, loopDistances, isEdit, originalName, submitter: payload.submitter }),
             head: branch,
             base: 'main'
         })
@@ -160,51 +280,49 @@ export default {
         if (request.method === 'OPTIONS') {
             return new Response(null, { status: 204, headers: corsHeaders });
         }
-
         if (!allowedOrigins.includes(origin)) {
             return new Response('Forbidden', { status: 403, headers: corsHeaders });
         }
-
         if (request.method !== 'POST') {
             return new Response('Method not allowed', { status: 405, headers: corsHeaders });
         }
-
         if (!env.GITHUB_TOKEN) {
             return new Response(JSON.stringify({ error: 'Worker ikke konfigurert (mangler GITHUB_TOKEN)' }), {
-                status: 500,
-                headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+                status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
             });
         }
 
         try {
-            const { name, url, date, description, category, manualDistance, gpxContent, gpxFilename } = await request.json();
+            const payload = await request.json();
+            const { name, originalId, gpxContent, gpxFilename, category, loopDistances } = payload;
 
-            if (!name || !gpxContent || !gpxFilename || !category) {
-                return new Response(JSON.stringify({ error: 'Mangler påkrevde felt' }), {
-                    status: 400,
-                    headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            const isEdit = !!originalId;
+            const hasGpx = !!(gpxContent && gpxFilename);
+
+            if (!name) {
+                return new Response(JSON.stringify({ error: 'Mangler løpsnavn' }), {
+                    status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+                });
+            }
+            if (!isEdit && !hasGpx) {
+                return new Response(JSON.stringify({ error: 'GPX-fil er påkrevd for nye løp' }), {
+                    status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+                });
+            }
+            if (!loopDistances?.length && !category) {
+                return new Response(JSON.stringify({ error: 'Mangler kategori' }), {
+                    status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
                 });
             }
 
-            const raceData = {
-                name,
-                url: url || '',
-                date: date || '',
-                description: description || '',
-                category,
-                manualDistance: manualDistance || undefined,
-                color: darkColorPool[Math.floor(Math.random() * darkColorPool.length)]
-            };
-
-            const pr = await createRacePR(raceData, gpxContent, gpxFilename, env.GITHUB_TOKEN);
+            const pr = await createRacePR(payload, env.GITHUB_TOKEN);
 
             return new Response(JSON.stringify({ prNumber: pr.number, prUrl: pr.html_url }), {
                 headers: { ...corsHeaders, 'Content-Type': 'application/json' }
             });
         } catch (err) {
             return new Response(JSON.stringify({ error: err.message }), {
-                status: 500,
-                headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+                status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
             });
         }
     }

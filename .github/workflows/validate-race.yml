@@ -80,8 +80,21 @@ jobs:
               sys.exit(1)
 
           if total_km < MIN_KM:
-              print(f"ERROR: total distance {total_km:.1f} km is less than the {MIN_KM} km minimum")
-              sys.exit(1)
+              # Loop race: check if app.js diff contains manualDistance >= MIN_KM
+              import subprocess, re
+              try:
+                  diff = subprocess.check_output(
+                      ['git', 'diff', '--unified=0', 'origin/main...HEAD', '--', 'app.js']
+                  ).decode('utf-8', errors='replace')
+                  added = [float(m) for m in re.findall(r'^\+\s*manualDistance:\s*(\d+(?:\.\d+)?)', diff, re.MULTILINE)]
+                  if added and max(added) >= MIN_KM:
+                      print(f"  Loop course — GPX = {total_km:.1f} km, manualDistance = {max(added):.0f} km ✓")
+                  else:
+                      print(f"ERROR: total distance {total_km:.1f} km is less than {MIN_KM} km and no valid manualDistance found")
+                      sys.exit(1)
+              except Exception as e:
+                  print(f"ERROR: could not check manualDistance: {e}")
+                  sys.exit(1)
 
           print("Validation passed ✓")
           PYEOF

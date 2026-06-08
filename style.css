@@ -1131,6 +1131,68 @@ body {
     line-height: 1.5;
 }
 
+.loop-distance-entry {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.loop-distance-entry .form-input {
+    width: 140px;
+    flex-shrink: 0;
+}
+
+.loop-dist-remove {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: #e8e4e0;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.loop-dist-remove:hover {
+    background: #d0cbc5;
+}
+
+.add-distance-btn {
+    background: none;
+    border: 1.5px dashed #b0aba5;
+    border-radius: 7px;
+    color: #116A7B;
+    padding: 8px 14px;
+    font-size: 0.9em;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 4px;
+}
+
+.add-distance-btn:hover {
+    border-color: #116A7B;
+    background: #f0f8f9;
+}
+
+.race-edit-btn {
+    background: none;
+    border: 1px solid #b0aba5;
+    border-radius: 6px;
+    color: #555;
+    padding: 6px 12px;
+    font-size: 0.85em;
+    cursor: pointer;
+}
+
+.race-edit-btn:hover {
+    border-color: #116A7B;
+    color: #116A7B;
+}
+
 /* ── End submit race form ─────────────────────────────────────────────────── */
 
 .mobile-welcome {
