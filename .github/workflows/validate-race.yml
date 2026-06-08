@@ -1,0 +1,109 @@
+name: Validate and merge race submission
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    branches: [main]
+
+jobs:
+  validate:
+    if: startsWith(github.head_ref, 'add-race/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Find new GPX files
+        run: |
+          git diff --name-only origin/main...HEAD -- '*.gpx' > /tmp/new_gpx.txt
+          echo "GPX files in this PR:"
+          cat /tmp/new_gpx.txt
+
+      - name: Validate GPX files
+        id: validate
+        run: |
+          python3 - << 'PYEOF'
+          import sys, math
+          from pathlib import Path
+          from xml.etree import ElementTree as ET
+
+          MIN_KM = 30
+
+          def haversine(lat1, lon1, lat2, lon2):
+              R = 6371
+              lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
+              dlat, dlon = lat2 - lat1, lon2 - lon1
+              a = math.sin(dlat/2)**2 + math.cos(lat1)*math.cos(lat2)*math.sin(dlon/2)**2
+              return 2 * R * math.asin(math.sqrt(a))
+
+          errors = []
+          total_km = 0
+
+          with open('/tmp/new_gpx.txt') as f:
+              files = [l.strip() for l in f if l.strip().endswith('.gpx')]
+
+          if not files:
+              print("ERROR: No GPX files found in this PR")
+              sys.exit(1)
+
+          for path in files:
+              if not Path(path).exists():
+                  errors.append(f"{path}: file not found")
+                  continue
+              try:
+                  tree = ET.parse(path)
+                  root = tree.getroot()
+                  points = root.findall('.//{*}trkpt')
+                  if not points:
+                      errors.append(f"{path}: no track points (<trkpt>) found — use a track file, not a route file")
+                      continue
+                  coords = [(float(p.get('lat')), float(p.get('lon'))) for p in points]
+                  km = sum(
+                      haversine(coords[i][0], coords[i][1], coords[i+1][0], coords[i+1][1])
+                      for i in range(len(coords) - 1)
+                  )
+                  total_km += km
+                  print(f"  {path}: {km:.1f} km, {len(points)} track points ✓")
+              except ET.ParseError as e:
+                  errors.append(f"{path}: invalid XML — {e}")
+
+          print(f"\nTotal distance: {total_km:.1f} km")
+
+          if errors:
+              for e in errors:
+                  print(f"ERROR: {e}")
+              sys.exit(1)
+
+          if total_km < MIN_KM:
+              print(f"ERROR: total distance {total_km:.1f} km is less than the {MIN_KM} km minimum")
+              sys.exit(1)
+
+          print("Validation passed ✓")
+          PYEOF
+        continue-on-error: true
+
+      - name: Comment validation result
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const passed = '${{ steps.validate.outcome }}' === 'success';
+            const body = passed
+              ? '✅ **Validering OK** — GPX-filen er gyldig og løypen er over 30 km. Merger automatisk!'
+              : '❌ **Validering feilet** — Sjekk at GPX-filen inneholder sporpunkter (`<trkpt>`) og at total distanse er over 30 km. Se logg for detaljer.';
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body
+            });
+
+      - name: Auto-merge if valid
+        if: steps.validate.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh pr merge ${{ github.event.pull_request.number }} --squash --delete-branch

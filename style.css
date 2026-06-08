@@ -876,9 +876,17 @@ body {
 }
 
 .info-content h3 {
-    margin: 20px 0 10px 0;
+    margin: 24px 0 10px 0;
+    padding-top: 20px;
+    border-top: 1px solid #e8e4e0;
     color: #333;
     font-size: 1.1em;
+}
+
+.submit-race-teaser h3 {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
 }
 
 .info-content p {
@@ -936,6 +944,194 @@ body {
         font-size: 1.3em;
     }
 }
+
+/* ── Submit race form ────────────────────────────────────────────────────── */
+
+.submit-race-teaser {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #e8e4e0;
+}
+
+.submit-race-teaser h3 {
+    margin: 0 0 8px 0 !important;
+}
+
+.submit-race-teaser p {
+    margin: 0 0 12px 0 !important;
+}
+
+.submit-race-teaser-btn {
+    border: none;
+    cursor: pointer;
+    font-size: 0.95em;
+}
+
+.submit-race-back {
+    background: none;
+    border: none;
+    color: #116A7B;
+    font-size: 0.95em;
+    cursor: pointer;
+    padding: 0;
+    margin-bottom: 16px;
+    display: inline-block;
+}
+
+.submit-race-back:hover {
+    text-decoration: underline;
+}
+
+.form-hint {
+    font-size: 0.83em;
+    color: #888;
+    margin: 0 0 7px 0 !important;
+}
+
+.submit-race-intro {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 20px !important;
+}
+
+.form-group {
+    margin-bottom: 14px;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.85em;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 5px;
+}
+
+.form-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border: 1.5px solid #d0cbc5;
+    border-radius: 7px;
+    font-size: 0.95em;
+    color: #222;
+    background: #fafafa;
+    transition: border-color 0.15s;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #116A7B;
+    background: #fff;
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 72px;
+    line-height: 1.5;
+}
+
+.gpx-file-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border: 1.5px dashed #b0aba5;
+    border-radius: 7px;
+    cursor: pointer;
+    background: #fafafa;
+    transition: border-color 0.15s, background 0.15s;
+    font-size: 0.95em;
+    color: #555;
+}
+
+.gpx-file-label:hover {
+    border-color: #116A7B;
+    background: #f0f8f9;
+}
+
+.gpx-file-label input[type="file"] {
+    display: none;
+}
+
+.gpx-file-icon {
+    font-size: 1.1em;
+    flex-shrink: 0;
+}
+
+.gpx-stats {
+    margin-top: 7px;
+    font-size: 0.83em;
+    padding: 6px 10px;
+    border-radius: 5px;
+}
+
+.gpx-stats-ok {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.gpx-stats-error {
+    background: #fdecea;
+    color: #c62828;
+}
+
+.submit-race-error {
+    padding: 10px 14px;
+    background: #fdecea;
+    color: #c62828;
+    border-radius: 7px;
+    font-size: 0.9em;
+    margin-bottom: 12px;
+}
+
+.submit-race-success {
+    padding: 12px 14px;
+    background: #e8f5e9;
+    color: #2e7d32;
+    border-radius: 7px;
+    font-size: 0.9em;
+    line-height: 1.6;
+    margin-bottom: 12px;
+}
+
+.submit-race-success a {
+    color: #1b5e20;
+    font-weight: 600;
+}
+
+.submit-race-btn {
+    width: 100%;
+    padding: 13px;
+    background: #116A7B;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 4px;
+}
+
+.submit-race-btn:hover:not(:disabled) {
+    background: #0d5463;
+}
+
+.submit-race-btn:disabled {
+    background: #9bb8bd;
+    cursor: not-allowed;
+}
+
+.race-description {
+    font-size: 0.9em;
+    color: #555;
+    margin: 4px 0 12px 0;
+    line-height: 1.5;
+}
+
+/* ── End submit race form ─────────────────────────────────────────────────── */
 
 .mobile-welcome {
     position: fixed;

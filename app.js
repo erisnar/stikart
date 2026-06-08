@@ -1,3 +1,8 @@
+// ── Race submission config ────────────────────────────────────────────────
+// Deploy worker.js to Cloudflare Workers, then set this to your worker URL.
+// Run: wrangler deploy && wrangler secret put GITHUB_TOKEN
+const WORKER_URL = 'https://stikart-submit.stikart.workers.dev';
+
 // Touch device detection
 const isTouchDevice = (function() {
     return (
@@ -242,7 +247,7 @@ const raceRoutes = [
     },
     {
         name: 'Endless Shore Ultra',
-        files: ['race-calendar/EndlessShores/Endless_Shores_Ultra_Trail_100M_2026.gpx'],
+        files: ['race-calendar/EndlessShores/Endless_Shores_Ultra_Trail_100_miles_2025_FINAL.gpx'],
         color: '#16a085',
         url: 'https://www.endless-shore.no/',
         useCalculatedStats: true,
@@ -2036,6 +2041,7 @@ function showRaceDetailOverlay(race, loading = false) {
     content.innerHTML = `
         <div class="race-popup">
             <h3>${race.name} <span class="popup-color-btn" onclick="changeRaceColor('${race.name}')" title="Endre farge">🎨</span></h3>
+            ${race.description ? `<p class="race-description">${race.description.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>` : ''}
             <div class="race-popup-details">
                 <div class="race-details">
                     <div><strong>Dato:</strong> ${formatDate(race.date)}</div>
@@ -2196,3 +2202,147 @@ regenerateColors = function() {
 
 // Initialize panel on DOM ready
 document.addEventListener('DOMContentLoaded', initRacePanel);
+
+// ── Race submission ────────────────────────────────────────────────────────
+
+let _parsedGpxStats = null;
+
+function showSubmitRaceForm() {
+    document.getElementById('info-main-panel').style.display = 'none';
+    document.getElementById('info-submit-panel').style.display = '';
+    document.getElementById('submit-race-error').style.display = 'none';
+    document.getElementById('submit-race-success').style.display = 'none';
+}
+
+function closeSubmitRaceForm() {
+    document.getElementById('info-submit-panel').style.display = 'none';
+    document.getElementById('info-main-panel').style.display = '';
+}
+
+function onGpxFileSelect(input) {
+    const file = input.files[0];
+    if (!file) return;
+    document.getElementById('gpx-file-text').textContent = file.name;
+    _parsedGpxStats = null;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const result = parseGPXForStats(e.target.result);
+        const statsEl = document.getElementById('gpx-stats');
+        const manualGroup = document.getElementById('manual-distance-group');
+        const manualInput = document.getElementById('race-manual-distance-input');
+        if (result.error) {
+            statsEl.textContent = result.error;
+            statsEl.className = 'gpx-stats gpx-stats-error';
+            statsEl.style.display = '';
+            manualGroup.style.display = 'none';
+            return;
+        }
+        _parsedGpxStats = result;
+        statsEl.textContent = `${result.distance.toFixed(1)} km · ${result.elevation} hm · ${result.points} punkter`;
+        statsEl.className = 'gpx-stats gpx-stats-ok';
+        statsEl.style.display = '';
+        const isLoop = result.distance < 30;
+        manualGroup.style.display = isLoop ? '' : 'none';
+        manualInput.required = isLoop;
+        if (!isLoop) manualInput.value = '';
+    };
+    reader.readAsText(file);
+}
+
+function parseGPXForStats(gpxText) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(gpxText, 'text/xml');
+    if (doc.querySelector('parsererror')) return { error: 'Ugyldig GPX-fil (XML-feil)' };
+    const trkpts = doc.querySelectorAll('trkpt');
+    if (!trkpts.length) return { error: 'GPX-filen mangler sporpunkter (<trkpt>)' };
+    const coords = Array.from(trkpts).map(pt => [
+        parseFloat(pt.getAttribute('lat')),
+        parseFloat(pt.getAttribute('lon')),
+        pt.querySelector('ele') ? parseFloat(pt.querySelector('ele').textContent) : null
+    ]);
+    const geoCoords = coords.map(([lat, lon, ele]) => [lon, lat, ele]);
+    const stats = calculateGPXStats(geoCoords);
+    return { distance: stats.distance, elevation: stats.elevationGain, points: trkpts.length };
+}
+
+function distanceToCategory(km) {
+    if (km < 50) return 'marathon-trail';
+    if (km < 65) return '50k';
+    if (km < 130) return '50-miles';
+    if (km < 160) return '100k';
+    if (km < 500) return '100-miles';
+    return '100-miles-plus';
+}
+
+async function handleRaceSubmit(event) {
+    event.preventDefault();
+
+    const errorEl = document.getElementById('submit-race-error');
+    const successEl = document.getElementById('submit-race-success');
+    const btn = document.getElementById('submit-race-btn');
+
+    function showError(msg) {
+        errorEl.textContent = msg;
+        errorEl.style.display = '';
+        successEl.style.display = 'none';
+    }
+
+    errorEl.style.display = 'none';
+    successEl.style.display = 'none';
+
+    const gpxFile = document.getElementById('gpx-file-input').files[0];
+    if (!gpxFile) {
+        showError('Last opp en GPX-fil.');
+        return;
+    }
+
+    if (!_parsedGpxStats) {
+        showError('GPX-filen kunne ikke leses. Sjekk at filen er gyldig.');
+        return;
+    }
+
+    const manualDistanceVal = parseFloat(document.getElementById('race-manual-distance-input').value) || null;
+    const effectiveDistance = manualDistanceVal || _parsedGpxStats.distance;
+
+    if (effectiveDistance < 30) {
+        showError(`Distansen er for kort (${effectiveDistance.toFixed(1)} km). Minimum 30 km.`);
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Sender inn…';
+
+    try {
+        const gpxContent = await gpxFile.text();
+        const res = await fetch(WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: document.getElementById('race-name-input').value.trim(),
+                url: document.getElementById('race-url-input').value.trim(),
+                date: document.getElementById('race-date-input').value,
+                description: document.getElementById('race-description-input').value.trim(),
+                category: distanceToCategory(effectiveDistance),
+                manualDistance: manualDistanceVal || undefined,
+                gpxContent,
+                gpxFilename: gpxFile.name
+            })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+
+        successEl.innerHTML = `Løpet er sendt inn! <a href="${data.prUrl}" target="_blank" rel="noopener">Se PR #${data.prNumber} →</a><br><small>Løpet merges automatisk hvis GPX-en valideres OK.</small>`;
+        successEl.style.display = '';
+        btn.style.display = 'none';
+        document.getElementById('submit-race-form').reset();
+        document.getElementById('gpx-file-text').textContent = 'Velg GPX-fil…';
+        document.getElementById('gpx-stats').style.display = 'none';
+        document.getElementById('manual-distance-group').style.display = 'none';
+        _parsedGpxStats = null;
+    } catch (err) {
+        showError(`Feil: ${err.message}`);
+        btn.disabled = false;
+        btn.textContent = 'Send inn løp';
+    }
+}

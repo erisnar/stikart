@@ -130,7 +130,9 @@
     <div id="info-overlay" class="info-overlay hidden">
         <div class="info-card">
             <button class="close-info" onclick="closeInfoOverlay()">&times;</button>
-            <div class="info-content">
+
+            <!-- Main info panel -->
+            <div id="info-main-panel" class="info-content">
                 <img src="favicon.svg" alt="Stikart logo" class="info-logo">
                 <h2>Om Stikart</h2>
                 <p>Stikart er et interaktivt kart for å utforske ultraløp i Norge. Her kan du se løyper, distanser, høydemeter og finne lenker til arrangørenes nettsider.</p>
@@ -142,7 +144,6 @@
                     <li><strong>Bruk filtrene</strong> øverst for å filtrere etter måned eller distanse</li>
                     <li><strong>🎨-knappen</strong> gir alle løypene nye tilfeldige farger</li>
                     <li><strong>Kartlag-knappen</strong> oppe til høyre lar deg bytte mellom Norgeskart og OpenStreetMap</li>
-
                 </ul>
 
                 <h3>Bidra</h3>
@@ -158,6 +159,69 @@
                 <p id="visit-count" class="visit-count">Laster...</p>
                 <p>stikart.no lagrer trafikk for nettstedet. Statistikken viser hvor mye hvert enkelt område av nettstedet blir besøkt. Vi kan ikke spore din bruk av nettstedet tilbake til deg som enkeltperson.</p>
                 <a href="https://www.goatcounter.com/help/privacy" target="_blank" rel="noopener noreferrer" class="info-link">Les mer om personvern hos GoatCounter →</a>
+
+                <div class="submit-race-teaser">
+                    <h3>Mangler det et løp?</h3>
+                    <p>Send inn GPX-filen og vi legger løpet til på kartet.</p>
+                    <button class="info-link submit-race-teaser-btn" onclick="showSubmitRaceForm()">Legg til løp →</button>
+                </div>
+            </div>
+
+            <!-- Submit race form panel -->
+            <div id="info-submit-panel" class="info-content" style="display:none">
+                <button class="submit-race-back" onclick="closeSubmitRaceForm()">← Tilbake</button>
+                <h2>Legg til løp</h2>
+                <p class="submit-race-intro">Fyll inn info og last opp GPX-filen. Løpet legges til automatisk hvis GPX-en er gyldig og distansen er over 30 km.</p>
+
+                <form id="submit-race-form" onsubmit="handleRaceSubmit(event)">
+                    <div class="form-group">
+                        <label class="form-label" for="race-name-input">Løpsnavn *</label>
+                        <input type="text" id="race-name-input" class="form-input" required
+                            placeholder="f.eks. Jotunheimen Trail Run">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">GPX-fil *</label>
+                        <label class="gpx-file-label" id="gpx-file-label">
+                            <input type="file" id="gpx-file-input" accept=".gpx"
+                                onchange="onGpxFileSelect(this)">
+                            <span class="gpx-file-icon">↑</span>
+                            <span id="gpx-file-text">Velg GPX-fil…</span>
+                        </label>
+                        <div id="gpx-stats" class="gpx-stats" style="display:none"></div>
+                    </div>
+
+                    <div id="manual-distance-group" class="form-group" style="display:none">
+                        <label class="form-label" for="race-manual-distance-input">Total distanse (km) *</label>
+                        <p class="form-hint">GPX-filen viser kun én runde. Skriv inn total distanse for hele løpet.</p>
+                        <input type="number" id="race-manual-distance-input" class="form-input"
+                            step="0.1" min="30" placeholder="f.eks. 100">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="race-url-input">Nettside</label>
+                        <input type="url" id="race-url-input" class="form-input"
+                            placeholder="https://…">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="race-date-input">Løpsdato</label>
+                        <input type="date" id="race-date-input" class="form-input">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="race-description-input">Beskrivelse</label>
+                        <textarea id="race-description-input" class="form-input form-textarea"
+                            rows="3" placeholder="Kort beskrivelse av løpet…"></textarea>
+                    </div>
+
+                    <div id="submit-race-error" class="submit-race-error" style="display:none"></div>
+                    <div id="submit-race-success" class="submit-race-success" style="display:none"></div>
+
+                    <button type="submit" id="submit-race-btn" class="submit-race-btn">
+                        Send inn løp
+                    </button>
+                </form>
             </div>
         </div>
     </div>
